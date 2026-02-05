@@ -1,0 +1,101 @@
+name: momoest
+description: Modern Movement Educational Semantic Tool is an application designed to allow teachers to annotate spatial things, learning tasks, and itineraries, which are transparently stored as Linked Open Data (LOD). The application also enables students to access and use these learning resources in a transparent way.
+
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 0.0.1
+
+environment:
+  sdk: ">=2.17.6 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  cached_network_image: ^3.4.1
+  camera: ^0.11.1
+  cupertino_icons: ^1.0.8
+  file_picker: ^10.1.9
+  firebase_analytics: ^11.4.4
+  firebase_auth: ^5.5.1
+  firebase_core: ^3.12.1
+  firebase_crashlytics: ^4.3.4
+  flutter_map: ^8.2.1
+  flutter_map_marker_cluster: ^8.1.0
+  # flutter_map_marker_cluster: 
+  #   git:
+  #     url: "https://github.com/pablogz/flutter_map_marker_cluster.git"
+  # flutter_map_cancellable_tile_provider: ^3.0.2
+  flutter_quill: ^11.0.0
+  flutter_quill_delta_from_html: ^1.4.3
+  flutter_svg: ^2.0.9
+  flutter_widget_from_html_core: ^0.17.0
+  fwfh_url_launcher: ^0.16.0
+  geolocator: ^14.0.1
+  go_router: ^16.0.0
+  google_fonts: ^6.0.0
+  google_sign_in: ^6.3.0
+  gpx: ^2.2.2
+  http: ^1.2.2
+  image_network: ^2.5.6
+  intl: ^0.20.2
+  latlong2: ^0.9.0
+  path_provider: ^2.1.4
+  qr_flutter: ^4.1.0
+  share_plus: ^11.0.0
+  shared_preferences: ^2.3.1
+  universal_io: ^2.2.2
+  url_launcher: ^6.3.0
+  uuid: ^4.4.0
+  sign_in_with_apple: ^7.0.1
+  string_similarity: ^2.1.1
+  vsc_quill_delta_to_html: ^1.0.5
+  flutter_image_compress: ^2.4.0
+
+# dependency_overrides:
+#   url_launcher_android: "<=6.0.32"
+
+# dart run flutter_launcher_icons
+#   flutter_launcher_icons: ^0.14.4
+# flutter_launcher_icons:
+#   android: true
+#   ios: true
+#   remove_alpha_ios: true
+#   image_path: "images/icon/chestIcon.png"
+#   adaptive_icon_background: "#FFFFFF"
+#   adaptive_icon_foreground: "images/icon/chestIcon.png"
+#   adaptive_icon_foreground_inset: 24
+#   adaptive_icon_monochrome: "images/icon/chestIconMonochrome.png"
+#   min_sdk_android: 21
+#   web: 
+#     generate: true
+#     image_path: "images/icon/chestIcon.png"
+#     backgroudn_color: "#FFFFFF"
+#     theme_color: "#276C29"
+#   windows:
+#     generate: false
+#   macos:
+#     generate: false
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - images/
+    - images/landing/
+    - images/landing/badges/
+    - images/basemap_gallery/
+
+  # fonts:
+  #   - family: OpenSans
+  #     fonts:
+  #       - asset: fonts/OpenSans-Regular.ttf

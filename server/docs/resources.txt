@@ -1,0 +1,185 @@
+/======================================================================\
+| POI                                                                  |
+\======================================================================/
+------------------------------------------------------------------------
+Collection POI: /poi
+    GET:
+        Required query:
+            - north
+            - south
+            - west
+            - east
+            - group
+        Optional header:
+            - idStudent
+        Status code:
+            - 200: 
+                group = OFF:
+                    [
+                        ...,
+                        {
+                            *'id': 'POI_label_25.2_-25.2',
+                            *'latitude': 25.2,
+                            *'longitude': -25.2,
+                            *'label': [
+                                {
+                                    'lang': 'en',
+                                    'label': 'POI label'
+                                },
+                                {
+                                    'lang': 'es',
+                                    'label': 'Etiqueta del PDI'
+                                },
+                                ...
+                            ],
+                            *'author': 'afsd324sfd',
+                            'thumbnail': {
+                                *'image': urlImg1,
+                                'license': license
+                            },
+                            'categories': [
+                                    {
+
+                                    },
+                                ]
+                        },
+                        ...
+                    ]
+                group = ON:
+                    [
+                        ...,
+                        {
+                            *'latitude': 25.2,
+                            *'longitude': -25.2,
+                            *'nPOI': 32
+                        },
+                        ...
+                    ]
+            - 204
+            - 400
+    POST:
+        Required body (JSON):
+            - label: [
+                    {
+                        "lang": "en",
+                        "label": "POI label",
+                    },
+                    ...
+                ],
+            - comment: [
+                    {
+                        "lang": "en",
+                        "label": "POI label",
+                    },
+                    ...
+                ],
+            - latitude: 25.2,
+            - longitude: -25.2
+        Optional body:
+            - image: [
+                    {
+                        *image: urlImg1,
+                        license: license
+                    },
+                    ...
+                ],
+            - thumbnail: {
+                *'image': urlImg1,
+                'license': license
+                },
+            - moreInfo: urlMoreInfo,
+            - categories: [
+                    {
+
+                    },
+                ]
+            - source: urlSource
+        Status code:
+            201: created
+                - Header response:
+                    location: idPOI
+            400: user error
+            401: unauthorized
+            403: forbidden
+            409: conflict
+    OPTIONS: GET(return: application/json)/POST(need: application/json)
+------------------------------------------------------------------------
+Resource POI: /poi/{idPOI}
+    GET: 
+        Optional header:
+                - idStudent
+        Status code:
+            - 200: 
+                [
+                    ...,
+                    {
+                        *'id': 'POI_label_25.2_-25.2',
+                        *'latitude': 25.2,
+                        *'longitude': -25.2,
+                        *'label': [
+                            {
+                                'lang': 'en',
+                                'label': 'POI label'
+                            },
+                            {
+                                'lang': 'es',
+                                'label': 'Etiqueta del PDI'
+                            },
+                            ...
+                        ],
+                        *'comment': [
+                            {
+                                'lang': 'en',
+                                'label': 'POI comment'
+                            },
+                            ...
+                        ],
+                        *'author': 'afsd324sfd',
+                        'thumbnail': {
+                                *'image': urlImg1,
+                                'license': license
+                            },
+                        'image': [
+                            {
+                                *'image': urlImg1,
+                                'license': license
+                            },
+                            ...
+                        ],
+                        'moreInfo': urlMoreInfo,
+                        'categories': [
+                                {
+
+                                },
+                            ]
+                        'source': urlSource
+                    },
+                    ...
+                ]
+            - 400
+    PUT:
+        Required body (JSON):
+            {
+                ...,
+                obj: {
+                    'old': objOld,
+                    *'new': objNew
+                },
+                ...
+            }
+        Status Code:
+            - 200
+            - 400: Old error
+            - 401: unauthorized
+            - 403: forbidden
+    DELETE:
+        Status Code:
+            - 200
+            - 401: unauthorized
+            - 403: forbidden  
+    OPTIONS: GET(return: application/json)/PUT(need: application/json)/DELETE
+    
+
+
+
+
