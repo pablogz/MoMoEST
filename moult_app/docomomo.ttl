@@ -1,0 +1,41 @@
+@prefix momo: <http://momoest.gsic.uva.es/ontology/> .
+@prefix mo: <http://moult.gsic.uva.es/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix geoSparql: <http://www.opengis.net/ont/geosparql#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix wd: <http://www.wikidata.org/entity/> .
+
+
+md:docomomo-casa_cuna
+    a momo:Feature ;
+    rdfs:label "Casa Cuna"@es ;
+    rdfs:comment '''<p>El edificio refleja la atención institucional de una época hacia un programa de ayuda a la infancia, tanto en el diseño y planificación de sus espacios interiores como los exteriores.</p><p>Las distintas partes del programa se desarrollan en torno a un patio central de precisa geometría rectangular; el contorno exterior presenta un resultado más laberíntico que deriva de la adecuación tipológica diferenciada y la autonomía funcional de cada parte. Surge así una composición por módulos estructurales, con patios menores que iluminan e introducen la vegetación en cada una de las piezas menores que rodean el patio central, propiciando la escala más íntima de estas piezas de aulas y juegos. El sistema de organización evoca el Orfanato de Ámsterdam, del arquitecto Aldo van Eyck, clara referencias estructuralista para este tipo de edificios. El bloque de dormitorios se desarrolla en cuatro plantas, mientras que el resto del programa tiene una única planta.</p> <p>Es significativo el diálogo de las técnicas constructivas entre modernidad y tradición, que era propio de la década de 1960. En los volúmenes de una sola planta, conviven muros de carga de ladrillo visto con grandes cristaleras y soportes puntuales metálicos. Estos volúmenes se rematan con cubiertas planas, ajardinadas en origen, entre vigas de canto sobre los muros que posibilitan grandes vuelos para proteger las cristaleras orientadas al sur. En las cubiertas se explicita la dirección de los trazados norte-sur que sirven de guía geométrica de estos muros y de la ordenación y deslizamiento de estas partes del programa. El bloque alto de dormitorios subraya la idea de <em>fenêtre en longueur</em>. Lasala de actos, tanto en el trazado de la planta como en la articulación de pendientes contrapuestas entre el techo interior y la cubierta exterior, evoca mecanismos conocidos de la arquitectura de Alvar Aalto.</p><p>La estrategia estructural y material asume el debate de la época entre sistemas tradicionales y modernos, logrando un diálogo crítico que la buena conservación del edificio aún mantiene</p><br />Eusebio Alonso García</p>'''@es ;
+    momo:startDate "1968" ;
+    momo:endDate "1973" ;
+    momo:architect md:docomomo-rios_gomez, md:docomomo-paredes_sanz ;
+    rdfs:seeAlso <https://docomomoiberico.com/edificios/casa-cuna/> ;
+    momo:thumbnail md:AMP_CASTLEON_ESTE_A26_03 ;
+    mo:media md:AMP_CASTLEON_ESTE_A26_03 , md:AMP_CASTLEON_ESTE_A26_02 , md:AMP_CASTLEON_ESTE_A26_01 , md:AMP_CASTLEON_ESTE_A26_04 , md:AMP_CAST_LEONESTE_A26_14 , md:AMP_CAST_LEONESTE_A26_15 , md:AMP_CAST_LEONESTE_A26_16 ;
+    mo:hasGeometry md:docomomo-casa-cuna-point .
+md:docomomo-rios_gomez
+    a mo:Person ;
+    foaf:name "Ángel Ríos Gómez" ;
+    rdfs:seeAlso <https://docomomoiberico.com/autoria/angel-rios-gomez/> .
+md:AMP_CASTLEON_ESTE_A26_03
+    a mo:MediaObject ;
+    schema:urlContent "FIREBASE" ;
+    rdfs:label  "Daniel Villalobos Alonso / Fundación Docomomo Ibérico, 2014" ;
+    owl:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg> .
+md:docomomo-casa-cuna-point
+    a mo:Point ;
+    geo:lat 41.631001 ;
+    geo:long -4.747057 .

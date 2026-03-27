@@ -1,4 +1,4 @@
-package com.example.momoest
+package es.uva.gsic.momoest
 
 import io.flutter.embedding.android.FlutterActivity
 

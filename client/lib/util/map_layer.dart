@@ -79,7 +79,7 @@ class MapLayer {
     AppLocalizations? appLoca = AppLocalizations.of(context);
     List<OutlinedButton> buttons = [
       OutlinedButton(
-        child: Text(appLoca!.atribucionMapaCHEST),
+        child: Text(appLoca!.atribucionMapaxest),
         onPressed: () async {
           if (!await launchUrl(
             Uri.parse(
@@ -88,6 +88,16 @@ class MapLayer {
           )) {
             if (ConfigXest.development)
               debugPrint('OSM copyright url problem!');
+          }
+        },
+      ),
+      OutlinedButton(
+        child: Text(appLoca.atribucionMapaDocomomo),
+        onPressed: () async {
+          if (!await launchUrl(
+              Uri.parse('https://docomomoiberico.com/quienes-somos/'))) {
+            if (ConfigXest.development)
+              debugPrint('Docomomo copyright url problem!');
           }
         },
       ),

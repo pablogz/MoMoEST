@@ -1245,7 +1245,7 @@ class _InfoFeature extends State<InfoFeature>
         nameSource = 'es.DBpedia';
         break;
       case 'localRepo':
-        nameSource = AppLocalizations.of(context)!.chest;
+        nameSource = AppLocalizations.of(context)!.xest;
         break;
       default:
     }
@@ -1404,12 +1404,12 @@ class _InfoFeature extends State<InfoFeature>
           LocalRepo data = provider.data;
           for (PairLang pl in data.labels) {
             if (pl.value == cLabel) {
-              labelSource = appLoca!.usuariosCHEST;
+              labelSource = appLoca!.usuariosxest;
             }
           }
           for (PairLang pl in data.comments) {
             if (pl.value == cComment) {
-              commentSource = appLoca!.usuariosCHEST;
+              commentSource = appLoca!.usuariosxest;
             }
           }
           mainProvOSM = false;
@@ -1433,7 +1433,7 @@ class _InfoFeature extends State<InfoFeature>
       isBic ? Text('${appLoca.obtEnlBic} ${appLoca.gobcyl}.') : Container(),
       Text('${appLoca.obtCom} $commentSource.'),
       Text(
-          '${appLoca.obtCoor} ${mainProvOSM ? 'OpenStreetMap' : appLoca.usuariosCHEST}.'),
+          '${appLoca.obtCoor} ${mainProvOSM ? 'OpenStreetMap' : appLoca.usuariosxest}.'),
     ];
     if (feature.hasThumbnail) {
       // Wikidata or OSM?

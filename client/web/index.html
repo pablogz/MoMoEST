@@ -18,7 +18,8 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description"
+    content="An application where teachers can annotate located learning tasks in places and students can carry out these tasks.">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -29,10 +30,64 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>momoest</title>
+  <title>MoMoEST</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <div id="loading">
+    <style>
+      body {
+        inset: 0;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        position: fixed;
+        background-color: rgb(161, 199, 170);
+      }
+
+      #loading {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        width: 100%;
+      }
+
+      #loading img {
+        margin-bottom: 2em;
+      }
+
+      progress::-webkit-progress-value {
+        background-color: #1b3d27 !important;
+        border-radius: 5px;
+      }
+
+      progress::-webkit-progress-bar {
+        background-color: #fff;
+        border-radius: 5px;
+      }
+
+      progress::-moz-progress-bar {
+        background-color: #1b3d27 !important;
+        border-radius: 5px;
+      }
+
+      progress {
+        width: 50%;
+        height: 1em;
+        appearance: none;
+        background: #fff;
+        border-radius: 5px;
+        border: 0;
+      }
+    </style>
+    <img src="Icon-192.png" alt="Loading..." />
+    <progress class="progress" id="progressBar" value="0" max="100" />
+  </div>
+  <!-- <script src="flutter_bootstrap.js" async></script> -->
+   <script>
+    {{flutter_bootstrap_js}}
+  </script>
 </body>
 </html>

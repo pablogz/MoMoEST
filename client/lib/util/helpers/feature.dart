@@ -1153,16 +1153,13 @@ class FeatureDistance {
 
 // TODO cambiar cuando sea otro dominio
 enum SpatialThingType {
-  artwork,
-  attraction,
-  cathedral,
-  castle,
-  church,
-  culturalHeritage,
-  fountain,
-  museum,
-  palace,
+  factory,
+  residential,
+  hotel,
+  education,
+  goverment,
   placeOfWorship,
+  cinema,
   square,
-  tower,
+  culturalHeritage
 }

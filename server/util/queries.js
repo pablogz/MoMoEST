@@ -93,45 +93,22 @@ function getInfoFeaturesOSM(bounds, type) {
             e: bounds.east,
         }
     )
-    switch (type) {
-        case 'forest':
-            listFilter = [
-                // { key: "natural", value: "^(tree|wood)$", e: false },
-                { typeQuery: "nwr", objs: [{ key: "natural", valor: "tree", e: "=" }], },
-            ]
-            break;
-        case 'schools':
-            listFilter = [
-                { typeQuery: "nwr", objs: [{ key: "amenity", valor: "^(school|college|university)$", e: "~" }], },
-                { typeQuery: "nwr", objs: [{ key: "building", valor: "^(school|college|university)$", e: "~" }], },
 
+    listFilter = [
+        { typeQuery: "nwr", objs: [{ key: "factory", e: "", }], },
+        { typeQuery: "nwr", objs: [{ key: "building", valor: "^(factory|residential|hotel|school|college|university|public)$", e: "~", }], },
+        { typeQuery: "nwr", objs: [{ key: "amenity", valor: "^(place_of_worship|cinema)$", e: "~", }], },
+        { typeQuery: "nwr", objs: [{ key: "tourism", valor: "hotel", e: "=", }], },
+        { typeQuery: "nwr", objs: [{ key: "goverment", e: "", }], },
+        { typeQuery: "nwr", objs: [{ key: "office", valor: "goverment", e: "=" }], },
+        {
+            typeQuery: "nwr",
+            objs: [
+                { key: "place", e: "=", valor: "square" },
+                { key: "tourism", e: "" },
             ]
-            break;
-        default:
-            listFilter = [
-                { typeQuery: "nwr", objs: [{ key: "heritage", e: "", }], },
-                { typeQuery: "nwr", objs: [{ key: "historic", e: "", }], },
-                { typeQuery: "nwr", objs: [{ key: "museum", valor: "^(history|art)$", e: "~", }], },
-                { typeQuery: "nwr", objs: [{ key: "building", valor: "^(church|palace|tower)$", e: "~", }], },
-                { typeQuery: "nwr", objs: [{ key: "amenity", valor: "place_of_worship", e: "=", }], },
-                { typeQuery: "nwr", objs: [{ key: "tourism", valor: "^(artwork|attraction|museum)$", e: "~", }], },
-                {
-                    typeQuery: "nwr",
-                    objs: [
-                        { key: "place", e: "=", valor: "square" },
-                        { key: "tourism", e: "" },
-                    ]
-                },
-                {
-                    typeQuery: 'nwr',
-                    objs: [
-                        { key: "amenity", e: "=", valor: "fountain" },
-                        { key: "drinking_water", e: "!=", valor: "yes" },
-                    ]
-                }
-            ];
-            break;
-    }
+        },
+    ];
 
     for (let f of listFilter) {
         //f.e: 0 = =; 1 = ~; -1=withoutValue
@@ -292,6 +269,19 @@ OPTIONAL { {{{idWiki}}} wdt:P625 ?point .}
         pg: primaryGraph,
         idWiki: idWikidata
     }).replace(/\s+/g, ' ');
+}
+
+function getInceptionWikidata(values, interval) {
+    return Mustache.render(
+        `SELECT DISTINCT ?id ?inception WHERE {
+  VALUES ?id { {{{values}}} } 
+  ?id wdt:P571 ?inception .
+  FILTER (YEAR(?inception) >= {{{start}}} && YEAR(?inception) <= {{{end}}})
+  }`, {
+    values: values,
+    start: interval.start,
+    end: interval.end
+  }).replace(/\s+/g, ' ');
 }
 
 function getInfoFeatureEsDBpedia(idesDBpedia) {
@@ -1773,7 +1763,7 @@ rdfs:label ?label ;
 rdfs:comment ?comment ;
 dc:creator ?feeder .
 ?feeder rdfs:label ?feederLbl .
-}`, 
+}`,
         {
             pg: primaryGraph,
         }
@@ -1795,7 +1785,7 @@ rdfs:label ?label ;
 rdfs:comment ?comment ;
 dc:creator ?feeder .
 ?feeder rdfs:label ?feederLbl .
-}`, 
+}`,
         {
             pg: primaryGraph,
             v: valuesStr
@@ -1867,4 +1857,5 @@ module.exports = {
     getItineraryTasks,
     basicInfoFeeds,
     allFeedsLOD,
+    getInceptionWikidata
 }

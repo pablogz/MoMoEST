@@ -1,0 +1,1727 @@
+<!doctype html>
+<html lang="es-ES">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-NBTXCDJQN4"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+
+		//gtag('config', 'UA-2590112-18');
+		gtag('config', 'G-NBTXCDJQN4');
+	</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.css" />
+
+	<script data-cfasync="false" data-no-defer="1" data-no-minify="1" data-no-optimize="1">var ewww_webp_supported=!1;function check_webp_feature(A,e){var w;e=void 0!==e?e:function(){},ewww_webp_supported?e(ewww_webp_supported):((w=new Image).onload=function(){ewww_webp_supported=0<w.width&&0<w.height,e&&e(ewww_webp_supported)},w.onerror=function(){e&&e(!1)},w.src="data:image/webp;base64,"+{alpha:"UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAAAAAAAAAQUxQSAwAAAARBxAR/Q9ERP8DAABWUDggGAAAABQBAJ0BKgEAAQAAAP4AAA3AAP7mtQAAAA=="}[A])}check_webp_feature("alpha");</script><script data-cfasync="false" data-no-defer="1" data-no-minify="1" data-no-optimize="1">var Arrive=function(c,w){"use strict";if(c.MutationObserver&&"undefined"!=typeof HTMLElement){var r,a=0,u=(r=HTMLElement.prototype.matches||HTMLElement.prototype.webkitMatchesSelector||HTMLElement.prototype.mozMatchesSelector||HTMLElement.prototype.msMatchesSelector,{matchesSelector:function(e,t){return e instanceof HTMLElement&&r.call(e,t)},addMethod:function(e,t,r){var a=e[t];e[t]=function(){return r.length==arguments.length?r.apply(this,arguments):"function"==typeof a?a.apply(this,arguments):void 0}},callCallbacks:function(e,t){t&&t.options.onceOnly&&1==t.firedElems.length&&(e=[e[0]]);for(var r,a=0;r=e[a];a++)r&&r.callback&&r.callback.call(r.elem,r.elem);t&&t.options.onceOnly&&1==t.firedElems.length&&t.me.unbindEventWithSelectorAndCallback.call(t.target,t.selector,t.callback)},checkChildNodesRecursively:function(e,t,r,a){for(var i,n=0;i=e[n];n++)r(i,t,a)&&a.push({callback:t.callback,elem:i}),0<i.childNodes.length&&u.checkChildNodesRecursively(i.childNodes,t,r,a)},mergeArrays:function(e,t){var r,a={};for(r in e)e.hasOwnProperty(r)&&(a[r]=e[r]);for(r in t)t.hasOwnProperty(r)&&(a[r]=t[r]);return a},toElementsArray:function(e){return e=void 0!==e&&("number"!=typeof e.length||e===c)?[e]:e}}),e=(l.prototype.addEvent=function(e,t,r,a){a={target:e,selector:t,options:r,callback:a,firedElems:[]};return this._beforeAdding&&this._beforeAdding(a),this._eventsBucket.push(a),a},l.prototype.removeEvent=function(e){for(var t,r=this._eventsBucket.length-1;t=this._eventsBucket[r];r--)e(t)&&(this._beforeRemoving&&this._beforeRemoving(t),(t=this._eventsBucket.splice(r,1))&&t.length&&(t[0].callback=null))},l.prototype.beforeAdding=function(e){this._beforeAdding=e},l.prototype.beforeRemoving=function(e){this._beforeRemoving=e},l),t=function(i,n){var o=new e,l=this,s={fireOnAttributesModification:!1};return o.beforeAdding(function(t){var e=t.target;e!==c.document&&e!==c||(e=document.getElementsByTagName("html")[0]);var r=new MutationObserver(function(e){n.call(this,e,t)}),a=i(t.options);r.observe(e,a),t.observer=r,t.me=l}),o.beforeRemoving(function(e){e.observer.disconnect()}),this.bindEvent=function(e,t,r){t=u.mergeArrays(s,t);for(var a=u.toElementsArray(this),i=0;i<a.length;i++)o.addEvent(a[i],e,t,r)},this.unbindEvent=function(){var r=u.toElementsArray(this);o.removeEvent(function(e){for(var t=0;t<r.length;t++)if(this===w||e.target===r[t])return!0;return!1})},this.unbindEventWithSelectorOrCallback=function(r){var a=u.toElementsArray(this),i=r,e="function"==typeof r?function(e){for(var t=0;t<a.length;t++)if((this===w||e.target===a[t])&&e.callback===i)return!0;return!1}:function(e){for(var t=0;t<a.length;t++)if((this===w||e.target===a[t])&&e.selector===r)return!0;return!1};o.removeEvent(e)},this.unbindEventWithSelectorAndCallback=function(r,a){var i=u.toElementsArray(this);o.removeEvent(function(e){for(var t=0;t<i.length;t++)if((this===w||e.target===i[t])&&e.selector===r&&e.callback===a)return!0;return!1})},this},i=new function(){var s={fireOnAttributesModification:!1,onceOnly:!1,existing:!1};function n(e,t,r){return!(!u.matchesSelector(e,t.selector)||(e._id===w&&(e._id=a++),-1!=t.firedElems.indexOf(e._id)))&&(t.firedElems.push(e._id),!0)}var c=(i=new t(function(e){var t={attributes:!1,childList:!0,subtree:!0};return e.fireOnAttributesModification&&(t.attributes=!0),t},function(e,i){e.forEach(function(e){var t=e.addedNodes,r=e.target,a=[];null!==t&&0<t.length?u.checkChildNodesRecursively(t,i,n,a):"attributes"===e.type&&n(r,i)&&a.push({callback:i.callback,elem:r}),u.callCallbacks(a,i)})})).bindEvent;return i.bindEvent=function(e,t,r){t=void 0===r?(r=t,s):u.mergeArrays(s,t);var a=u.toElementsArray(this);if(t.existing){for(var i=[],n=0;n<a.length;n++)for(var o=a[n].querySelectorAll(e),l=0;l<o.length;l++)i.push({callback:r,elem:o[l]});if(t.onceOnly&&i.length)return r.call(i[0].elem,i[0].elem);setTimeout(u.callCallbacks,1,i)}c.call(this,e,t,r)},i},o=new function(){var a={};function i(e,t){return u.matchesSelector(e,t.selector)}var n=(o=new t(function(){return{childList:!0,subtree:!0}},function(e,r){e.forEach(function(e){var t=e.removedNodes,e=[];null!==t&&0<t.length&&u.checkChildNodesRecursively(t,r,i,e),u.callCallbacks(e,r)})})).bindEvent;return o.bindEvent=function(e,t,r){t=void 0===r?(r=t,a):u.mergeArrays(a,t),n.call(this,e,t,r)},o};d(HTMLElement.prototype),d(NodeList.prototype),d(HTMLCollection.prototype),d(HTMLDocument.prototype),d(Window.prototype);var n={};return s(i,n,"unbindAllArrive"),s(o,n,"unbindAllLeave"),n}function l(){this._eventsBucket=[],this._beforeAdding=null,this._beforeRemoving=null}function s(e,t,r){u.addMethod(t,r,e.unbindEvent),u.addMethod(t,r,e.unbindEventWithSelectorOrCallback),u.addMethod(t,r,e.unbindEventWithSelectorAndCallback)}function d(e){e.arrive=i.bindEvent,s(i,e,"unbindArrive"),e.leave=o.bindEvent,s(o,e,"unbindLeave")}}(window,void 0),ewww_webp_supported=!1;function check_webp_feature(e,t){var r;ewww_webp_supported?t(ewww_webp_supported):((r=new Image).onload=function(){ewww_webp_supported=0<r.width&&0<r.height,t(ewww_webp_supported)},r.onerror=function(){t(!1)},r.src="data:image/webp;base64,"+{alpha:"UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAAAAAAAAAQUxQSAwAAAARBxAR/Q9ERP8DAABWUDggGAAAABQBAJ0BKgEAAQAAAP4AAA3AAP7mtQAAAA==",animation:"UklGRlIAAABXRUJQVlA4WAoAAAASAAAAAAAAAAAAQU5JTQYAAAD/////AABBTk1GJgAAAAAAAAAAAAAAAAAAAGQAAABWUDhMDQAAAC8AAAAQBxAREYiI/gcA"}[e])}function ewwwLoadImages(e){if(e){for(var t=document.querySelectorAll(".batch-image img, .image-wrapper a, .ngg-pro-masonry-item a, .ngg-galleria-offscreen-seo-wrapper a"),r=0,a=t.length;r<a;r++)ewwwAttr(t[r],"data-src",t[r].getAttribute("data-webp")),ewwwAttr(t[r],"data-thumbnail",t[r].getAttribute("data-webp-thumbnail"));for(var i=document.querySelectorAll("div.woocommerce-product-gallery__image"),r=0,a=i.length;r<a;r++)ewwwAttr(i[r],"data-thumb",i[r].getAttribute("data-webp-thumb"))}for(var n=document.querySelectorAll("video"),r=0,a=n.length;r<a;r++)ewwwAttr(n[r],"poster",e?n[r].getAttribute("data-poster-webp"):n[r].getAttribute("data-poster-image"));for(var o,l=document.querySelectorAll("img.ewww_webp_lazy_load"),r=0,a=l.length;r<a;r++)e&&(ewwwAttr(l[r],"data-lazy-srcset",l[r].getAttribute("data-lazy-srcset-webp")),ewwwAttr(l[r],"data-srcset",l[r].getAttribute("data-srcset-webp")),ewwwAttr(l[r],"data-lazy-src",l[r].getAttribute("data-lazy-src-webp")),ewwwAttr(l[r],"data-src",l[r].getAttribute("data-src-webp")),ewwwAttr(l[r],"data-orig-file",l[r].getAttribute("data-webp-orig-file")),ewwwAttr(l[r],"data-medium-file",l[r].getAttribute("data-webp-medium-file")),ewwwAttr(l[r],"data-large-file",l[r].getAttribute("data-webp-large-file")),null!=(o=l[r].getAttribute("srcset"))&&!1!==o&&o.includes("R0lGOD")&&ewwwAttr(l[r],"src",l[r].getAttribute("data-lazy-src-webp"))),l[r].className=l[r].className.replace(/\bewww_webp_lazy_load\b/,"");for(var s=document.querySelectorAll(".ewww_webp"),r=0,a=s.length;r<a;r++)e?(ewwwAttr(s[r],"srcset",s[r].getAttribute("data-srcset-webp")),ewwwAttr(s[r],"src",s[r].getAttribute("data-src-webp")),ewwwAttr(s[r],"data-orig-file",s[r].getAttribute("data-webp-orig-file")),ewwwAttr(s[r],"data-medium-file",s[r].getAttribute("data-webp-medium-file")),ewwwAttr(s[r],"data-large-file",s[r].getAttribute("data-webp-large-file")),ewwwAttr(s[r],"data-large_image",s[r].getAttribute("data-webp-large_image")),ewwwAttr(s[r],"data-src",s[r].getAttribute("data-webp-src"))):(ewwwAttr(s[r],"srcset",s[r].getAttribute("data-srcset-img")),ewwwAttr(s[r],"src",s[r].getAttribute("data-src-img"))),s[r].className=s[r].className.replace(/\bewww_webp\b/,"ewww_webp_loaded");window.jQuery&&jQuery.fn.isotope&&jQuery.fn.imagesLoaded&&(jQuery(".fusion-posts-container-infinite").imagesLoaded(function(){jQuery(".fusion-posts-container-infinite").hasClass("isotope")&&jQuery(".fusion-posts-container-infinite").isotope()}),jQuery(".fusion-portfolio:not(.fusion-recent-works) .fusion-portfolio-wrapper").imagesLoaded(function(){jQuery(".fusion-portfolio:not(.fusion-recent-works) .fusion-portfolio-wrapper").isotope()}))}function ewwwWebPInit(e){ewwwLoadImages(e),ewwwNggLoadGalleries(e),document.arrive(".ewww_webp",function(){ewwwLoadImages(e)}),document.arrive(".ewww_webp_lazy_load",function(){ewwwLoadImages(e)}),document.arrive("videos",function(){ewwwLoadImages(e)}),"loading"==document.readyState?document.addEventListener("DOMContentLoaded",ewwwJSONParserInit):("undefined"!=typeof galleries&&ewwwNggParseGalleries(e),ewwwWooParseVariations(e))}function ewwwAttr(e,t,r){null!=r&&!1!==r&&e.setAttribute(t,r)}function ewwwJSONParserInit(){"undefined"!=typeof galleries&&check_webp_feature("alpha",ewwwNggParseGalleries),check_webp_feature("alpha",ewwwWooParseVariations)}function ewwwWooParseVariations(e){if(e)for(var t=document.querySelectorAll("form.variations_form"),r=0,a=t.length;r<a;r++){var i=t[r].getAttribute("data-product_variations"),n=!1;try{for(var o in i=JSON.parse(i))void 0!==i[o]&&void 0!==i[o].image&&(void 0!==i[o].image.src_webp&&(i[o].image.src=i[o].image.src_webp,n=!0),void 0!==i[o].image.srcset_webp&&(i[o].image.srcset=i[o].image.srcset_webp,n=!0),void 0!==i[o].image.full_src_webp&&(i[o].image.full_src=i[o].image.full_src_webp,n=!0),void 0!==i[o].image.gallery_thumbnail_src_webp&&(i[o].image.gallery_thumbnail_src=i[o].image.gallery_thumbnail_src_webp,n=!0),void 0!==i[o].image.thumb_src_webp&&(i[o].image.thumb_src=i[o].image.thumb_src_webp,n=!0));n&&ewwwAttr(t[r],"data-product_variations",JSON.stringify(i))}catch(e){}}}function ewwwNggParseGalleries(e){if(e)for(var t in galleries){var r=galleries[t];galleries[t].images_list=ewwwNggParseImageList(r.images_list)}}function ewwwNggLoadGalleries(e){e&&document.addEventListener("ngg.galleria.themeadded",function(e,t){window.ngg_galleria._create_backup=window.ngg_galleria.create,window.ngg_galleria.create=function(e,t){var r=$(e).data("id");return galleries["gallery_"+r].images_list=ewwwNggParseImageList(galleries["gallery_"+r].images_list),window.ngg_galleria._create_backup(e,t)}})}function ewwwNggParseImageList(e){for(var t in e){var r=e[t];if(void 0!==r["image-webp"]&&(e[t].image=r["image-webp"],delete e[t]["image-webp"]),void 0!==r["thumb-webp"]&&(e[t].thumb=r["thumb-webp"],delete e[t]["thumb-webp"]),void 0!==r.full_image_webp&&(e[t].full_image=r.full_image_webp,delete e[t].full_image_webp),void 0!==r.srcsets)for(var a in r.srcsets)nggSrcset=r.srcsets[a],void 0!==r.srcsets[a+"-webp"]&&(e[t].srcsets[a]=r.srcsets[a+"-webp"],delete e[t].srcsets[a+"-webp"]);if(void 0!==r.full_srcsets)for(var i in r.full_srcsets)nggFSrcset=r.full_srcsets[i],void 0!==r.full_srcsets[i+"-webp"]&&(e[t].full_srcsets[i]=r.full_srcsets[i+"-webp"],delete e[t].full_srcsets[i+"-webp"])}return e}check_webp_feature("alpha",ewwwWebPInit);</script><meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<link rel="alternate" hreflang="es" href="https://docomomoiberico.com/edificios/casa-cuna/" />
+<link rel="alternate" hreflang="en" href="https://docomomoiberico.com/en/buildings/casa-cuna/" />
+<link rel="alternate" hreflang="pt-pt" href="https://docomomoiberico.com/pt-pt/edificios/casa-cuna/" />
+<link rel="alternate" hreflang="x-default" href="https://docomomoiberico.com/edificios/casa-cuna/" />
+
+	<!-- This site is optimized with the Yoast SEO plugin v27.0 - https://yoast.com/product/yoast-seo-wordpress/ -->
+	<title>Casa Cuna - Fundación Docomomo Ibérico</title>
+	<link rel="canonical" href="https://docomomoiberico.com/edificios/casa-cuna/" />
+	<meta property="og:locale" content="es_ES" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Casa Cuna - Fundación Docomomo Ibérico" />
+	<meta property="og:url" content="https://docomomoiberico.com/edificios/casa-cuna/" />
+	<meta property="og:site_name" content="Fundación Docomomo Ibérico" />
+	<meta property="article:publisher" content="https://www.facebook.com/pages/DOCOMOMO-ibrico/114719302031025" />
+	<meta property="article:modified_time" content="2026-01-05T10:38:00+00:00" />
+	<meta property="og:image" content="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg" />
+	<meta property="og:image:width" content="1446" />
+	<meta property="og:image:height" content="1920" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@DOCOMOMOIberico" />
+	<meta name="twitter:label1" content="Tiempo de lectura" />
+	<meta name="twitter:data1" content="2 minutos" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://docomomoiberico.com/edificios/casa-cuna/","url":"https://docomomoiberico.com/edificios/casa-cuna/","name":"Casa Cuna - Fundación Docomomo Ibérico","isPartOf":{"@id":"https://docomomoiberico.com/#website"},"primaryImageOfPage":{"@id":"https://docomomoiberico.com/edificios/casa-cuna/#primaryimage"},"image":{"@id":"https://docomomoiberico.com/edificios/casa-cuna/#primaryimage"},"thumbnailUrl":"https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg","datePublished":"2018-05-03T07:45:51+00:00","dateModified":"2026-01-05T10:38:00+00:00","breadcrumb":{"@id":"https://docomomoiberico.com/edificios/casa-cuna/#breadcrumb"},"inLanguage":"es","potentialAction":[{"@type":"ReadAction","target":["https://docomomoiberico.com/edificios/casa-cuna/"]}]},{"@type":"ImageObject","inLanguage":"es","@id":"https://docomomoiberico.com/edificios/casa-cuna/#primaryimage","url":"https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg","contentUrl":"https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg","width":1446,"height":1920},{"@type":"BreadcrumbList","@id":"https://docomomoiberico.com/edificios/casa-cuna/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Portada","item":"https://docomomoiberico.com/"},{"@type":"ListItem","position":2,"name":"Edificios","item":"https://docomomoiberico.com/edificios/"},{"@type":"ListItem","position":3,"name":"Casa Cuna"}]},{"@type":"WebSite","@id":"https://docomomoiberico.com/#website","url":"https://docomomoiberico.com/","name":"Fundación Docomomo Ibérico","description":"Documentación y conservación de la arquitectura y el urbanismo del movimiento moderno","publisher":{"@id":"https://docomomoiberico.com/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://docomomoiberico.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"es"},{"@type":"Organization","@id":"https://docomomoiberico.com/#organization","name":"Fundación DOCOMOMO Ibérico","url":"https://docomomoiberico.com/","logo":{"@type":"ImageObject","inLanguage":"es","@id":"https://docomomoiberico.com/#/schema/logo/image/","url":"https://docomomoiberico.com/wp-content/uploads/2022/09/logo.png","contentUrl":"https://docomomoiberico.com/wp-content/uploads/2022/09/logo.png","width":397,"height":55,"caption":"Fundación DOCOMOMO Ibérico"},"image":{"@id":"https://docomomoiberico.com/#/schema/logo/image/"},"sameAs":["https://www.facebook.com/pages/DOCOMOMO-ibrico/114719302031025","https://x.com/DOCOMOMOIberico","https://www.instagram.com/docomomoiberico/"]}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//unpkg.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<style id='wp-img-auto-sizes-contain-inline-css' type='text/css'>
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='acy_front_messages_css-css' href='https://docomomoiberico.com/wp-content/plugins/acymailing/media/css/front/messages.min.css?v=1771925363&#038;ver=6.9.4' type='text/css' media='all' />
+<link rel='stylesheet' id='mp-theme-css' href='https://docomomoiberico.com/wp-content/plugins/memberpress/css/ui/theme.css?ver=1.12.11' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-block-library-css' href='https://docomomoiberico.com/wp-includes/css/dist/block-library/style.min.css?ver=6.9.4' type='text/css' media='all' />
+
+<style id='wp-block-heading-inline-css' type='text/css'>
+h1:where(.wp-block-heading).has-background,h2:where(.wp-block-heading).has-background,h3:where(.wp-block-heading).has-background,h4:where(.wp-block-heading).has-background,h5:where(.wp-block-heading).has-background,h6:where(.wp-block-heading).has-background{padding:1.25em 2.375em}h1.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h1.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h2.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h2.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h3.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h3.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h4.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h4.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h5.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h5.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h6.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h6.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]){rotate:180deg}
+/*# sourceURL=https://docomomoiberico.com/wp-includes/blocks/heading/style.min.css */
+</style>
+<style id='wp-block-image-inline-css' type='text/css'>
+.wp-block-image>a,.wp-block-image>figure>a{display:inline-block}.wp-block-image img{box-sizing:border-box;height:auto;max-width:100%;vertical-align:bottom}@media not (prefers-reduced-motion){.wp-block-image img.hide{visibility:hidden}.wp-block-image img.show{animation:show-content-image .4s}}.wp-block-image[style*=border-radius] img,.wp-block-image[style*=border-radius]>a{border-radius:inherit}.wp-block-image.has-custom-border img{box-sizing:border-box}.wp-block-image.aligncenter{text-align:center}.wp-block-image.alignfull>a,.wp-block-image.alignwide>a{width:100%}.wp-block-image.alignfull img,.wp-block-image.alignwide img{height:auto;width:100%}.wp-block-image .aligncenter,.wp-block-image .alignleft,.wp-block-image .alignright,.wp-block-image.aligncenter,.wp-block-image.alignleft,.wp-block-image.alignright{display:table}.wp-block-image .aligncenter>figcaption,.wp-block-image .alignleft>figcaption,.wp-block-image .alignright>figcaption,.wp-block-image.aligncenter>figcaption,.wp-block-image.alignleft>figcaption,.wp-block-image.alignright>figcaption{caption-side:bottom;display:table-caption}.wp-block-image .alignleft{float:left;margin:.5em 1em .5em 0}.wp-block-image .alignright{float:right;margin:.5em 0 .5em 1em}.wp-block-image .aligncenter{margin-left:auto;margin-right:auto}.wp-block-image :where(figcaption){margin-bottom:1em;margin-top:.5em}.wp-block-image.is-style-circle-mask img{border-radius:9999px}@supports ((-webkit-mask-image:none) or (mask-image:none)) or (-webkit-mask-image:none){.wp-block-image.is-style-circle-mask img{border-radius:0;-webkit-mask-image:url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50"/></svg>');mask-image:url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50"/></svg>');mask-mode:alpha;-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain}}:root :where(.wp-block-image.is-style-rounded img,.wp-block-image .is-style-rounded img){border-radius:9999px}.wp-block-image figure{margin:0}.wp-lightbox-container{display:flex;flex-direction:column;position:relative}.wp-lightbox-container img{cursor:zoom-in}.wp-lightbox-container img:hover+button{opacity:1}.wp-lightbox-container button{align-items:center;backdrop-filter:blur(16px) saturate(180%);background-color:#5a5a5a40;border:none;border-radius:4px;cursor:zoom-in;display:flex;height:20px;justify-content:center;opacity:0;padding:0;position:absolute;right:16px;text-align:center;top:16px;width:20px;z-index:100}@media not (prefers-reduced-motion){.wp-lightbox-container button{transition:opacity .2s ease}}.wp-lightbox-container button:focus-visible{outline:3px auto #5a5a5a40;outline:3px auto -webkit-focus-ring-color;outline-offset:3px}.wp-lightbox-container button:hover{cursor:pointer;opacity:1}.wp-lightbox-container button:focus{opacity:1}.wp-lightbox-container button:focus,.wp-lightbox-container button:hover,.wp-lightbox-container button:not(:hover):not(:active):not(.has-background){background-color:#5a5a5a40;border:none}.wp-lightbox-overlay{box-sizing:border-box;cursor:zoom-out;height:100vh;left:0;overflow:hidden;position:fixed;top:0;visibility:hidden;width:100%;z-index:100000}.wp-lightbox-overlay .close-button{align-items:center;cursor:pointer;display:flex;justify-content:center;min-height:40px;min-width:40px;padding:0;position:absolute;right:calc(env(safe-area-inset-right) + 16px);top:calc(env(safe-area-inset-top) + 16px);z-index:5000000}.wp-lightbox-overlay .close-button:focus,.wp-lightbox-overlay .close-button:hover,.wp-lightbox-overlay .close-button:not(:hover):not(:active):not(.has-background){background:none;border:none}.wp-lightbox-overlay .lightbox-image-container{height:var(--wp--lightbox-container-height);left:50%;overflow:hidden;position:absolute;top:50%;transform:translate(-50%,-50%);transform-origin:top left;width:var(--wp--lightbox-container-width);z-index:9999999999}.wp-lightbox-overlay .wp-block-image{align-items:center;box-sizing:border-box;display:flex;height:100%;justify-content:center;margin:0;position:relative;transform-origin:0 0;width:100%;z-index:3000000}.wp-lightbox-overlay .wp-block-image img{height:var(--wp--lightbox-image-height);min-height:var(--wp--lightbox-image-height);min-width:var(--wp--lightbox-image-width);width:var(--wp--lightbox-image-width)}.wp-lightbox-overlay .wp-block-image figcaption{display:none}.wp-lightbox-overlay button{background:none;border:none}.wp-lightbox-overlay .scrim{background-color:#fff;height:100%;opacity:.9;position:absolute;width:100%;z-index:2000000}.wp-lightbox-overlay.active{visibility:visible}@media not (prefers-reduced-motion){.wp-lightbox-overlay.active{animation:turn-on-visibility .25s both}.wp-lightbox-overlay.active img{animation:turn-on-visibility .35s both}.wp-lightbox-overlay.show-closing-animation:not(.active){animation:turn-off-visibility .35s both}.wp-lightbox-overlay.show-closing-animation:not(.active) img{animation:turn-off-visibility .25s both}.wp-lightbox-overlay.zoom.active{animation:none;opacity:1;visibility:visible}.wp-lightbox-overlay.zoom.active .lightbox-image-container{animation:lightbox-zoom-in .4s}.wp-lightbox-overlay.zoom.active .lightbox-image-container img{animation:none}.wp-lightbox-overlay.zoom.active .scrim{animation:turn-on-visibility .4s forwards}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active){animation:none}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .lightbox-image-container{animation:lightbox-zoom-out .4s}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .lightbox-image-container img{animation:none}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .scrim{animation:turn-off-visibility .4s forwards}}@keyframes show-content-image{0%{visibility:hidden}99%{visibility:hidden}to{visibility:visible}}@keyframes turn-on-visibility{0%{opacity:0}to{opacity:1}}@keyframes turn-off-visibility{0%{opacity:1;visibility:visible}99%{opacity:0;visibility:visible}to{opacity:0;visibility:hidden}}@keyframes lightbox-zoom-in{0%{transform:translate(calc((-100vw + var(--wp--lightbox-scrollbar-width))/2 + var(--wp--lightbox-initial-left-position)),calc(-50vh + var(--wp--lightbox-initial-top-position))) scale(var(--wp--lightbox-scale))}to{transform:translate(-50%,-50%) scale(1)}}@keyframes lightbox-zoom-out{0%{transform:translate(-50%,-50%) scale(1);visibility:visible}99%{visibility:visible}to{transform:translate(calc((-100vw + var(--wp--lightbox-scrollbar-width))/2 + var(--wp--lightbox-initial-left-position)),calc(-50vh + var(--wp--lightbox-initial-top-position))) scale(var(--wp--lightbox-scale));visibility:hidden}}
+/*# sourceURL=https://docomomoiberico.com/wp-includes/blocks/image/style.min.css */
+</style>
+<style id='wp-block-list-inline-css' type='text/css'>
+ol,ul{box-sizing:border-box}:root :where(.wp-block-list.has-background){padding:1.25em 2.375em}
+/*# sourceURL=https://docomomoiberico.com/wp-includes/blocks/list/style.min.css */
+</style>
+<style id='wp-block-group-inline-css' type='text/css'>
+.wp-block-group{box-sizing:border-box}:where(.wp-block-group.wp-block-group-is-layout-constrained){position:relative}
+/*# sourceURL=https://docomomoiberico.com/wp-includes/blocks/group/style.min.css */
+</style>
+<style id='wp-block-paragraph-inline-css' type='text/css'>
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+/*# sourceURL=https://docomomoiberico.com/wp-includes/blocks/paragraph/style.min.css */
+</style>
+<style id='wp-block-separator-inline-css' type='text/css'>
+@charset "UTF-8";.wp-block-separator{border:none;border-top:2px solid}:root :where(.wp-block-separator.is-style-dots){height:auto;line-height:1;text-align:center}:root :where(.wp-block-separator.is-style-dots):before{color:currentColor;content:"···";font-family:serif;font-size:1.5em;letter-spacing:2em;padding-left:2em}.wp-block-separator.is-style-dots{background:none!important;border:none!important}
+/*# sourceURL=https://docomomoiberico.com/wp-includes/blocks/separator/style.min.css */
+</style>
+<style id='wp-block-spacer-inline-css' type='text/css'>
+.wp-block-spacer{clear:both}
+/*# sourceURL=https://docomomoiberico.com/wp-includes/blocks/spacer/style.min.css */
+</style>
+
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='contact-form-7-css' href='https://docomomoiberico.com/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=6.1.5' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-css' href='https://docomomoiberico.com/wp-content/plugins/cookie-law-info/legacy/public/css/cookie-law-info-public.css?ver=3.4.0' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-gdpr-css' href='https://docomomoiberico.com/wp-content/plugins/cookie-law-info/legacy/public/css/cookie-law-info-gdpr.css?ver=3.4.0' type='text/css' media='all' />
+<link rel='stylesheet' id='wp_wishlist_frontend_style-css' href='https://docomomoiberico.com/wp-content/plugins/wp-wishlist/assets/css/styles.css?ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='wpml-menu-item-0-css' href='https://docomomoiberico.com/wp-content/plugins/sitepress-multilingual-cms/templates/language-switchers/menu-item/style.min.css?ver=1' type='text/css' media='all' />
+<link rel='stylesheet' id='fontawesome/css-css' href='https://docomomoiberico.com/wp-content/themes/docomomo/assets/css/font-awesome.min.css?ver=6.9.4' type='text/css' media='all' />
+<link rel='stylesheet' id='manrope-font-css' href='https://fonts.googleapis.com/css2?family=Manrope%3Awght%40300%3B400%3B500%3B700&#038;display=swap&#038;ver=6.9.4' type='text/css' media='all' />
+<link rel='stylesheet' id='bootstrap/css-css' href='https://docomomoiberico.com/wp-content/themes/docomomo/assets/css/bootstrap.min.css?ver=6.9.4' type='text/css' media='all' />
+<link rel='stylesheet' id='slick/css-css' href='https://docomomoiberico.com/wp-content/themes/docomomo/assets/css/slick.css?ver=6.9.4' type='text/css' media='all' />
+<link rel='stylesheet' id='slick-theme/css-css' href='https://docomomoiberico.com/wp-content/themes/docomomo/assets/css/slick-theme.css?ver=6.9.4' type='text/css' media='all' />
+<link rel='stylesheet' id='slick-lightbox-css' href='https://docomomoiberico.com/wp-content/themes/docomomo/assets/css/slick-lightbox.css?ver=6.9.4' type='text/css' media='all' />
+<link rel='stylesheet' id='main/css-css' href='https://docomomoiberico.com/wp-content/themes/docomomo/style.css?ver=6.9.4' type='text/css' media='all' />
+<link rel='stylesheet' id='simple-favorites-css' href='https://docomomoiberico.com/wp-content/plugins/favorites/assets/css/favorites.css?ver=2.3.6' type='text/css' media='all' />
+<script type="text/javascript" id="acy_front_messages_js-js-before">
+/* <![CDATA[ */
+var ACYM_AJAX_START = "https://docomomoiberico.com/wp-admin/admin-ajax.php";
+            var ACYM_AJAX_PARAMS = "?action=acymailing_router&noheader=1&nocache=1774430644";
+            var ACYM_AJAX = ACYM_AJAX_START + ACYM_AJAX_PARAMS;
+//# sourceURL=acy_front_messages_js-js-before
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/acymailing/media/js/front/messages.min.js?v=1771925363&amp;ver=6.9.4" id="acy_front_messages_js-js"></script>
+<script type="text/javascript" id="wpml-cookie-js-extra">
+/* <![CDATA[ */
+var wpml_cookies = {"wp-wpml_current_language":{"value":"es","expires":1,"path":"/"}};
+var wpml_cookies = {"wp-wpml_current_language":{"value":"es","expires":1,"path":"/"}};
+//# sourceURL=wpml-cookie-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/sitepress-multilingual-cms/res/js/cookies/language-cookie.js?ver=490900" id="wpml-cookie-js" defer="defer" data-wp-strategy="defer"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
+<script type="text/javascript" id="cookie-law-info-js-extra">
+/* <![CDATA[ */
+var Cli_Data = {"nn_cookie_ids":["CookieLawInfoConsent","cookielawinfo-checkbox-advertisement","PHPSESSID","_ga","_gid","_gat_gtag_UA_2590112_18","wp-wpml_current_language"],"cookielist":[],"non_necessary_cookies":{"necessary":["CookieLawInfoConsent","PHPSESSID","wp-wpml_current_language"],"analytics":["_ga","_gid","_gat_gtag_UA_2590112_18"]},"ccpaEnabled":"","ccpaRegionBased":"","ccpaBarEnabled":"","strictlyEnabled":["necessary","obligatoire"],"ccpaType":"gdpr","js_blocking":"1","custom_integration":"","triggerDomRefresh":"","secure_cookies":""};
+var cli_cookiebar_settings = {"animate_speed_hide":"500","animate_speed_show":"500","background":"#FFF","border":"#b1a6a6c2","border_on":"","button_1_button_colour":"#000000","button_1_button_hover":"#000000","button_1_link_colour":"#fff","button_1_as_button":"1","button_1_new_win":"","button_2_button_colour":"#333","button_2_button_hover":"#292929","button_2_link_colour":"#444","button_2_as_button":"","button_2_hidebar":"","button_3_button_colour":"#000000","button_3_button_hover":"#000000","button_3_link_colour":"#ffffff","button_3_as_button":"1","button_3_new_win":"","button_4_button_colour":"#dedfe0","button_4_button_hover":"#b2b2b3","button_4_link_colour":"#333333","button_4_as_button":"1","button_7_button_colour":"#000000","button_7_button_hover":"#000000","button_7_link_colour":"#fff","button_7_as_button":"1","button_7_new_win":"","font_family":"inherit","header_fix":"","notify_animate_hide":"1","notify_animate_show":"","notify_div_id":"#cookie-law-info-bar","notify_position_horizontal":"right","notify_position_vertical":"bottom","scroll_close":"","scroll_close_reload":"","accept_close_reload":"","reject_close_reload":"","showagain_tab":"","showagain_background":"#fff","showagain_border":"#000","showagain_div_id":"#cookie-law-info-again","showagain_x_position":"100px","text":"#333333","show_once_yn":"","show_once":"10000","logging_on":"","as_popup":"","popup_overlay":"1","bar_heading_text":"","cookie_bar_as":"widget","popup_showagain_position":"bottom-right","widget_position":"right"};
+var log_object = {"ajax_url":"https://docomomoiberico.com/wp-admin/admin-ajax.php"};
+//# sourceURL=cookie-law-info-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/cookie-law-info/legacy/public/js/cookie-law-info-public.js?ver=3.4.0" id="cookie-law-info-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/contact-form-7-paypal-addon-pro_DADS-602967/assets/js/front.min.js?ver=3.3" id="cf7pap_front_js-js"></script>
+<script type="text/javascript" id="cf7pap_alternative_payment_method_js-js-extra">
+/* <![CDATA[ */
+var CF7PAP_ajax_object = {"ajax_url":"https://docomomoiberico.com/wp-admin/admin-ajax.php"};
+//# sourceURL=cf7pap_alternative_payment_method_js-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/contact-form-7-paypal-addon-pro_DADS-602967/assets/js/alternative.payment.method.js?ver=3.3" id="cf7pap_alternative_payment_method_js-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/js/vendor/imagesloaded.pkgd.min.js?ver=6.9.4" id="imagesLoaded/js-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/js/vendor/isotope.pkgd.min.js?ver=6.9.4" id="isotope-js"></script>
+<script type="text/javascript" id="favorites-js-extra">
+/* <![CDATA[ */
+var favorites_data = {"ajaxurl":"https://docomomoiberico.com/wp-admin/admin-ajax.php","nonce":"9d9da5a7e1","favorite":"\u003Ci class=\"far fa-star\"\u003E\u003C/i\u003E","favorited":"\u003Ci class=\"fas fa-star\"\u003E\u003C/i\u003E","includecount":"","indicate_loading":"1","loading_text":"","loading_image":"\u003Cspan class=\"sf-icon-spinner-wrapper\"\u003E\u003Ci class=\"sf-icon-spinner\"\u003E\u003C/i\u003E\u003C/span\u003E","loading_image_active":"\u003Cspan class=\"sf-icon-spinner-wrapper active\"\u003E\u003Ci class=\"sf-icon-spinner active\"\u003E\u003C/i\u003E\u003C/span\u003E","loading_image_preload":"","cache_enabled":"1","button_options":{"button_type":"custom","custom_colors":false,"box_shadow":false,"include_count":false,"default":{"background_default":false,"border_default":false,"text_default":false,"icon_default":false,"count_default":false},"active":{"background_active":false,"border_active":false,"text_active":false,"icon_active":false,"count_active":false}},"authentication_modal_content":"\u003Cp\u003EPor favor, accede para a\u00f1adir favoritos.\u003C/p\u003E\n\u003Cp\u003E\u003Ca href=\"#\" data-favorites-modal-close\u003EDescartar este aviso\u003C/a\u003E\u003C/p\u003E\n","authentication_redirect":"","dev_mode":"","logged_in":"","user_id":"0","authentication_redirect_url":"https://docomomoiberico.com/wp-login.php"};
+//# sourceURL=favorites-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/favorites/assets/js/favorites.min.js?ver=2.3.6" id="favorites-js"></script>
+<meta name="generator" content="WPML ver:4.9.0 stt:1,41,2;" />
+<link rel="icon" href="https://docomomoiberico.com/wp-content/uploads/2022/03/cropped-favicon-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://docomomoiberico.com/wp-content/uploads/2022/03/cropped-favicon-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://docomomoiberico.com/wp-content/uploads/2022/03/cropped-favicon-180x180.png" />
+<meta name="msapplication-TileImage" content="https://docomomoiberico.com/wp-content/uploads/2022/03/cropped-favicon-270x270.png" />
+		<style type="text/css" id="wp-custom-css">
+			#cookie-law-info-bar {
+	width: 360px !important;
+}
+#cookie-law-info-bar .cli-style-v2 {
+	font-size: 14px;
+  line-height: 21px;
+}		</style>
+		<link rel='stylesheet' id='printomatic-css-css' href='https://docomomoiberico.com/wp-content/plugins/print-o-matic/css/style.css?ver=2.0' type='text/css' media='all' />
+<style id='printomatic-css-inline-css' type='text/css'>
+#pom_top_html,
+#pom_bot_html {
+	display: none;
+}
+@media print {
+#popuptext {
+	display:block !important;
+}
+#pom_top_html,
+#pom_bot_html {
+	display: block !important;
+}
+.site-footer {
+	display: none !important;
+}
+.acf-map.fullwidth {page-break-before: always;}
+}
+
+/*# sourceURL=printomatic-css-inline-css */
+</style>
+<link rel='stylesheet' id='cookie-law-info-table-css' href='https://docomomoiberico.com/wp-content/plugins/cookie-law-info/legacy/public/css/cookie-law-info-table.css?ver=3.4.0' type='text/css' media='all' />
+
+</head>
+
+<body class="wp-singular edificios-template-default single single-edificios postid-4047 wp-embed-responsive wp-theme-docomomo casa-cuna">
+
+	
+
+	<!-- NAVEGACIÓ -->
+	<nav id="fixed-nav" class="navbar navbar-expand-lg bg-faded sticky-top-lg fs-14 search-open stickytop">
+		<div class="container">
+
+			<a class="navbar-brand mr-auto" href="https://docomomoiberico.com/"><img src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/img/logo-docomomo-iberico.svg" alt="Fundación Docomomo Ibérico" width="229" height="30"></a>
+
+			
+			<a href="#" class="display-search order-1 order-lg-3">
+				<img src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/img/btn-search.svg" alt="buscar" width="17" height="17">
+			</a>
+
+			<button class="c-hamburger c-hamburger--htx navbar-toggler collapsed order-3 order-lg-4" type="button" data-toggle="collapse" data-target="#top-menu" aria-controls="top-menu" aria-expanded="false" aria-label="Toggle navigation">
+				<span>toggle menu</span>
+			</button>
+
+			<div id="nav-search" class="order-4 order-lg-1">
+				<div id="top-menu" class="navbar-collapse collapse flex-column order-4 order-lg-1">
+
+					<ul id="menu-main-menu" class="navbar-nav ml-auto" itemscope="" itemtype="http://www.schema.org/SiteNavigationElement">
+						<li  class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children dropdown menu-item-42497 nav-item"><a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle nav-link" id="menu-item-dropdown-42497">Arquitectura moderna</a>
+<ul class="dropdown-menu" aria-labelledby="menu-item-dropdown-42497">
+	<li  class="menu-item menu-item-type-post_type_archive menu-item-object-edificios menu-item-42498 nav-item"><a href="https://docomomoiberico.com/edificios/" class="nav-link">Registro de edificios</a></li>
+	<li  class="menu-item menu-item-type-post_type_archive menu-item-object-exposiciones menu-item-56482 nav-item"><a href="https://docomomoiberico.com/exposiciones/" class="nav-link">Exposiciones</a></li>
+	<li  class="menu-item menu-item-type-post_type_archive menu-item-object-mapas menu-item-42807 nav-item"><a href="https://docomomoiberico.com/mapas/" class="nav-link">Mapas interactivos</a></li>
+	<li  class="menu-item menu-item-type-post_type_archive menu-item-object-linea-tiempo menu-item-42823 nav-item"><a href="https://docomomoiberico.com/linea-tiempo/" class="nav-link">Líneas de tiempo</a></li>
+	<li  class="menu-item menu-item-type-post_type menu-item-object-page menu-item-63539 nav-item"><a href="https://docomomoiberico.com/publicaciones-y-documentos/" class="nav-link">Publicaciones</a></li>
+	<li  class="menu-item menu-item-type-post_type_archive menu-item-object-tesis menu-item-42499 nav-item"><a href="https://docomomoiberico.com/tesis/" class="nav-link">Tesis</a></li>
+	<li  class="menu-item menu-item-type-post_type_archive menu-item-object-visita-virtual menu-item-149410 nav-item"><a href="https://docomomoiberico.com/visita-virtual/" class="nav-link">Visitas Virtuales</a></li>
+</ul>
+</li>
+<li  class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children dropdown menu-item-159988 nav-item"><a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle nav-link" id="menu-item-dropdown-159988">Difusión</a>
+<ul class="dropdown-menu" aria-labelledby="menu-item-dropdown-159988">
+	<li  class="menu-item menu-item-type-post_type_archive menu-item-object-enciclopedia menu-item-159989 nav-item"><a href="https://docomomoiberico.com/enciclopedia/" class="nav-link">Enciclopedia</a></li>
+	<li  class="menu-item menu-item-type-post_type menu-item-object-page menu-item-159990 nav-item"><a href="https://docomomoiberico.com/autores/" class="nav-link">Autores</a></li>
+	<li  class="menu-item menu-item-type-post_type menu-item-object-page menu-item-42626 nav-item"><a href="https://docomomoiberico.com/actualidad/" class="nav-link">Actualidad</a></li>
+</ul>
+</li>
+<li  class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children dropdown menu-item-42493 nav-item"><a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle nav-link" id="menu-item-dropdown-42493">La fundación</a>
+<ul class="dropdown-menu" aria-labelledby="menu-item-dropdown-42493">
+	<li  class="menu-item menu-item-type-post_type menu-item-object-page menu-item-42495 nav-item"><a href="https://docomomoiberico.com/quienes-somos/" class="nav-link">Quiénes somos</a></li>
+	<li  class="menu-item menu-item-type-post_type_archive menu-item-object-programas menu-item-42496 nav-item"><a href="https://docomomoiberico.com/programas/" class="nav-link">Programas y colaboraciones</a></li>
+	<li  class="menu-item menu-item-type-post_type menu-item-object-page menu-item-42494 nav-item"><a href="https://docomomoiberico.com/contacta-con-nosotros/" class="nav-link">Contactar</a></li>
+</ul>
+</li>
+<li  class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children dropdown menu-item-141873 nav-item"><a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle nav-link" id="menu-item-dropdown-141873">Amigos</a>
+<ul class="dropdown-menu" aria-labelledby="menu-item-dropdown-141873">
+	<li  class="menu-item menu-item-type-post_type menu-item-object-page menu-item-42607 nav-item"><a href="https://docomomoiberico.com/hazte-amigo/" class="nav-link">Hazte amigo</a></li>
+	<li  class="menu-item menu-item-type-post_type menu-item-object-page menu-item-42555 nav-item"><a href="https://docomomoiberico.com/comunidad-docomomo/" class="nav-link">Comunidad Docomomo Ibérico</a></li>
+</ul>
+</li>
+<li  class="menu-item wpml-ls-slot-671 wpml-ls-item wpml-ls-item-es wpml-ls-current-language wpml-ls-menu-item wpml-ls-first-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-has-children dropdown menu-item-wpml-ls-671-es nav-item"><a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle nav-link" id="menu-item-dropdown-wpml-ls-671-es" aria-current="page" aria-controls="wpml-ls-submenu-wpml-ls-671-es"><span class="wpml-ls-native" lang="es">ES</span></a>
+<ul class="dropdown-menu" aria-labelledby="menu-item-dropdown-wpml-ls-671-es">
+	<li  class="menu-item wpml-ls-slot-671 wpml-ls-item wpml-ls-item-en wpml-ls-menu-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-wpml-ls-671-en nav-item"><a title="Cambiar a EN" href="https://docomomoiberico.com/en/buildings/casa-cuna/" class="nav-link" aria-label="Cambiar a EN"><span class="wpml-ls-native" lang="en">EN</span></a></li>
+	<li  class="menu-item wpml-ls-slot-671 wpml-ls-item wpml-ls-item-pt-pt wpml-ls-menu-item wpml-ls-last-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-wpml-ls-671-pt-pt nav-item"><a title="Cambiar a PT" href="https://docomomoiberico.com/pt-pt/edificios/casa-cuna/" class="nav-link" aria-label="Cambiar a PT"><span class="wpml-ls-native" lang="pt-pt">PT</span></a></li>
+</ul>
+</li>
+							<li class="display-user order-2 order-lg-2">
+								<a href="https://docomomoiberico.com/login/" title="Login" data-toggle="modal" data-target="#popupLogin">
+									<img src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/img/user.svg" alt="user" width="19" height="17">
+								</a>
+							</li>
+						
+					</ul>
+
+				</div><!-- fi #top-menu -->
+
+
+				<div id="top-search" style="display: none;">
+					<div class="wrap-search float-lg-right">
+						<div class="form-wrap">
+							
+<form role="search" method="get" class="search-form fs-14" action="https://docomomoiberico.com/edificios/">
+    <span class="screen-reader-text">Buscar:</span>    
+    <div class="input-group">
+        <div class="input-group-prepend filter-criteria">
+            <button class="btn btn-outline-secondary dropdown-toggle filter-selection" type="button" data-toggle="dropdown" aria-expanded="false">Buscar edificios</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item filter-select" href="https://docomomoiberico.com/edificios/" data-placeholder="Busca por nombre de edificio, autor, municipio, uso…">Buscar edificios</a>
+                <a class="dropdown-item filter-select" href="https://docomomoiberico.com/tesis/" data-placeholder="Buscar tesis…">Buscar tesis</a>
+                <a class="dropdown-item filter-select filter-map" href="https://docomomoiberico.com/mapa-de-edificios/" data-placeholder="Buscar edificios en mapa…">Buscar en mapa</a>
+                <a class="dropdown-item filter-select" href="https://docomomoiberico.com/" data-placeholder="Buscar en toda la web…">Buscar en toda la web</a>
+            </div>
+        </div>
+        <input type="search" class="form-control search-field" placeholder="Busca por nombre de edificio, autor, municipio, uso…" value="" name="s" />
+        <div class="input-group-append">
+            <button class="search-submit btn btn-outline-secondary" type="submit" id="button-addon2"><img src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/img/btn-search.svg" alt="buscar" width="17" height="17"></button>
+        </div>
+    </div>
+
+</form>
+
+<script>
+    jQuery(document).ready(function(){        
+        
+        var navbar = jQuery( '#fixed-nav' );
+        
+        function animate_search(speed=300, open=true) {
+            if(open) {
+                jQuery('#top-search').toggle( speed, function() {
+                    jQuery('#top-search').addClass('search-active');
+                });
+                jQuery('.display-search').addClass('button-active');
+                jQuery('.search-field').focus();    
+                navbar.addClass('search-open');   
+                navbar.removeClass('search-close');          
+            } else {
+                jQuery('#top-search').toggle( speed, function() {
+                    jQuery('#top-search').removeClass('search-active');
+                });
+                jQuery('.display-search').removeClass('button-active');
+                navbar.removeClass('search-open'); 
+                navbar.addClass('search-close');
+            }
+
+        }
+        // Animar al cargar la página
+        if (!jQuery('body').hasClass('single')) {
+            animate_search(0,true);
+        } else {
+            jQuery('.display-search').addClass('button-single');
+        }
+        
+        // Animar si clica botón lupa
+        jQuery('.display-search').click(function(e){
+                e.preventDefault();
+                animate_search(300,true);  
+                navbar.addClass('search-open-manual'); 
+        });
+
+        // ocultar search si clica botón hamburger
+        jQuery('.c-hamburger').click(function(e){
+                e.preventDefault();
+                animate_search(0,false);  
+                navbar.removeClass('search-open-manual'); 
+        }); 
+
+        jQuery(window).scroll(function (event) {
+            if(navbar.hasClass('stickytop') && navbar.hasClass('search-close')){
+                animate_search(0,true);
+            }
+            if(navbar.hasClass('sticky') && navbar.hasClass('search-open') && !navbar.hasClass('search-open-manual')){
+                animate_search(0,false);
+            } 
+        });
+
+        // Cambiar textos y url de action según selección
+        jQuery( ".filter-criteria" ).on( "click",".filter-select", function(e) {
+            e.preventDefault();
+		    var optionSelected = jQuery(this).text();
+            var urlSelected = jQuery(this).attr('href');
+            var placeholderSelected = jQuery(this).data('placeholder');
+            console.log(placeholderSelected);
+            var parent = jQuery(this).closest('.filter-criteria');
+                parent.find('.filter-selection').text(optionSelected);
+                parent.find('.filter-select').removeClass('active');
+                jQuery(this).addClass('active');
+            var form = jQuery(this).closest('.search-form');
+                form.attr('action', urlSelected);
+                form.find('.search-field').attr('placeholder', placeholderSelected);
+            if(jQuery(this).hasClass( 'filter-map' )) {
+                form.find('.search-field').attr('name', 'search');
+            } else {
+                form.find('.search-field').attr('name', 's');
+            }
+        });
+
+    });
+</script>						</div>
+					</div>
+				</div><!-- fi #top-search -->
+			</div>
+
+			
+		</div>
+
+	</nav><!-- FI NAVEGACIÓ -->
+
+		<div id="content" class="site-content">	
+    <div class="container">
+        <div class="row">
+
+            <main id="main" class="col-md-12 content-area py-5">
+
+                
+<article id="post-4047" class="entry-item-edificio fs-15 post-4047 edificios type-edificios status-publish has-post-thumbnail hentry tag-expo_cines tag-line_map_placas2023 tag-line_map_valladolid categoria-nivel-a autoria-angel-rios-gomez autoria-isaias-paredes-sanz uso_original-parvulario registro-ampliacion-temporal-1965-1975">
+
+	<header class="entry-header bb-2">
+
+		<div class="row">
+			<div class="col-lg-4 my-5 thumb-edificio">
+				<img width="768" height="1020" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="pr-lg-4 wp-post-image ewww_webp" alt="" decoding="async" fetchpriority="high" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="(max-width: 768px) 100vw, 768px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-768x1020.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-768x1020.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-768x1020.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-226x300.jpg.webp 226w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-1157x1536.jpg.webp 1157w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg.webp 1446w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-768x1020.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-226x300.jpg 226w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-1157x1536.jpg 1157w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg 1446w" data-eio="j" /><noscript><img width="768" height="1020" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-768x1020.jpg" class="pr-lg-4 wp-post-image" alt="" decoding="async" fetchpriority="high" srcset="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-768x1020.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-226x300.jpg 226w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-1157x1536.jpg 1157w, https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg 1446w" sizes="(max-width: 768px) 100vw, 768px" /></noscript> 
+							</div>
+			<div class="col-lg-5 my-5 fs-14 header-edificio">
+				
+				<h1 class="entry-title h2 mb-4">Casa Cuna</h1>
+				<p><span><a href="https://docomomoiberico.com/autoria/angel-rios-gomez/" class="">Ángel Ríos Gómez</a></span>, <span><a href="https://docomomoiberico.com/autoria/isaias-paredes-sanz/" class="">Isaías Paredes Sanz</a></span></p>
+				<p>1968 - 1973</p>
+				<p>Valladolid, Valladolid, España</p>
+									<p>Denominación actual: Centro Cívico Casa Cuna</p>
+				
+			</div>
+			<div class="col-lg-3 my-5 align-self-end text-right social-edificio">
+				
+<nav class="share-menu fs-18">
+  <div class='printomatic pom-default ' id='id5837'  data-print_target='#main'></div> 
+  <a href="https://docomomoiberico.com/contacta-con-nosotros/" title="Contacta" class="share-item mx-1 mx-xl-2">
+      <img src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/img/contacto.svg" alt="Contacta" width="20" height="20">  
+   </a>
+   | 
+  <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fdocomomoiberico.com%2Fedificios%2Fcasa-cuna%2F" class="share-item facebook mx-1 mx-xl-2" title="Comparte en Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a><a href="https://twitter.com/share?url=https://docomomoiberico.com/edificios/casa-cuna/&text=Casa Cuna" class="share-item twitter mx-1 mx-xl-2" title="Comparte en Twitter" target="_blank"><i class="fab fa-twitter"></i></a><a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fdocomomoiberico.com%2Fedificios%2Fcasa-cuna%2F" class="share-item linkedin mx-1 mx-xl-2" title="Comparte en LinkedIn" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+</nav>			</div>
+		</div>
+
+	</header><!-- .entry-header -->
+
+	<div class="entry-content py-5 mb-5">
+
+					<div class="galeria pb-4 mb-5 bb-2">
+
+				<h2 class="h5">Imágenes:</h2>
+
+				<div class="partialcollapse">
+					<div class="collapse" id="collapseGaleria">
+						<div class="row" id="lightboxGaleria">
+						<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: YES --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico, 2014" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: YES --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_02.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico, 2014" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_02-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_02-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_02-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: YES --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_01.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico, 2014" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_01-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_01-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_01-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: YES --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_04.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_04-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_04-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_04-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_14.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_14-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_14-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_14-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_15.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_15-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_15-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_15-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_16.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_16-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_16-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_16-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_17.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_17-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_17-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_17-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_18.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_18-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_18-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_18-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_19.jpg" data-caption="© Daniel Villalobos Alonso/Fundación Docomomo Ibérico" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_19-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_19-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_19-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_05.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_05-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_05-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_05-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_12.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_12-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_12-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_12-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_06.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_06-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_06-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_06-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_07.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_07-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_07-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_07-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_08.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_08-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_08-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_08-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_09.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_09-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_09-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_09-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_10.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_10-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_10-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_10-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_11.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_11-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_11-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_11-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_20.jpg" data-caption="© Archivo Municipal de Valladolid" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_20-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_20-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_20-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+							<div class="col-lg-2 col-sm-4 mb-4 galeria-item">
+    <!-- CONDITION DEBUG --><!-- counter < 5: NO --><!-- ip_valida: YES --><!-- user_member: NO --><!-- FINAL RESULT: SHOW IMAGE -->        <a href="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_21.jpg" data-caption="" target="_blank">
+            <img width="350" height="245" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-galeria size-galeria ewww_webp" alt="" decoding="async" loading="lazy" data-src-img="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_21-350x245.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_21-350x245.jpg.webp" data-eio="j" /><noscript><img width="350" height="245" src="https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_21-350x245.jpg" class="attachment-galeria size-galeria" alt="" decoding="async" loading="lazy" /></noscript>        </a>
+    </div>
+													</div>
+					</div>
+				</div>
+
+				<p class="mt-3 text-right">
+					<a class="btn btn-primary btnleer" data-toggle="collapse" href="#collapseGaleria" role="button" aria-expanded="false" aria-controls="collapseGaleria">
+						<span class="leermas">Ver más</span>
+						<span class="leermenos">Ver menos</span>
+					</a></p>
+
+			</div><!-- .galeria -->
+
+				
+		<div class="informacion pb-4 mb-5 bb-2">
+
+			<div class="row">
+				<div class="col-lg-6">
+
+					<p><strong>Denominación actual:</strong> Centro Cívico Casa Cuna</p>
+					<p><strong>Autoría:</strong> <span><a href="https://docomomoiberico.com/autoria/angel-rios-gomez/" class="link-tag">Ángel Ríos Gómez</a></span> <span><a href="https://docomomoiberico.com/autoria/isaias-paredes-sanz/" class="link-tag">Isaías Paredes Sanz</a></span></p>
+					<p><strong>Fechas</strong> 
+						<a href="https://docomomoiberico.com/edificios/?inicio=1968" class="link-tag">1968</a> 
+						<a href="https://docomomoiberico.com/edificios/?final=1973" class="link-tag">1973</a>
+					</p>
+					<p><strong>Colaboradores y detalle autoría:</strong><br>
+					</p>
+				
+				</div>
+				<div class="col-lg-3">
+					<p><strong>Localización:</strong> 
+						<a href="https://docomomoiberico.com/edificios/?municipio=Valladolid" class="link-tag">Valladolid</a> 
+						<a href="https://docomomoiberico.com/edificios/?provincia=Valladolid" class="link-tag">Valladolid</a> 
+						<a href="https://docomomoiberico.com/edificios/?ccaa=Castilla%20y%20León" class="link-tag">Castilla y León</a> 
+						<a href="https://docomomoiberico.com/edificios/?pais=España" class="link-tag">España</a>
+					</p>
+					<p><strong>Dirección:</strong> 
+						Calle Ecuador núm. 2 - 47014, 
+						<a href="https://docomomoiberico.com/edificios/?municipio=Valladolid">Valladolid</a> 
+						(<a href="https://docomomoiberico.com/edificios/?provincia=Valladolid">Valladolid</a>) España					</p>
+				</div>
+				<div class="col-lg-3">
+									<div id="leaflet-map" class="acf-map" data-zoom="16">
+						<div class="marker" data-lat="41.631001" data-lng="-4.747057" data-icono="black" data-min-width="105">
+							<a href="https://www.google.com/maps/search/?api=1&query=41.631001%2C-4.747057" target="_blank" class="fw-regular no-linkshadow">
+							Ir a Google Maps</a>
+						</div>
+					</div>
+								</div>
+			</div>
+
+		</div><!-- .informacion -->
+
+				<div class="memoria pb-4 mb-5 bb-2">
+
+			<div class="row justify-content-between">
+				<div class="col-xl-auto col-lg-2 col-xs-1">
+					<h2 class="h5">Memoria</h2>
+				</div>
+				<div class="col-lg-10">
+					<div class="partialcollapse" style="max-width: 835px;">
+						<div class="collapse" id="collapseMemoria">
+							<p>El edificio refleja la atención institucional de una época hacia un programa de ayuda a la infancia, tanto en el diseño y planificación de sus espacios interiores como los exteriores.</p>
+<p>Las distintas partes del programa se desarrollan en torno a un patio central de precisa geometría rectangular; el contorno exterior presenta un resultado más laberíntico que deriva de la adecuación tipológica diferenciada y la autonomía funcional de cada parte. Surge así una composición por módulos estructurales, con patios menores que iluminan e introducen la vegetación en cada una de las piezas menores que rodean el patio central, propiciando la  escala más íntima de estas piezas de aulas y juegos. El sistema de organización evoca el Orfanato de Ámsterdam, del arquitecto Aldo van Eyck, clara referencias estructuralista para este tipo de edificios. El bloque de dormitorios se desarrolla en cuatro plantas, mientras que el resto del programa tiene una única planta.</p>
+<p>Es significativo el diálogo de las técnicas constructivas entre modernidad y tradición, que era propio de la década de 1960. En los volúmenes de una sola planta, conviven muros de carga de ladrillo visto con grandes cristaleras y soportes puntuales metálicos. Estos volúmenes se rematan con cubiertas planas, ajardinadas en origen, entre vigas de canto sobre los muros que posibilitan grandes vuelos para proteger las cristaleras orientadas al sur.  En las cubiertas se explicita la dirección de los trazados norte-sur que sirven de guía geométrica de estos muros y de la ordenación y deslizamiento de estas partes del programa. El bloque alto de dormitorios subraya la idea de <em>fenêtre en longueur</em>. Lasala de actos, tanto en el trazado de la planta como en la articulación de pendientes contrapuestas entre el techo interior y la cubierta exterior, evoca mecanismos conocidos de la arquitectura de Alvar Aalto.</p>
+<p>La estrategia estructural y material asume el debate de la época entre sistemas tradicionales y modernos, logrando un diálogo crítico que la buena conservación del edificio aún mantiene</p>
+<p>Eusebio Alonso García</p>
+						</div>
+					</div>
+					<p class="mt-3 text-right">
+						<a class="btn btn-primary btnleer" data-toggle="collapse" href="#collapseMemoria" role="button" aria-expanded="false" aria-controls="collapseMemoria">
+							<span class="leermas">Ver más</span>
+							<span class="leermenos">Ver menos</span>
+						</a>
+					</p>
+				</div>
+			</div>
+
+		</div><!-- .memoria -->
+		
+		<div class="categorias-edificios pb-4 mb-5 bb-2">
+
+			<div class="row">
+				<div class="col-lg-6">
+
+					<p><strong>Uso original:</strong> <span><a href="https://docomomoiberico.com/uso_original/uso-docente/" class="link-tag">Uso docente</a></span><span><a href="https://docomomoiberico.com/uso_original/uso-docente/parvulario/" class="link-tag">Parvulario</a></span></p>
+					<p><strong>Reportaje fotográfico:</strong> </p>
+														
+				</div>
+				<div class="col-lg-6">
+					<p><strong>Categoría:</strong> <span><a href="https://docomomoiberico.com/categoria/nivel-a/" class="link-tag">Nivel A</a></span></p>
+					<p><strong>Registro:</strong> <span><a href="https://docomomoiberico.com/registro/ampliacion-temporal-1965-1975/" class="link-tag">Ampliación temporal, 1965-1975</a></span></p>
+
+										
+				</div>
+			</div>
+
+		</div><!-- .categorias-edificios -->
+
+				<div class="bibliografia collapse-inline pb-4 mb-5 bb-2">
+
+			<h2 class="h5">Bibliografía:</h2>
+
+			<div class="collapse" id="collapseBibliografia">
+				<ul>
+<li>VILLALOBOS, Daniel, “Casa Cuna, el edificio social que albergó a trescientos niños huérfanos”, en <em>El Norte de Castilla</em>, 25 de marzo de 2023.</li>
+<li>ALONSO, Eusebio, “Casa Cuna, 1968”, en VILLALOBOS VILLALOBOS, Daniel, CIRPAC, eds., <em>Docomomo Valladolid. Registro DOCOMOMO Ibérico, 1925-1975. Industria, vivienda y equipamientos</em>, Fundación Municipal de Cultura del Ayuntamiento de Valladolid, Valladolid, 2019, págs. 286-289.</li>
+<li>ARNUNCIO, Juan Carlos, “Casa Cuna”, en ARNUNCIO, J. C. et Altri, <em>Guía de Arquitectura de Valladolid</em>, Consorcio IV Centenario de la Ciudad de Valladolid, Valladolid, 1996, pág. 278.</li>
+</ul>
+			</div>
+			<p class="button-collapse text-right">
+									<a class="btn btn-primary btnleer" data-toggle="collapse" href="#collapseBibliografia" role="button" aria-expanded="false" aria-controls="collapseBibliografia">
+						<span class="leermas">Ver más</span>
+						<span class="leermenos">Ver menos</span>
+					</a></p>
+								</p>
+		</div><!-- .bibliografia -->
+		
+		
+				<div class="enlaces collapse-inline pb-4 mb-5 bb-2">
+
+			<h2 class="h5">Enlaces de interés:</h2>
+
+			<div class="collapse" id="collapseEnlaces">
+				
+				<ul class="enlaces-interes">
+
+										<li><a href="https://www.youtube.com/watch?v=pFCODCm5saI&#038;feature=youtu.be" target="_blank">Filmación &quot;Casa Cuna. La Joya oculta&quot;</a></li>
+					
+				</ul>
+				
+			</div>
+			<p class="button-collapse text-right">
+				<a class="btn btn-primary btnleer" data-toggle="collapse" href="#collapseEnlaces" role="button" aria-expanded="false" aria-controls="collapseEnlaces">
+					<span class="leermas">Ver más</span>
+					<span class="leermenos">Ver menos</span>
+				</a>
+			</p>
+
+		</div><!-- .enlaces -->
+		
+
+		
+
+	</div><!-- .entry-content -->
+
+</article><!-- #post-4047 -->
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    // Inicializa Isotope
+    var $grid = $('.loop-vinculados').isotope({
+        itemSelector: '.grid-item', // Asegúrate de que tus items tienen esta clase
+        percentPosition: true,
+        masonry: {
+            columnWidth: '.grid-sizer' // Cambia esto según tu configuración
+        }
+    });
+
+    // Función para cargar más posts
+    $('#load-more').on('click', function() {
+        var button = $(this),
+            data = {
+                'action': 'loadmore',
+                'page': button.data('page'),
+                'id': 4047            };
+
+        //console.log('Loading more posts for page: ' + button.data('page'));
+
+        $.ajax({
+            url: button.data('url'),
+            data: data,
+            type: 'POST',
+            beforeSend: function(xhr) {
+                button.text('Cargando...');
+            },
+            success: function(response) {
+                if (response.success && response.data.data) {
+                    var $newItems = $(response.data.data);
+
+                    // Añadir nuevos elementos al contenedor
+                    $('.loop-vinculados').append($newItems);
+
+                    // Esperar a que las imágenes se carguen antes de inicializar Isotope
+                    $newItems.imagesLoaded(function() {
+                        $grid.isotope('appended', $newItems);
+                        $grid.isotope('layout');
+                    });
+
+                    // Incrementar la página y restablecer el texto del botón
+                    button.data('page', button.data('page') + 1);
+                    button.text('Cargar más');
+
+                    // Ocultar el botón si no hay más páginas
+                    if (!response.data.has_more) {
+                        button.hide();
+                    }
+                } else {
+                    button.text('No hay más edificios').prop('disabled', true);
+                }
+            }
+        });
+    });
+});
+</script>
+
+	<div class="related-news">
+
+		<header>
+			<h2 class="page-title h5 mb-5">Forma parte de la exposición</h2>
+		</header>
+		<section class="featured-expo bg-black fullwidth">
+				
+<article id="post-151357" class="container item-content entry-expo mb-5 post-no-logged post-151357 exposiciones type-exposiciones status-publish has-post-thumbnail hentry tag-expo_cines tag-noticias_cines tag-solo-amigos">
+
+	<div class="card flex-lg-row expo-wrap h-100 px-0 py-0 pb-5 pb-lg-0 border-0 rounded-0">
+			
+		<div class="card-body d-lg-flex flex-lg-column pl-0 pr-0 pr-lg-5 pt-5 pb-4 col-lg-6 justify-content-end">
+			
+			<span class="section-title white">
+				Exposición temporal			</span>
+			
+			<header class="entry-header pr-4 pr-lg-5 mr-5">
+				<h2 class="entry-title mt-0 mt-xl-5 mb-4 h1 white">
+											<a href="https://docomomoiberico.com/exposiciones/cines-modernos-aquellos-espacios-para-sonar/" rel="bookmark" class="white">
+											Cines modernos, aquellos espacios para soñar										</a>
+									</h2>
+			</header>
+
+			<div class="entry-summary h4 fw-regular white pr-0 pr-lg-5 mr-5">
+				<p>Las respuestas arquitectónicas del movimiento moderno a la demanda de este nuevo tipo de espacios crearon una condición indisoluble y arrolladora entre arquitectura moderna y cine.</p> 
+			</div>
+
+		</div>
+		<!-- .card-body -->
+
+		<div class="img-wrap animate-y col-lg-6">
+						<a class="post-thumbnail" href="https://docomomoiberico.com/exposiciones/cines-modernos-aquellos-espacios-para-sonar/">
+							<img width="1920" height="1100" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="card-img-bottom wp-post-image ewww_webp" alt="" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 1920px) 100vw, 1920px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2023/09/baja.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2023/09/baja.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2023/09/baja.jpg.webp 1920w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-300x172.jpg.webp 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-768x440.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-1536x880.jpg.webp 1536w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2023/09/baja.jpg 1920w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-300x172.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-768x440.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-1536x880.jpg 1536w" data-eio="j" /><noscript><img width="1920" height="1100" src="https://docomomoiberico.com/wp-content/uploads/2023/09/baja.jpg" class="card-img-bottom wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2023/09/baja.jpg 1920w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-300x172.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-768x440.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/baja-1536x880.jpg 1536w" sizes="auto, (max-width: 1920px) 100vw, 1920px" /></noscript> 
+							</a>
+					</div>
+		
+	
+	</div>
+
+</article><!-- #post-151357 -->
+		</section>
+	</div>
+	
+	<div class="related-mapas">
+
+		<header>
+			<h2 class="page-title h5 mb-5">Mapas y líneas de tiempo vinculadas a Casa Cuna</h2>
+		</header>
+		<div class="tesis-loop row">
+				
+<article id="post-151670" class="item-content entry-mapa mb-5 col-md-6 post-151670 mapas type-mapas status-publish has-post-thumbnail hentry tag-line_map_placas2023">
+
+	<div class="card mapa-wrap h-100 px-0 py-0 border-0 rounded-0">
+
+		<span class="section-title">Mapa interactivo</span>
+
+		<div class="card-body px-4 pt-4 pb-0">
+			<header class="entry-header">
+				<h2 class="entry-title pr-5"><a href="https://docomomoiberico.com/mapas/placas-docomomo-iberico-en-el-dia-mundial-de-la-arquitectura-2023/" rel="bookmark" class="black stretched-link">Placas Docomomo Ibérico en el Día Mundial de la Arquitectura 2023</a></h2>
+							</header>
+
+		</div>
+		<!-- .card-body -->
+
+		<div class="img-wrap animate-x">
+			
+    <a class="post-thumbnail" href="https://docomomoiberico.com/mapas/placas-docomomo-iberico-en-el-dia-mundial-de-la-arquitectura-2023/">
+      <img width="1474" height="1165" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="card-img-bottom wp-post-image ewww_webp" alt="" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 1474px) 100vw, 1474px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas.jpg.webp 1474w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-300x237.jpg.webp 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-768x607.jpg.webp 768w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas.jpg 1474w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-300x237.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-768x607.jpg 768w" data-eio="j" /><noscript><img width="1474" height="1165" src="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas.jpg" class="card-img-bottom wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas.jpg 1474w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-300x237.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-768x607.jpg 768w" sizes="auto, (max-width: 1474px) 100vw, 1474px" /></noscript> 
+    </a>
+
+  		</div>
+		
+	
+	</div>
+
+</article><!-- #post-151670 -->
+
+<article id="post-151525" class="item-content entry-tiempo mb-5 col-md-6 post-151525 linea-tiempo type-linea-tiempo status-publish has-post-thumbnail hentry tag-line_map_valladolid tag-line_map_valladolid_provincia">
+
+	<div class="card tiempo-wrap h-100 px-0 py-0 border-0 rounded-0">
+
+		<span class="section-title">Línea de tiempo</span>
+
+		<div class="card-body px-4 pt-4 pb-0">
+			<header class="entry-header">
+				<h2 class="entry-title pr-5"><a href="https://docomomoiberico.com/linea-tiempo/docomomo-iberico-en-valladolid/" rel="bookmark" class="black stretched-link">Docomomo Ibérico en Valladolid</a></h2>
+							</header>
+
+		</div>
+		<!-- .card-body -->
+
+		<div class="img-wrap animate-x">
+			
+    <a class="post-thumbnail" href="https://docomomoiberico.com/linea-tiempo/docomomo-iberico-en-valladolid/">
+      <img width="1770" height="1095" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="card-img-bottom wp-post-image ewww_webp" alt="" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 1770px) 100vw, 1770px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r.jpg.webp 1770w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-300x186.jpg.webp 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-768x475.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-1536x950.jpg.webp 1536w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r.jpg 1770w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-300x186.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-768x475.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-1536x950.jpg 1536w" data-eio="j" /><noscript><img width="1770" height="1095" src="https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r.jpg" class="card-img-bottom wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r.jpg 1770w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-300x186.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-768x475.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/E_CASTLEON_ESTE_A22_01r-1536x950.jpg 1536w" sizes="auto, (max-width: 1770px) 100vw, 1770px" /></noscript> 
+    </a>
+
+  		</div>
+		
+	
+	</div>
+
+</article><!-- #post-151525 -->
+
+		</div>
+	</div>
+	
+	<div class="related-news">
+
+		<header>
+			<h2 class="page-title h5 mb-5">Te puede interesar</h2>
+		</header>
+		<div class="loop-edificios row">
+
+			<div class="grid-sizer col-lg-3"></div>
+
+		
+<article id="post-1627" class="col-lg-3 mb-5 grid-item item-content entry-edificio fs-14 post-1627 edificios type-edificios status-publish has-post-thumbnail hentry tag-autor_fernandez-alba tag-expo_cines categoria-nivel-b autoria-antonio-fernandez-alba uso_original-cine-teatro registro-los-equipamientos-modernos">
+	
+	
+	<div class="entry-wrap">
+		<header class="entry-header">
+			
+			<img width="768" height="1024" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-medium_large size-medium_large wp-post-image ewww_webp" alt="" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 768px) 100vw, 768px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-768x1024.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-768x1024.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-768x1024.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-225x300.jpg.webp 225w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-1152x1536.jpg.webp 1152w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01.jpg.webp 1440w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-768x1024.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-225x300.jpg 225w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-1152x1536.jpg 1152w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01.jpg 1440w" data-eio="j" /><noscript><img width="768" height="1024" src="https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-768x1024.jpg" class="attachment-medium_large size-medium_large wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-768x1024.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-225x300.jpg 225w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01-1152x1536.jpg 1152w, https://docomomoiberico.com/wp-content/uploads/2011/02/E_ISLAS_BA_B07_01.jpg 1440w" sizes="auto, (max-width: 768px) 100vw, 768px" /></noscript> 
+			
+			
+			<div class="entry-hover">
+
+								
+				<a href="https://docomomoiberico.com/edificios/cine-rivoli/" target="_blank" data-postid="1627" class="img-edificio">
+					<p>1960 - 1962<br>
+					Palma de Mallorca, Baleares (Islas), España										</p>
+				</a>
+			</div>
+			
+		</header><!-- .entry-header -->
+
+		<div class="entry-summary">
+
+				<h2 class="entry-title h6"><a href="https://docomomoiberico.com/edificios/cine-rivoli/" target="_blank" data-postid="1627">Cine Rívoli. <span class="">Antonio Fernández Alba</span></a></h2>
+	
+		</div><!-- .entry-summary -->		
+	</div>
+	
+
+</article><!-- #post-1627 -->
+
+<article id="post-619" class="col-lg-3 mb-5 grid-item item-content entry-edificio fs-14 post-619 edificios type-edificios status-publish has-post-thumbnail hentry tag-autor_bonet-castellana tag-line_map_placas2023 tag-pnpsxx categoria-nivel-a autoria-antonio-bonet-castellana uso_original-conjunto-de-viviendas registro-la-vivienda-moderna reportaje-jose-hevia">
+	
+	
+	<div class="entry-wrap">
+		<header class="entry-header">
+			
+			<img width="768" height="641" src="https://docomomoiberico.com/wp-content/uploads/1999/11/V_MU_A02_hevia_7_02-768x641.jpg" class="attachment-medium_large size-medium_large wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/1999/11/V_MU_A02_hevia_7_02-768x641.jpg 768w, https://docomomoiberico.com/wp-content/uploads/1999/11/V_MU_A02_hevia_7_02-300x250.jpg 300w, https://docomomoiberico.com/wp-content/uploads/1999/11/V_MU_A02_hevia_7_02-1536x1282.jpg 1536w, https://docomomoiberico.com/wp-content/uploads/1999/11/V_MU_A02_hevia_7_02.jpg 1920w" sizes="auto, (max-width: 768px) 100vw, 768px" /> 
+			
+			
+			<div class="entry-hover">
+
+								
+				<a href="https://docomomoiberico.com/edificios/conjunto-hexagonal/" target="_blank" data-postid="619" class="img-edificio">
+					<p>1963 - 1965<br>
+					Cartagena, Murcia, España										</p>
+				</a>
+			</div>
+			
+		</header><!-- .entry-header -->
+
+		<div class="entry-summary">
+
+				<h2 class="entry-title h6"><a href="https://docomomoiberico.com/edificios/conjunto-hexagonal/" target="_blank" data-postid="619">Conjunto hexagonal. <span class="">Antonio Bonet Castellana</span></a></h2>
+	
+		</div><!-- .entry-summary -->		
+	</div>
+	
+
+</article><!-- #post-619 -->
+
+<article id="post-299" class="col-lg-3 mb-5 grid-item item-content entry-edificio fs-14 post-299 edificios type-edificios status-publish has-post-thumbnail hentry tag-line_map_valladolid categoria-nivel-a autoria-javier-ramon-y-guerra uso_original-vivienda-colectiva registro-la-vivienda-moderna">
+	
+	
+	<div class="entry-wrap">
+		<header class="entry-header">
+			
+			<img width="768" height="1024" src="https://docomomoiberico.com/wp-content/uploads/1999/11/V_CASTLEON_ESTE_A03_4-768x1024.jpg" class="attachment-medium_large size-medium_large wp-post-image" alt="Edificio de viviendas (calle Panaderos)" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/1999/11/V_CASTLEON_ESTE_A03_4-768x1024.jpg 768w, https://docomomoiberico.com/wp-content/uploads/1999/11/V_CASTLEON_ESTE_A03_4-225x300.jpg 225w, https://docomomoiberico.com/wp-content/uploads/1999/11/V_CASTLEON_ESTE_A03_4-1152x1536.jpg 1152w, https://docomomoiberico.com/wp-content/uploads/1999/11/V_CASTLEON_ESTE_A03_4.jpg 1440w" sizes="auto, (max-width: 768px) 100vw, 768px" /> 
+			
+			
+			<div class="entry-hover">
+
+								
+				<a href="https://docomomoiberico.com/edificios/edificio-de-viviendas-panaderos/" target="_blank" data-postid="299" class="img-edificio">
+					<p>1935 - <br>
+					Valladolid, Valladolid, España										</p>
+				</a>
+			</div>
+			
+		</header><!-- .entry-header -->
+
+		<div class="entry-summary">
+
+				<h2 class="entry-title h6"><a href="https://docomomoiberico.com/edificios/edificio-de-viviendas-panaderos/" target="_blank" data-postid="299">Edificio de viviendas (calle Panaderos). <span class="">Javier Ramón y Guerra</span></a></h2>
+	
+		</div><!-- .entry-summary -->		
+	</div>
+	
+
+</article><!-- #post-299 -->
+
+<article id="post-4848" class="col-lg-3 mb-5 grid-item item-content entry-edificio fs-14 post-4848 edificios type-edificios status-publish has-post-thumbnail hentry tag-corrales-molezun tag-line_map_valladolid categoria-nivel-b autoria-jose-antonio-corrales-gutierrez uso_original-vivienda-unifamiliar registro-ampliacion-temporal-1965-1975 reportaje-luis-arguelles">
+	
+	
+	<div class="entry-wrap">
+		<header class="entry-header">
+			
+			<img width="768" height="513" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-medium_large size-medium_large wp-post-image ewww_webp" alt="Casa Luelmo II" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 768px) 100vw, 768px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-768x513.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-768x513.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-768x513.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-300x200.jpg.webp 300w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-1536x1026.jpg.webp 1536w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a.jpg.webp 1920w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-768x513.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-300x200.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-1536x1026.jpg 1536w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a.jpg 1920w" data-eio="j" /><noscript><img width="768" height="513" src="https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-768x513.jpg" class="attachment-medium_large size-medium_large wp-post-image" alt="Casa Luelmo II" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-768x513.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-300x200.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a-1536x1026.jpg 1536w, https://docomomoiberico.com/wp-content/uploads/2019/10/AMP_CASTLEON_ESTE_B29_01a.jpg 1920w" sizes="auto, (max-width: 768px) 100vw, 768px" /></noscript> 
+			
+			
+			<div class="entry-hover">
+
+								
+				<a href="https://docomomoiberico.com/edificios/casa-luelmo-ii/" target="_blank" data-postid="4848" class="img-edificio">
+					<p>1965 - <br>
+					Valladolid, Valladolid, España										</p>
+				</a>
+			</div>
+			
+		</header><!-- .entry-header -->
+
+		<div class="entry-summary">
+
+				<h2 class="entry-title h6"><a href="https://docomomoiberico.com/edificios/casa-luelmo-ii/" target="_blank" data-postid="4848">Casa Luelmo II. <span class="">José Antonio Corrales Gutiérrez</span></a></h2>
+	
+		</div><!-- .entry-summary -->		
+	</div>
+	
+
+</article><!-- #post-4848 -->
+
+<article id="post-5347" class="col-lg-3 mb-5 grid-item item-content entry-edificio fs-14 post-5347 edificios type-edificios status-publish has-post-thumbnail hentry tag-expo_cines categoria-nivel-a autoria-fernando-schiappa-de-campos uso_original-cine-teatro registro-los-equipamientos-modernos">
+	
+	
+	<div class="entry-wrap">
+		<header class="entry-header">
+			
+			<img width="670" height="402" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-medium_large size-medium_large wp-post-image ewww_webp" alt="Cinema Virginia" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 670px) 100vw, 670px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01.jpg.webp 670w, https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01-300x180.jpg.webp 300w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01.jpg 670w, https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01-300x180.jpg 300w" data-eio="j" /><noscript><img width="670" height="402" src="https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01.jpg" class="attachment-medium_large size-medium_large wp-post-image" alt="Cinema Virginia" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01.jpg 670w, https://docomomoiberico.com/wp-content/uploads/2021/05/AMP_PORT_A44_01-300x180.jpg 300w" sizes="auto, (max-width: 670px) 100vw, 670px" /></noscript> 
+			
+			
+			<div class="entry-hover">
+
+								
+				<a href="https://docomomoiberico.com/edificios/cinema-virginia/" target="_blank" data-postid="5347" class="img-edificio">
+					<p>1951 - 1956<br>
+					Santarém, Portugal, Portugal											<br>Actual Teatro Virgínia										</p>
+				</a>
+			</div>
+			
+		</header><!-- .entry-header -->
+
+		<div class="entry-summary">
+
+				<h2 class="entry-title h6"><a href="https://docomomoiberico.com/edificios/cinema-virginia/" target="_blank" data-postid="5347">Cinema Virginia. <span class="">Fernando Schiappa de Campos</span></a></h2>
+	
+		</div><!-- .entry-summary -->		
+	</div>
+	
+
+</article><!-- #post-5347 -->
+
+<article id="post-1764" class="col-lg-3 mb-5 grid-item item-content entry-edificio fs-14 post-1764 edificios type-edificios status-publish has-post-thumbnail hentry tag-expo_cines categoria-nivel-b autoria-autor-desconocido uso_original-cine-teatro registro-los-equipamientos-modernos">
+	
+	
+	<div class="entry-wrap">
+		<header class="entry-header">
+			
+			<img width="768" height="1152" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-medium_large size-medium_large wp-post-image ewww_webp" alt="Cinematógrafo de Monzón" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 768px) 100vw, 768px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-768x1152.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-768x1152.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-768x1152.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-200x300.jpg.webp 200w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-1024x1536.jpg.webp 1024w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02.jpg.webp 1280w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-768x1152.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-200x300.jpg 200w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-1024x1536.jpg 1024w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02.jpg 1280w" data-eio="j" /><noscript><img width="768" height="1152" src="https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-768x1152.jpg" class="attachment-medium_large size-medium_large wp-post-image" alt="Cinematógrafo de Monzón" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-768x1152.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-200x300.jpg 200w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02-1024x1536.jpg 1024w, https://docomomoiberico.com/wp-content/uploads/2011/04/E_AR_B05_02.jpg 1280w" sizes="auto, (max-width: 768px) 100vw, 768px" /></noscript> 
+			
+			
+			<div class="entry-hover">
+
+								
+				<a href="https://docomomoiberico.com/edificios/cinematografo-de-monzon/" target="_blank" data-postid="1764" class="img-edificio">
+					<p>1920 - 1930<br>
+					Monzón, Huesca, España											<br>Actual Cine Victoria										</p>
+				</a>
+			</div>
+			
+		</header><!-- .entry-header -->
+
+		<div class="entry-summary">
+
+				<h2 class="entry-title h6"><a href="https://docomomoiberico.com/edificios/cinematografo-de-monzon/" target="_blank" data-postid="1764">Cinematógrafo de Monzón. <span class="">autor desconocido</span></a></h2>
+	
+		</div><!-- .entry-summary -->		
+	</div>
+	
+
+</article><!-- #post-1764 -->
+
+<article id="post-127" class="col-lg-3 mb-5 grid-item item-content entry-edificio fs-14 post-127 edificios type-edificios status-publish has-post-thumbnail hentry tag-line_map_placas2021 tag-line_map_valladolid categoria-nivel-a autoria-constantino-candeira-arquitecto uso_original-oficinas registro-la-arquitectura-de-la-industria">
+	
+	
+	<div class="entry-wrap">
+		<header class="entry-header">
+			
+			<img width="768" height="514" src="https://docomomoiberico.com/wp-content/uploads/1999/11/I_CASTLEON_02_19-768x514.jpg" class="attachment-medium_large size-medium_large wp-post-image" alt="Oficinas de la refinería de aceites Hipesa" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/1999/11/I_CASTLEON_02_19-768x514.jpg 768w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CASTLEON_02_19-300x201.jpg 300w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CASTLEON_02_19-1536x1029.jpg 1536w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CASTLEON_02_19.jpg 1920w" sizes="auto, (max-width: 768px) 100vw, 768px" /> 
+			
+			
+			<div class="entry-hover">
+
+								
+				<a href="https://docomomoiberico.com/edificios/oficinas-de-la-refineria-de-aceites-hipesa/" target="_blank" data-postid="127" class="img-edificio">
+					<p>1935 - 1936<br>
+					Valladolid, Valladolid, España											<br>Actual Sede de los Servicios Municipales de Medioambiente, Salud, Consumo y otros servicios del Ayuntamiento de Valladolid										</p>
+				</a>
+			</div>
+			
+		</header><!-- .entry-header -->
+
+		<div class="entry-summary">
+
+				<h2 class="entry-title h6"><a href="https://docomomoiberico.com/edificios/oficinas-de-la-refineria-de-aceites-hipesa/" target="_blank" data-postid="127">Oficinas de la refinería de aceites Hipesa. <span class="">Constantino Candeira</span></a></h2>
+	
+		</div><!-- .entry-summary -->		
+	</div>
+	
+
+</article><!-- #post-127 -->
+
+<article id="post-1498" class="col-lg-3 mb-5 grid-item item-content entry-edificio fs-14 post-1498 edificios type-edificios status-publish has-post-thumbnail hentry tag-expo_cines tag-pnpsxx categoria-nivel-a autoria-felipe-lopez-delgado uso_original-cine-teatro registro-los-equipamientos-modernos reportaje-luis-arguelles">
+	
+	
+	<div class="entry-wrap">
+		<header class="entry-header">
+			
+			<img width="768" height="1127" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="attachment-medium_large size-medium_large wp-post-image ewww_webp" alt="" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 768px) 100vw, 768px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-768x1127.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-768x1127.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-768x1127.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-204x300.jpg.webp 204w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-1046x1536.jpg.webp 1046w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14.jpg.webp 1308w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-768x1127.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-204x300.jpg 204w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-1046x1536.jpg 1046w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14.jpg 1308w" data-eio="j" /><noscript><img width="768" height="1127" src="https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-768x1127.jpg" class="attachment-medium_large size-medium_large wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-768x1127.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-204x300.jpg 204w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14-1046x1536.jpg 1046w, https://docomomoiberico.com/wp-content/uploads/2011/01/E_MA_A49_14.jpg 1308w" sizes="auto, (max-width: 768px) 100vw, 768px" /></noscript> 
+			
+			
+			<div class="entry-hover">
+
+								
+				<a href="https://docomomoiberico.com/edificios/teatro-figaro/" target="_blank" data-postid="1498" class="img-edificio">
+					<p>1930 - 1931<br>
+					Madrid, Madrid, España											<br>Actual Teatro Fígaro - Adolfo Marsillach										</p>
+				</a>
+			</div>
+			
+		</header><!-- .entry-header -->
+
+		<div class="entry-summary">
+
+				<h2 class="entry-title h6"><a href="https://docomomoiberico.com/edificios/teatro-figaro/" target="_blank" data-postid="1498">Teatro Fígaro. <span class="">Felipe López Delgado</span></a></h2>
+	
+		</div><!-- .entry-summary -->		
+	</div>
+	
+
+</article><!-- #post-1498 -->
+
+		</div>
+	</div>
+
+	<aside class="banner-area banner-1-area">
+<div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow">
+<div style="height:50px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<hr class="wp-block-separator has-css-opacity"/>
+
+
+
+<p class="has-text-align-center black no-linkshadow mb-4 h1 fw-regular has-black-color has-text-color" style="font-size:45px"><a href="https://docomomoiberico.com/hazte-amigo/" data-type="page" data-id="42559">Hazte amigo de Docomomo y descubre las ventajas</a></p>
+
+
+
+<hr class="wp-block-separator has-css-opacity"/>
+
+
+
+<div style="height:50px" aria-hidden="true" class="wp-block-spacer"></div>
+</div></div>
+</aside><aside class="banner-area banner-1-area"></aside><aside class="banner-area banner-1-area"></aside>
+    <div class="related-news">
+
+        <header>
+            <h2 class="page-title h5 mb-5">Más noticias</h2>
+        </header>
+        <div class="news-loop row">
+            
+<article id="post-153883" class="item-content entry-news mb-lg-5 col-lg-3 post-153883 post type-post status-publish format-standard has-post-thumbnail hentry category-exposicion tag-expo_cines tag-noticias_cines">
+
+	<div class="entry-wrap py-4 h-100 d-flex flex-column justify-content-between">
+		<header class="entry-header pr-5">
+
+			<h2 class="entry-title h4 black">
+				<a href="https://docomomoiberico.com/cines-modernos-aquellos-espacios-para-sonar/" rel="bookmark">
+					Cines modernos, aquellos espacios para soñar				</a>
+			</h2>
+					</header><!-- .entry-header -->
+
+		<div class="img-wrap animate-x mt-auto">
+			
+    <a class="post-thumbnail" href="https://docomomoiberico.com/cines-modernos-aquellos-espacios-para-sonar/">
+      <img width="300" height="300" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="wp-post-image ewww_webp" alt="" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 300px) 100vw, 300px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-300x300.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-300x300.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-300x300.jpg.webp 300w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-150x150.jpg.webp 150w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-768x769.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6.jpg.webp 1476w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-300x300.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-150x150.jpg 150w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-768x769.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6.jpg 1476w" data-eio="j" /><noscript><img width="300" height="300" src="https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-300x300.jpg" class=" wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-300x300.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-150x150.jpg 150w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6-768x769.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2023/10/cines6.jpg 1476w" sizes="auto, (max-width: 300px) 100vw, 300px" /></noscript> 
+    </a>
+
+  		</div>
+		<div class="thumb-time">	
+			<time class="updated" datetime="2023-11-02T10:54:33+00:00">
+				02/11/2023<br>Exposición			</time>
+		</div><!-- .thumb-time -->		
+	</div>
+
+
+</article><!-- #post-153883 -->
+
+<article id="post-151596" class="item-content entry-news mb-lg-5 col-lg-3 post-151596 post type-post status-publish format-standard has-post-thumbnail hentry category-reconocimiento tag-line_map_placas2023">
+
+	<div class="entry-wrap py-4 h-100 d-flex flex-column justify-content-between">
+		<header class="entry-header pr-5">
+
+			<h2 class="entry-title h4 black">
+				<a href="https://docomomoiberico.com/dia-mundial-de-la-arquitectura-2023-colocacion-de-placas-informativas-docomomo-iberico/" rel="bookmark">
+					Día Mundial de la Arquitectura 2023: colocación de placas informativas Docomomo Ibérico				</a>
+			</h2>
+					</header><!-- .entry-header -->
+
+		<div class="img-wrap animate-x mt-auto">
+			
+    <a class="post-thumbnail" href="https://docomomoiberico.com/dia-mundial-de-la-arquitectura-2023-colocacion-de-placas-informativas-docomomo-iberico/">
+      <img width="300" height="237" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="wp-post-image ewww_webp" alt="" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 300px) 100vw, 300px" data-src-img="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-300x237.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-300x237.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-300x237.jpg.webp 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-768x607.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1.jpg.webp 1474w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-300x237.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-768x607.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1.jpg 1474w" data-eio="j" /><noscript><img width="300" height="237" src="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-300x237.jpg" class=" wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-300x237.jpg 300w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1-768x607.jpg 768w, https://docomomoiberico.com/wp-content/uploads/2023/09/169_placas-1.jpg 1474w" sizes="auto, (max-width: 300px) 100vw, 300px" /></noscript> 
+    </a>
+
+  		</div>
+		<div class="thumb-time">	
+			<time class="updated" datetime="2023-09-21T15:39:32+00:00">
+				21/09/2023<br>Reconocimiento			</time>
+		</div><!-- .thumb-time -->		
+	</div>
+
+
+</article><!-- #post-151596 -->
+
+<article id="post-151015" class="item-content entry-news mb-lg-5 col-lg-3 post-151015 post type-post status-publish format-standard has-post-thumbnail hentry category-reportaje tag-line_map_valladolid">
+
+	<div class="entry-wrap py-4 h-100 d-flex flex-column justify-content-between">
+		<header class="entry-header pr-5">
+
+			<h2 class="entry-title h4 black">
+				<a href="https://docomomoiberico.com/reportaje-fotografico-de-la-fabrica-de-tableros-de-fibras-tafisa/" rel="bookmark">
+					Reportaje fotográfico de la fábrica de Tableros de Fibras (TAFISA)				</a>
+			</h2>
+					</header><!-- .entry-header -->
+
+		<div class="img-wrap animate-x mt-auto">
+			
+    <a class="post-thumbnail" href="https://docomomoiberico.com/reportaje-fotografico-de-la-fabrica-de-tableros-de-fibras-tafisa/">
+      <img width="300" height="203" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" class="wp-post-image ewww_webp" alt="" decoding="async" loading="lazy" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1w" sizes="auto, (max-width: 300px) 100vw, 300px" data-src-img="https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-300x203.jpg" data-src-webp="https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-300x203.jpg.webp" data-srcset-webp="https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-300x203.jpg.webp 300w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-768x520.jpg.webp 768w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-1536x1039.jpg.webp 1536w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18.jpg.webp 1920w" data-srcset-img="https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-300x203.jpg 300w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-768x520.jpg 768w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-1536x1039.jpg 1536w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18.jpg 1920w" data-eio="j" /><noscript><img width="300" height="203" src="https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-300x203.jpg" class=" wp-post-image" alt="" decoding="async" loading="lazy" srcset="https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-300x203.jpg 300w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-768x520.jpg 768w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18-1536x1039.jpg 1536w, https://docomomoiberico.com/wp-content/uploads/1999/11/I_CAST_LEON_5_1_18.jpg 1920w" sizes="auto, (max-width: 300px) 100vw, 300px" /></noscript> 
+    </a>
+
+  		</div>
+		<div class="thumb-time">	
+			<time class="updated" datetime="2023-07-25T09:49:14+00:00">
+				25/07/2023<br>Reportaje			</time>
+		</div><!-- .thumb-time -->		
+	</div>
+
+
+</article><!-- #post-151015 -->
+
+        </div>
+    </div>
+
+    
+                    
+            </main><!-- #main -->
+
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+
+							
+
+	</div><!-- end #content -->
+
+    
+	<footer id="colophon" class="site-footer pe-no-print text-center bg-primary fs-14">
+
+		<section class="footer-widgets text-left py-5">
+			<div class="container">
+				<div class="row">
+
+					<div class="col-lg-4">
+													<aside class="footer-contact-area mb-5 mb-lg-0 mr-0 mr-lg-5">
+								<section id="block-17" class="widget footer-contact footer-widget widget_block">
+<h3 class="wp-block-heading" id="contacto">Contacto</h3>
+</section><section id="block-43" class="widget footer-contact footer-widget widget_block"></section><section id="block-44" class="widget footer-contact footer-widget widget_block"></section><section id="block-62" class="widget footer-contact footer-widget widget_block">
+<div class="wp-block-contact-form-7-contact-form-selector">
+<div class="wpcf7 no-js" id="wpcf7-f42293-o1" lang="es-ES" dir="ltr" data-wpcf7-id="42293">
+<div class="screen-reader-response"><p role="status" aria-live="polite" aria-atomic="true"></p> <ul></ul></div>
+<form action="/edificios/casa-cuna/#wpcf7-f42293-o1" method="post" class="wpcf7-form init wpcf7-acceptance-as-validation" aria-label="Formulario de contacto" novalidate="novalidate" data-status="init">
+<fieldset class="hidden-fields-container"><input type="hidden" name="_wpcf7" value="42293" /><input type="hidden" name="_wpcf7_version" value="6.1.5" /><input type="hidden" name="_wpcf7_locale" value="es_ES" /><input type="hidden" name="_wpcf7_unit_tag" value="wpcf7-f42293-o1" /><input type="hidden" name="_wpcf7_container_post" value="0" /><input type="hidden" name="_wpcf7_posted_data_hash" value="" /><input type="hidden" name="_wpcf7_recaptcha_response" value="" />
+</fieldset>
+<p><span class="wpcf7-form-control-wrap" data-name="your-name"><input size="40" maxlength="400" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Nombre*" value="" type="text" name="your-name" /></span>
+</p>
+<p><span class="wpcf7-form-control-wrap" data-name="your-email"><input size="40" maxlength="400" class="wpcf7-form-control wpcf7-email wpcf7-validates-as-required wpcf7-text wpcf7-validates-as-email" aria-required="true" aria-invalid="false" placeholder="Correo electrónico*" value="" type="email" name="your-email" /></span>
+</p>
+<p><span class="wpcf7-form-control-wrap" data-name="your-message"><textarea cols="40" rows="3" maxlength="2000" class="wpcf7-form-control wpcf7-textarea wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Mensaje*" name="your-message"></textarea></span>
+</p>
+<p><span class="wpcf7-form-control-wrap" data-name="acceptance"><span class="wpcf7-form-control wpcf7-acceptance"><span class="wpcf7-list-item"><label><input type="checkbox" name="acceptance" value="1" aria-invalid="false" /><span class="wpcf7-list-item-label">He leído y acepto la <a href="https://docomomoiberico.com/politica-de-privacidad/" target="_blank">política de privacidad</a>.</span></label></span></span></span>
+</p>
+<p><label class="acymsub-checkbox"><link rel="stylesheet" href="https://docomomoiberico.com/wp-content/plugins/acymailing-integration-for-contact-form-7/css/acymcontactform.css" type="text/css"><span class="wpcf7-form-control-wrap acymsub-644">
+	<span class="wpcf7-form-control wpcf7-acymsub">
+		
+			<span class="onelist wpcf7-list-item">
+				<input type="checkbox"
+					   class="acym_checkbox"
+					   name="acymsub-644[]"
+					   id="acylist_6_field_acymsub-644"  value="6" />
+				<label for="acylist_6_field_acymsub-644">Docomomo</label>
+			</span>
+            
+		<input type="hidden"
+			   name="acymhiddenlists_acymsub-644"
+			   data-acymfield="acymsub-644"
+			   data-acymmail="your-email"
+			   data-acymname="your-name"
+			   value="" />
+		<input type="hidden" name="acymaction_acymsub-644" value="https://docomomoiberico.com/index.php?page=acymailing_front&#038;ctrl=frontusers&#038;task=subscribe&#038;noheader=1" />
+	</span>
+	</span>
+ Suscríbete a nuestra Newsletter</label>
+</p>
+<p><input class="wpcf7-form-control wpcf7-submit has-spinner btn btn-reverse mt-4" type="submit" value="Enviar" />
+</p><div class="wpcf7-response-output" aria-hidden="true"></div>
+</form>
+</div>
+</div>
+</section><section id="block-63" class="widget footer-contact footer-widget widget_block"></section>							</aside>
+											</div>
+
+					<div class="col-lg-8">
+						<div class="row h-100">
+															<div class="col-6 col-md-3">
+									<aside class="widget-area footer-1-area mb-4">
+										<section id="block-10" class="widget footer1 footer-widget widget_block">
+<h3 class="h6 wp-block-heading" id="arquitectura-moderna">Arquitectura moderna</h3>
+</section><section id="block-38" class="widget footer1 footer-widget widget_block"></section><section id="block-39" class="widget footer1 footer-widget widget_block"></section><section id="block-40" class="widget footer1 footer-widget widget_block">
+<ul class="nav navbar-nav wp-block-list">
+<li><a href="https://docomomoiberico.com/edificios/">Registros de edificios</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/exposiciones/">Exposiciones</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/mapas/">Mapas interactivos</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/linea-tiempo/">Líneas de tiempo</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/tesis/">Tesis</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/publicaciones/">Publicaciones</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/documentos-interes/">Documento de interés</a></li>
+</ul>
+</section><section id="block-41" class="widget footer1 footer-widget widget_block"></section><section id="block-42" class="widget footer1 footer-widget widget_block"></section>									</aside>
+								</div>
+							
+															<div class="col-6 col-md-3">
+									<aside class="widget-area footer-2-area mb-4">
+										<section id="block-12" class="widget footer2 footer-widget widget_block">
+<h3 class="h6 wp-block-heading" id="la-fundacion">La fundación</h3>
+</section><section id="block-45" class="widget footer2 footer-widget widget_block"></section><section id="block-46" class="widget footer2 footer-widget widget_block"></section><section id="block-11" class="widget footer2 footer-widget widget_block">
+<ul class="nav navbar-nav wp-block-list">
+<li><a href="https://docomomoiberico.com/quienes-somos/">Quienes somos</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/programas/">Programas y colaboraciones</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/contacta-con-nosotros/" data-type="page" data-id="42448">Contactar</a></li>
+</ul>
+</section><section id="block-47" class="widget footer2 footer-widget widget_block"></section><section id="block-48" class="widget footer2 footer-widget widget_block"></section>									</aside>
+								</div>
+							
+															<div class="col-6 col-md-3">
+									<aside class="widget-area footer-3-area mb-4">
+										<section id="block-14" class="widget footer3 footer-widget widget_block">
+<h3 class="h6 wp-block-heading" id="actualidad">Actualidad</h3>
+</section><section id="block-49" class="widget footer3 footer-widget widget_block"></section><section id="block-50" class="widget footer3 footer-widget widget_block"></section><section id="block-13" class="widget footer3 footer-widget widget_block">
+<ul class="nav navbar-nav wp-block-list">
+<li><a href="https://docomomoiberico.com/noticias/" data-type="page" data-id="42627">Noticias</a></li>
+</ul>
+</section><section id="block-51" class="widget footer3 footer-widget widget_block"></section><section id="block-52" class="widget footer3 footer-widget widget_block"></section>									</aside>
+								</div>
+							
+															<div class="col-6 col-md-3">
+									<aside class="widget-area footer-4-area mb-4">
+										<section id="block-16" class="widget footer4 footer-widget widget_block">
+<h3 class="h6 wp-block-heading" id="amigos">Amigos</h3>
+</section><section id="block-34" class="widget footer4 footer-widget widget_block"></section><section id="block-35" class="widget footer4 footer-widget widget_block"></section><section id="block-15" class="widget footer4 footer-widget widget_block">
+<ul class="nav navbar-nav wp-block-list">
+<li><a href="https://docomomoiberico.com/hazte-amigo/">Hazte amigo</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/comunidad-docomomo/" data-type="page" data-id="42501">Comunidad</a></li>
+</ul>
+</section><section id="block-36" class="widget footer4 footer-widget widget_block"></section><section id="block-37" class="widget footer4 footer-widget widget_block"></section>									</aside>
+								</div>
+							
+															<div class="col-6 mt-auto">
+									<aside class="widget-area footer-redes-area">
+										
+<p class="mb-0 fs-23"><a class="share-item facebook mx-1 mx-xl-2" title="S&#xED;guenos en Facebook" href="https://www.facebook.com/pages/DOCOMOMO-ib%C3%A9rico/114719302031025" target="_blank"><i class="fab fa-facebook-f"></i></a> <a class="share-item twitter mx-1 mx-xl-2" title="S&#xED;guenos en Twitter" href="https://twitter.com/DOCOMOMOIberico" target="_blank"><i class="fab fa-twitter"></i></a> <a class="share-item linkedin mx-1 mx-xl-2" title="S&#xED;guenos en Instagram" href="https://www.instagram.com/docomomoiberico/" target="_blank"><i class="fab fa-instagram"></i></a>  | <a href="https://docomomoiberico.com/contacta-con-nosotros/"><img loading="lazy" decoding="async" class="wp-image-42988 mx-1 mx-xl-2" style="width: 25px;" src="https://docomomoiberico.com/wp-content/uploads/2022/02/contacto.svg" alt="contacto" width="25" height="26"/></a></p>
+									</aside>
+								</div>
+							
+															<div class="col-6 mt-auto">
+									<aside class="widget-area footer-logo-area text-md-right text-left">
+										
+<figure class="wp-block-image size-large is-style-default"><img loading="lazy" decoding="async" width="258" height="60" src="https://docomomoiberico.com/wp-content/uploads/2022/03/Logo_MITMA_bn.svg" alt="" class="wp-image-66580"/></figure>
+									</aside>
+								</div>
+													</div>
+					</div>
+
+				</div>
+				<!-- /.row -->
+			</div>
+		</section>
+
+		<div class="container">
+			<div class="site-info text-center">
+				<div class="row">
+					<div class="col-lg-6 text-lg-left my-4">
+						2026 &copy; Fundación Docomomo Ibérico&reg;
+					</div>
+					<div class="col-lg-6 text-lg-right my-4">
+													
+<ul class="nav justify-content-center justify-content-lg-end wp-block-list">
+<li><a href="https://docomomoiberico.com/politica-de-privacidad/" data-type="page" data-id="5632">Política de privacidad</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/politica-de-cookies/" data-type="page" data-id="5633">Política de Cookies</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/condiciones-de-uso/" data-type="page" data-id="5631">Condiciones de uso</a></li>
+
+
+
+<li><a href="https://docomomoiberico.com/creditos/" data-type="page" data-id="141606">Créditos</a></li>
+</ul>
+											
+					</div>
+				</div>
+			</div><!-- /.site-info -->
+		</div><!-- /.container -->
+
+	</footer><!-- /#colophon -->
+    
+	<!-- Modal popupAmigo -->
+<div class="modal fade" id="popupAmigo" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="popupAmigoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h4>Para acceder a este contenido debes de ser amigo de Docomomo.</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        <p class="fs-20">Regístrate o inicia sesión si ya eres amigo.</p>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <a href="https://docomomoiberico.com/hazte-amigo/" class="btn btn-primary">Hacerme amigo</a>
+            <a href="#popupLogin" data-dismiss="modal" data-toggle="modal" class="btn btn-primary">Iniciar sesión</a>
+        </div>
+        </div>
+    </div>
+</div><!-- Modal popupLogin -->
+<div class="modal fade" id="popupLogin" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="popupLoginLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h4>Inicia sesión si ya eres Amigo.</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            
+<div class="mp_wrapper mp_login_form">
+                  <!-- mp-login-form-start -->     <form name="mepr_loginform" id="mepr_loginform" class="mepr-form" action="https://docomomoiberico.com/login/" method="post">
+            <div class="mp-form-row mepr_username">
+        <div class="mp-form-label">
+                              <label for="user_login">Nombre de usuario</label>
+        </div>
+        <input type="text" name="log" id="user_login" value="" />
+      </div>
+      <div class="mp-form-row mepr_password">
+        <div class="mp-form-label">
+          <label for="user_pass">Contraseña</label>
+          <div class="mp-hide-pw">
+            <input type="password" name="pwd" id="user_pass" value="" />
+            <button type="button" class="button mp-hide-pw hide-if-no-js" data-toggle="0" aria-label="Mostrar la contraseña">
+              <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+            <div>
+        <label><input name="rememberme" type="checkbox" id="rememberme" value="forever" /> Recuérdame</label>
+      </div>
+      <div class="mp-spacer">&nbsp;</div>
+      <div class="submit">
+        <input type="submit" name="wp-submit" id="wp-submit" class="button-primary mepr-share-button " value="Acceder" />
+        <input type="hidden" name="redirect_to" value="/edificios/casa-cuna/" />
+        <input type="hidden" name="mepr_process_login_form" value="true" />
+        <input type="hidden" name="mepr_is_login_page" value="false" />
+      </div>
+    </form>
+    <div class="mp-spacer">&nbsp;</div>
+    <div class="mepr-login-actions">
+        <a
+          href="https://docomomoiberico.com/login/?action=forgot_password"
+          title="Click here to reset your password"
+        >
+          Contraseña olvidada        </a>
+    </div>
+
+      
+    <!-- mp-login-form-end --> 
+  </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            ¿No eres Amigo de DOCOMOMO? <a href="https://docomomoiberico.com/hazte-amigo/" >Quiero hacerme amigo</a>
+        </div>
+        </div>
+    </div>
+</div>
+    <script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/docomomo/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<!--googleoff: all--><div id="cookie-law-info-bar" data-nosnippet="true"><span><div class="cli-bar-container cli-style-v2"><div class="cli-bar-message">Usamos cookies en nuestro sitio web para brindarle la experiencia más relevante recordando sus preferencias y visitas repetidas. Al hacer clic en "Aceptar todo", acepta el uso de TODAS las cookies. Sin embargo, puede visitar "Configuración de cookies" para proporcionar un consentimiento controlado. <a href="https://docomomoiberico.com/politica-de-cookies/" id="CONSTANT_OPEN_URL" target="_blank" class="cli-plugin-main-link">Política de Cookies</a></div><div class="cli-bar-btn_container"><a id="wt-cli-accept-all-btn" role='button' data-cli_action="accept_all" class="wt-cli-element medium cli-plugin-button wt-cli-accept-all-btn cookie_action_close_header cli_action_button">Aceptar todas</a> <a role='button' id="cookie_action_close_header_reject" class="medium cli-plugin-button cli-plugin-main-button cookie_action_close_header_reject cli_action_button wt-cli-reject-btn" data-cli_action="reject">Rechazar</a> <a role='button' class="medium cli-plugin-button cli-plugin-main-button cli_settings_button" style="margin:0px 0px 0px 5px">Configurar</a></div></div></span></div><div id="cookie-law-info-again" data-nosnippet="true"><span id="cookie_hdr_showagain">Manage consent</span></div><div class="cli-modal" data-nosnippet="true" id="cliSettingsPopup" tabindex="-1" role="dialog" aria-labelledby="cliSettingsPopup" aria-hidden="true">
+  <div class="cli-modal-dialog" role="document">
+	<div class="cli-modal-content cli-bar-popup">
+		  <button type="button" class="cli-modal-close" id="cliModalClose">
+			<svg class="" viewBox="0 0 24 24"><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"></path><path d="M0 0h24v24h-24z" fill="none"></path></svg>
+			<span class="wt-cli-sr-only">Cerrar</span>
+		  </button>
+		  <div class="cli-modal-body">
+			<div class="cli-container-fluid cli-tab-container">
+	<div class="cli-row">
+		<div class="cli-col-12 cli-align-items-stretch cli-px-0">
+			<div class="cli-privacy-overview">
+				<h4>Resumen de privacidad</h4>				<div class="cli-privacy-content">
+					<div class="cli-privacy-content-text">Este sitio web utiliza cookies para mejorar su experiencia mientras navega por el sitio web. De estas, las cookies que se clasifican como necesarias se almacenan en su navegador, ya que son esenciales para el funcionamiento de las funcionalidades básicas del sitio web. También utilizamos cookies de terceros que nos ayudan a analizar y comprender cómo utiliza este sitio web. Estas cookies se almacenarán en su navegador solo con su consentimiento. También tiene la opción de optar por no recibir estas cookies. Pero la exclusión voluntaria de algunas de estas cookies puede afectar su experiencia de navegación.</div>
+				</div>
+				<a class="cli-privacy-readmore" aria-label="Mostrar más" role="button" data-readmore-text="Mostrar más" data-readless-text="Mostrar menos"></a>			</div>
+		</div>
+		<div class="cli-col-12 cli-align-items-stretch cli-px-0 cli-tab-section-container">
+												<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="necessary" data-toggle="cli-toggle-tab">
+								Necesarias							</a>
+															<div class="wt-cli-necessary-checkbox">
+									<input type="checkbox" class="cli-user-preference-checkbox"  id="wt-cli-checkbox-necessary" data-id="checkbox-necessary" checked="checked"  />
+									<label class="form-check-label" for="wt-cli-checkbox-necessary">Necesarias</label>
+								</div>
+								<span class="cli-necessary-caption">Siempre activado</span>
+													</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="necessary">
+								<div class="wt-cli-cookie-description">
+									Las cookies necesarias son absolutamente esenciales para que el sitio web funcione correctamente. Estas cookies garantizan funcionalidades básicas y características de seguridad del sitio web, de forma anónima.
+<table class="cookielawinfo-row-cat-table cookielawinfo-winter"><thead><tr><th class="cookielawinfo-column-1">Cookie</th><th class="cookielawinfo-column-3">Duración</th><th class="cookielawinfo-column-4">Descripción</th></tr></thead><tbody><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checkbox-advertisement</td><td class="cookielawinfo-column-3">1 year</td><td class="cookielawinfo-column-4">Set by the GDPR Cookie Consent plugin, this cookie is used to record the user consent for the cookies in the "Advertisement" category .</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checkbox-analytics</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">This cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category "Analytics".</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checkbox-functional</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">The cookie is set by GDPR cookie consent to record the user consent for the cookies in the category "Functional".</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checkbox-necessary</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">This cookie is set by GDPR Cookie Consent plugin. The cookies is used to store the user consent for the cookies in the category "Necessary".</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checkbox-others</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">This cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category "Other.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">cookielawinfo-checkbox-performance</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">This cookie is set by GDPR Cookie Consent plugin. The cookie is used to store the user consent for the cookies in the category "Performance".</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">CookieLawInfoConsent</td><td class="cookielawinfo-column-3">1 year</td><td class="cookielawinfo-column-4">Records the default button state of the corresponding category &amp; the status of CCPA. It works only in coordination with the primary cookie.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">PHPSESSID</td><td class="cookielawinfo-column-3">session</td><td class="cookielawinfo-column-4">This cookie is native to PHP applications. The cookie is used to store and identify a users' unique session ID for the purpose of managing user session on the website. The cookie is a session cookies and is deleted when all the browser windows are closed.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">viewed_cookie_policy</td><td class="cookielawinfo-column-3">11 months</td><td class="cookielawinfo-column-4">The cookie is set by the GDPR Cookie Consent plugin and is used to store whether or not user has consented to the use of cookies. It does not store any personal data.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">wp-wpml_current_language</td><td class="cookielawinfo-column-3">session</td><td class="cookielawinfo-column-4">No description available.</td></tr></tbody></table>								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="analytics" data-toggle="cli-toggle-tab">
+								Analíticas							</a>
+															<div class="cli-switch">
+									<input type="checkbox" id="wt-cli-checkbox-analytics" class="cli-user-preference-checkbox"  data-id="checkbox-analytics" />
+									<label for="wt-cli-checkbox-analytics" class="cli-slider" data-cli-enable="Activado" data-cli-disable="Desactivado"><span class="wt-cli-sr-only">Analíticas</span></label>
+								</div>
+													</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="analytics">
+								<div class="wt-cli-cookie-description">
+									Las cookies analíticas se utilizan para comprender cómo interactúan los visitantes con el sitio web. Estas cookies ayudan a proporcionar información sobre métricas, el número de visitantes, la tasa de rebote, la fuente de tráfico, etc.
+<table class="cookielawinfo-row-cat-table cookielawinfo-winter"><thead><tr><th class="cookielawinfo-column-1">Cookie</th><th class="cookielawinfo-column-3">Duración</th><th class="cookielawinfo-column-4">Descripción</th></tr></thead><tbody><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">_ga</td><td class="cookielawinfo-column-3">2 years</td><td class="cookielawinfo-column-4">The _ga cookie, installed by Google Analytics, calculates visitor, session and campaign data and also keeps track of site usage for the site's analytics report. The cookie stores information anonymously and assigns a randomly generated number to recognize unique visitors.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">_gat_gtag_UA_2590112_18</td><td class="cookielawinfo-column-3">1 minute</td><td class="cookielawinfo-column-4">Set by Google to distinguish users.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">_gid</td><td class="cookielawinfo-column-3">1 day</td><td class="cookielawinfo-column-4">Installed by Google Analytics, _gid cookie stores information on how visitors use a website, while also creating an analytics report of the website's performance. Some of the data that are collected include the number of visitors, their source, and the pages they visit anonymously.</td></tr></tbody></table>								</div>
+							</div>
+						</div>
+					</div>
+										</div>
+	</div>
+</div>
+		  </div>
+		  <div class="cli-modal-footer">
+			<div class="wt-cli-element cli-container-fluid cli-tab-container">
+				<div class="cli-row">
+					<div class="cli-col-12 cli-align-items-stretch cli-px-0">
+						<div class="cli-tab-footer wt-cli-privacy-overview-actions">
+						
+															<a id="wt-cli-privacy-save-btn" role="button" tabindex="0" data-cli-action="accept" class="wt-cli-privacy-btn cli_setting_save_button wt-cli-privacy-accept-btn cli-btn">GUARDAR Y ACEPTAR</a>
+													</div>
+												<div class="wt-cli-ckyes-footer-section">
+							<div class="wt-cli-ckyes-brand-logo">Funciona con <a href="https://www.cookieyes.com/"><img src="https://docomomoiberico.com/wp-content/plugins/cookie-law-info/legacy/public/images/logo-cookieyes.svg" alt="CookieYes Logo"></a></div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </div>
+</div>
+<div class="cli-modal-backdrop cli-fade cli-settings-overlay"></div>
+<div class="cli-modal-backdrop cli-fade cli-popupbar-overlay"></div>
+<!--googleon: all--><script type="text/javascript" src="https://docomomoiberico.com/wp-includes/js/dist/hooks.min.js?ver=dd5603f07f9220ed27f1" id="wp-hooks-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-includes/js/dist/i18n.min.js?ver=c26c3dc7bed366793375" id="wp-i18n-js"></script>
+<script type="text/javascript" id="wp-i18n-js-after">
+/* <![CDATA[ */
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+//# sourceURL=wp-i18n-js-after
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/contact-form-7/includes/swv/js/index.js?ver=6.1.5" id="swv-js"></script>
+<script type="text/javascript" id="contact-form-7-js-translations">
+/* <![CDATA[ */
+( function( domain, translations ) {
+	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
+	localeData[""].domain = domain;
+	wp.i18n.setLocaleData( localeData, domain );
+} )( "contact-form-7", {"translation-revision-date":"2025-07-17 18:04:27+0000","generator":"WPML String Translation 3.3.3","domain":"messages","locale_data":{"messages":{"":{"domain":"messages","plural-forms":"nplurals=2; plural=n != 1;","lang":"es_ES"},"This contact form is placed in the wrong place.":["Este formulario de contacto est\u00e1 situado en el lugar incorrecto."],"Error:":["Error:"]}}} );
+//# sourceURL=contact-form-7-js-translations
+/* ]]> */
+</script>
+<script type="text/javascript" id="contact-form-7-js-before">
+/* <![CDATA[ */
+var wpcf7 = {
+    "api": {
+        "root": "https:\/\/docomomoiberico.com\/wp-json\/",
+        "namespace": "contact-form-7\/v1"
+    },
+    "cached": 1
+};
+//# sourceURL=contact-form-7-js-before
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/contact-form-7/includes/js/index.js?ver=6.1.5" id="contact-form-7-js"></script>
+<script type="text/javascript" id="wp_wishlist_frontend_script-js-extra">
+/* <![CDATA[ */
+var rox_wpwl_configs = {"rox_ajax":"https://docomomoiberico.com/wp-admin/admin-ajax.php","rox_csrf":"3f7fd6ba28","rox_action":"__rox_wpwl","rox_error":"We encountered an error while processing your request. Please try again after sometime.","list_name_max_len":"150","list_desc_max_len":"","errors":{"invalid_or_empty":"Valor no v\u00e1lido o vac\u00edo","list_name_max_len":"El nombre del mapa supera el l\u00edmite m\u00e1ximo de caracteres."},"confirm_delete_list":"\u00bfRealmente desea eliminar este mapa?","confirm_delete_item":"\u00bfRealmente desea eliminar este edificio de este mapa?","is_user_logged_in":"0","is_wishlist":"0","is_wishlist_tag":"0","is_wishlist_category":"0","is_wishlist_taxonomy":"0","is_wishlist_archive":"0","is_wp_wishlist":"0","post_id":"4047"};
+var rox_wpwl_configs = {"rox_ajax":"https://docomomoiberico.com/wp-admin/admin-ajax.php","rox_csrf":"3f7fd6ba28","rox_action":"__rox_wpwl","rox_error":"We encountered an error while processing your request. Please try again after sometime.","list_name_max_len":"150","list_desc_max_len":"","errors":{"invalid_or_empty":"Valor no v\u00e1lido o vac\u00edo","list_name_max_len":"El nombre del mapa supera el l\u00edmite m\u00e1ximo de caracteres."},"confirm_delete_list":"\u00bfRealmente desea eliminar este mapa?","confirm_delete_item":"\u00bfRealmente desea eliminar este edificio de este mapa?","is_user_logged_in":"0","is_wishlist":"0","is_wishlist_tag":"0","is_wishlist_category":"0","is_wishlist_taxonomy":"0","is_wishlist_archive":"0","is_wp_wishlist":"0","post_id":"4047"};
+//# sourceURL=wp_wishlist_frontend_script-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/wp-wishlist/assets/js/scripts.min.js?ver=1.0.0" id="wp_wishlist_frontend_script-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/js/vendor/popper.min.js?ver=6.9.4" id="popper/js-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/js/vendor/bootstrap.min.js?ver=6.9.4" id="bootstrap/js-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/js/vendor/slick.min.js?ver=6.9.4" id="slick/js-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/js/vendor/slick-lightbox.min.js?ver=6.9.4" id="slick-lightbox-js"></script>
+<script type="text/javascript" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js?ver=6.9.4" id="leaflet-js"></script>
+<script type="text/javascript" src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js?ver=6.9.4" id="markercluster-js"></script>
+<script type="text/javascript" src="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.js?ver=6.9.4" id="leaflet/fullscreen-js"></script>
+<script type="text/javascript" id="custom-map-js-extra">
+/* <![CDATA[ */
+var myMap = {"themeurl":"https://docomomoiberico.com/wp-content/themes/docomomo"};
+//# sourceURL=custom-map-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/js/maps-leaflet.js?ver=6.9.4" id="custom-map-js"></script>
+<script type="text/javascript" id="custom-js-extra">
+/* <![CDATA[ */
+var myString = {"string_datos":"Datos personales","string_user":"Usuario","string_subscribe":"Tu suscripci\u00f3n","ajaxurl":"https://docomomoiberico.com/wp-admin/admin-ajax.php","posts":"{\"page\":0,\"post_type\":\"edificios\",\"error\":\"\",\"m\":\"\",\"p\":4047,\"post_parent\":\"\",\"subpost\":\"\",\"subpost_id\":\"\",\"attachment\":\"\",\"attachment_id\":0,\"pagename\":\"\",\"page_id\":\"\",\"second\":\"\",\"minute\":\"\",\"hour\":\"\",\"day\":0,\"monthnum\":0,\"year\":0,\"w\":0,\"category_name\":\"\",\"tag\":\"\",\"cat\":\"\",\"tag_id\":\"\",\"author\":\"\",\"author_name\":\"\",\"feed\":\"\",\"tb\":\"\",\"paged\":0,\"meta_key\":\"\",\"meta_value\":\"\",\"preview\":\"\",\"s\":\"\",\"sentence\":\"\",\"title\":\"\",\"fields\":\"all\",\"menu_order\":\"\",\"embed\":\"\",\"category__in\":[],\"category__not_in\":[],\"category__and\":[],\"post__in\":[],\"post__not_in\":[],\"post_name__in\":[],\"tag__in\":[],\"tag__not_in\":[],\"tag__and\":[],\"tag_slug__in\":[],\"tag_slug__and\":[],\"post_parent__in\":[],\"post_parent__not_in\":[],\"author__in\":[],\"author__not_in\":[],\"search_columns\":[],\"name\":\"casa-cuna\",\"ignore_sticky_posts\":false,\"suppress_filters\":false,\"cache_results\":true,\"update_post_term_cache\":true,\"update_menu_item_cache\":false,\"lazy_load_term_meta\":true,\"update_post_meta_cache\":true,\"posts_per_page\":12,\"nopaging\":false,\"comments_per_page\":\"50\",\"no_found_rows\":false,\"order\":\"DESC\",\"edificios\":\"casa-cuna\"}","current_page":"1","max_page":"0"};
+//# sourceURL=custom-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/themes/docomomo/assets/js/custom.js?ver=6.9.4" id="custom-js"></script>
+<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?render=6LcxBygrAAAAAOJjGk081y1PmClSM9YaTavi4weU&amp;ver=3.0" id="google-recaptcha-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-includes/js/dist/vendor/wp-polyfill.min.js?ver=3.15.0" id="wp-polyfill-js"></script>
+<script type="text/javascript" id="wpcf7-recaptcha-js-before">
+/* <![CDATA[ */
+var wpcf7_recaptcha = {
+    "sitekey": "6LcxBygrAAAAAOJjGk081y1PmClSM9YaTavi4weU",
+    "actions": {
+        "homepage": "homepage",
+        "contactform": "contactform"
+    }
+};
+//# sourceURL=wpcf7-recaptcha-js-before
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/contact-form-7/modules/recaptcha/index.js?ver=6.1.5" id="wpcf7-recaptcha-js"></script>
+<script type="text/javascript" id="printomatic-js-js-before">
+/* <![CDATA[ */
+var print_data = {"pom_html_top":"<a href=\"https:\/\/docomomoiberico.com\/\"><img src=\"https:\/\/docomomoiberico.com\/wp-content\/themes\/docomomo\/assets\/img\/logo-docomomo-iberico.svg\" alt=\"Fundaci\u00f3n Docomomo Ib\u00e9rico\" width=\"229\" height=\"30\"><\/a>","pom_html_bottom":"<p style=\"text-align: center\">\r\n\t2026 \u00a9 Fundaci\u00f3n Docomomo Ib\u00e9rico\r\n<\/p>","pom_do_not_print":".close, .share-menu, .related-news, .related-mapas, .banner-area, .expo-content, .related-timeline","pom_pause_time":10000}
+//# sourceURL=printomatic-js-js-before
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/print-o-matic/js/printomat.js?ver=2.0.11" id="printomatic-js-js"></script>
+<script type="text/javascript" id="printomatic-js-js-after">
+/* <![CDATA[ */
+var print_data_id5837 = []
+//# sourceURL=printomatic-js-js-after
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/print-o-matic/js/print_elements.js?ver=1.1" id="pe-js-js"></script>
+<script type="text/javascript" src="https://docomomoiberico.com/wp-content/plugins/acymailing-integration-for-contact-form-7/js/acymcontactform.js?ver=6.9.4" id="acym_script1-js"></script>
+		<script>
+		(function() {
+			'use strict';
+			var parentSelector = '.menu-item.wpml-ls-current-language.menu-item-has-children';
+			
+			function toggleSubmenu(link, forceClose) {
+				var isExpanded = link.getAttribute('aria-expanded') === 'true';
+				if (forceClose || isExpanded) {
+					link.setAttribute('aria-expanded', 'false');
+				} else {
+					link.setAttribute('aria-expanded', 'true');
+				}
+			}
+			
+			function handleKeydown(e) {
+				var key = e.key || e.keyCode;
+				if (key === 'Enter' || key === ' ' || key === 13 || key === 32) {
+					e.preventDefault();
+					toggleSubmenu(this);
+				} else if (key === 'Escape' || key === 'Esc' || key === 27) {
+					if (this.getAttribute('aria-expanded') === 'true') {
+						e.preventDefault();
+						toggleSubmenu(this, true);
+					}
+				}
+			}
+			
+			function handleBlur(e) {
+				var link = this;
+				var parent = link.closest(parentSelector);
+				if (!parent) return;
+				
+				setTimeout(function() {
+					if (!parent.contains(document.activeElement)) {
+						toggleSubmenu(link, true);
+					}
+				}, 100);
+			}
+			
+			function init() {
+				var parents = document.querySelectorAll(parentSelector);
+				for (var i = 0; i < parents.length; i++) {
+					var link = parents[i].querySelector('a[aria-expanded]');
+					if (link) {
+						link.addEventListener('keydown', handleKeydown);
+						link.addEventListener('blur', handleBlur);
+					}
+				}
+			}
+			
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', init);
+			} else {
+				init();
+			}
+		})();
+		</script>
+		<div class="rox_wishlist_pop">
+	<div class="back_drop"></div>
+	<div class="rox_pop_container">
+        <div class="pop-header">
+			<div class="pop-title"><div class="pop-title"><h3>Guardar en...</h3></div></div>
+        </div>
+		<div class="pop_contents"></div>
+		<div class="pop-footer"><div class="pop-new-list"><a href="#"><span class="rox-wpwl-icon icon-add-new-list"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path id="add-icon" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path> </svg></span>Crear nuevo mapa</a></div>	<div class="rox-pop-form add-new-list" style="display: none;">
+		<div class="list-name">
+			<label for="list-name">Nombre</label>
+			<input type="text" id="list-name" name="list-name" required placeholder="Introduce un nombre del mapa...">
+			<span class="character-counter"><span class="counter-now">0</span>/<span class="counter-max">150</span></span>
+		</div>
+		<div class="list-privacy">
+			<label for="list-privacy">Privacidad</label>
+			<select id="list-privacy" name="list-privacy" required>
+				<option value="private">Privado</option><option value="public">Público</option>			</select>
+		</div>
+		<div class="rox-pop-actions">
+			<a href="#" class="button rox_cancle">Cancelar</a>
+			<a href="#" class="button rox_save">Crear</a>
+		</div>
+	</div>
+	</div>
+	</div>
+</div>    
+  </body>
+</html>

@@ -59,7 +59,8 @@ class _MyMap extends State<MyMap> {
   bool _userIded = false,
       _mapCenterInUser = false,
       _cargaInicial = true,
-      _tryingSignIn = false;
+      _tryingSignIn = false,
+      _lstItsVacia = false;
   late bool _extendedBar,
       _filterOpen,
       _visibleLabel,
@@ -317,7 +318,7 @@ class _MyMap extends State<MyMap> {
                                         ? "images/logoName_light.svg"
                                         : "images/logoName_dark.svg",
                                     height: 42,
-                                    semanticsLabel: appLoca.chest,
+                                    semanticsLabel: appLoca.xest,
                                   )
                                 ],
                               )
@@ -331,9 +332,9 @@ class _MyMap extends State<MyMap> {
                                 }),
                               )
                         : Text(
-                            appLoca.chest,
+                            appLoca.xest,
                             style: textTheme.titleLarge,
-                            semanticsLabel: appLoca.chest,
+                            semanticsLabel: appLoca.xest,
                           ),
                     groupAlignment: -1,
                     onDestinationSelected: (int index) => changePage(index),
@@ -418,26 +419,24 @@ class _MyMap extends State<MyMap> {
               : Icons.filter_alt),
     ));
     Set<SpatialThingType> sFilters = {
-      SpatialThingType.artwork,
-      SpatialThingType.attraction,
-      SpatialThingType.castle,
-      SpatialThingType.fountain,
-      SpatialThingType.museum,
-      SpatialThingType.palace,
+      SpatialThingType.cinema,
+      SpatialThingType.education,
+      SpatialThingType.factory,
+      SpatialThingType.goverment,
+      SpatialThingType.hotel,
       SpatialThingType.placeOfWorship,
+      SpatialThingType.residential,
       SpatialThingType.square,
-      SpatialThingType.tower,
     };
     Map<SpatialThingType, String> sFilterLabel = {
-      SpatialThingType.artwork: appLoca.artwork,
-      SpatialThingType.attraction: appLoca.attraction,
-      SpatialThingType.castle: appLoca.castle,
-      SpatialThingType.fountain: appLoca.fountain,
-      SpatialThingType.museum: appLoca.museum,
-      SpatialThingType.palace: appLoca.palace,
+      SpatialThingType.cinema: appLoca.cinema,
+      SpatialThingType.education: appLoca.education,
+      SpatialThingType.factory: appLoca.factory,
+      SpatialThingType.goverment: appLoca.goverment,
+      SpatialThingType.hotel: appLoca.hotel,
       SpatialThingType.placeOfWorship: appLoca.placeOfWorship,
+      SpatialThingType.residential: appLoca.residential,
       SpatialThingType.square: appLoca.square,
-      SpatialThingType.tower: appLoca.tower,
     };
 
     filterbar.addAll(
@@ -448,26 +447,14 @@ class _MyMap extends State<MyMap> {
           child: Padding(
             padding: const EdgeInsets.only(left: 4),
             child: FilterChip(
+              avatar: _filtrosActivos.contains(sf)
+                  ? Icon(Icons.check)
+                  : Icon(Auxiliar.sttIconData[sf]),
               label: Text(sFilterLabel[sf]!),
-              showCheckmark: false,
-              selectedColor: colorScheme.primaryContainer,
               selected: _filtrosActivos.contains(sf),
+              showCheckmark: false,
               onSelected: (bool v) {
                 setState(() {
-                  switch (sf) {
-                    case SpatialThingType.placeOfWorship:
-                      Set<SpatialThingType> lugarCulto = {
-                        SpatialThingType.cathedral,
-                        SpatialThingType.church,
-                        SpatialThingType.placeOfWorship
-                      };
-                      v
-                          ? _filtrosActivos.addAll(lugarCulto)
-                          : _filtrosActivos.removeAll(lugarCulto);
-                      break;
-                    default:
-                      v ? _filtrosActivos.add(sf) : _filtrosActivos.remove(sf);
-                  }
                   v ? _filtrosActivos.add(sf) : _filtrosActivos.remove(sf);
                 });
                 checkMarkerType();
@@ -837,38 +824,44 @@ class _MyMap extends State<MyMap> {
           centerTitle: true,
           title: Text(appLoca.itinerarios),
         ),
-        SliverAppBar(
-          floating: false,
-          pinned: true,
-          centerTitle: false,
-          toolbarHeight: 48,
-          title: TextField(
-            controller: _controllerFilterIt,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              icon: Icon(Icons.search),
-              hintText: appLoca.busquedaIt,
-              hintMaxLines: 1,
+        SliverVisibility(
+          visible: _itineraries.isNotEmpty,
+          sliver: SliverAppBar(
+            floating: false,
+            pinned: true,
+            centerTitle: false,
+            toolbarHeight: 48,
+            title: TextField(
+              controller: _controllerFilterIt,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                icon: Icon(Icons.search),
+                hintText: appLoca.busquedaIt,
+                hintMaxLines: 1,
+              ),
+              onChanged: (value) => setState(() => _filtroIt = value.trim()),
             ),
-            onChanged: (value) => setState(() => _filtroIt = value.trim()),
+            actions: _filtroIt.isNotEmpty
+                ? [
+                    IconButton(
+                        onPressed: () {
+                          _controllerFilterIt.clear();
+                          setState(() => _filtroIt = '');
+                        },
+                        icon: Icon(Icons.close))
+                  ]
+                : null,
           ),
-          actions: _filtroIt.isNotEmpty
-              ? [
-                  IconButton(
-                      onPressed: () {
-                        _controllerFilterIt.clear();
-                        setState(() => _filtroIt = '');
-                      },
-                      icon: Icon(Icons.close))
-                ]
-              : null,
         ),
         SliverPadding(
           padding: EdgeInsets.only(
               left: margenLateral, right: margenLateral, top: 10, bottom: 80),
           sliver: _itineraries.isEmpty
-              ? const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator.adaptive()))
+              ? SliverToBoxAdapter(
+                  child: Center(
+                      child: _lstItsVacia
+                          ? Text(appLoca.sinItinerarios)
+                          : const CircularProgressIndicator.adaptive()))
               : SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     Itinerary it = _itineraries[index];
@@ -1067,8 +1060,9 @@ class _MyMap extends State<MyMap> {
   }
 
   Future<List> _getItineraries() {
-    return http.get(Queries.getItineraries()).then((response) =>
-        response.statusCode == 200 ? json.decode(response.body) : []);
+    return http.get(Queries.getItineraries()).then((response) {
+      return response.statusCode == 200 ? json.decode(response.body) : [];
+    });
   }
 
   Future<Map> _getFeedsUser() async {
@@ -1584,7 +1578,7 @@ class _MyMap extends State<MyMap> {
                   '/users/${UserXEST.userXEST.id.split('/').last}/settings');
             }
           : null,
-      label: Text(appLoca.ajustesCHEST, semanticsLabel: appLoca.ajustesCHEST),
+      label: Text(appLoca.ajustesxest, semanticsLabel: appLoca.ajustesxest),
       icon: const Icon(Icons.settings),
     ));
 
@@ -1680,7 +1674,8 @@ class _MyMap extends State<MyMap> {
         child: TextButton.icon(
           key: shareKey,
           onPressed: () async => Auxiliar.share(shareKey, ConfigXest.addClient),
-          label: Text(appLoca.comparteApp, semanticsLabel: appLoca.comparteApp),
+          label:
+              Text(appLoca.compartexest, semanticsLabel: appLoca.compartexest),
           icon: const Icon(Icons.share),
         ),
       ),
@@ -1960,11 +1955,7 @@ class _MyMap extends State<MyMap> {
         Widget icono;
         icono = Center(
           child: Icon(
-            Queries.layerType == LayerType.ch
-                ? Icons.castle_outlined
-                : Queries.layerType == LayerType.schools
-                    ? Icons.school_outlined
-                    : Icons.forest_outlined,
+            Auxiliar.getIcon(feature.spatialThingTypes),
             color: colorScheme.onPrimaryContainer,
           ),
         );
@@ -2106,7 +2097,10 @@ class _MyMap extends State<MyMap> {
               }
             }
           }
-          setState(() => _itineraries.addAll(itL));
+          setState(() {
+            _itineraries.addAll(itL);
+            _lstItsVacia = _itineraries.isEmpty;
+          });
         }).onError((error, stackTrace) {
           setState(() => _itineraries = []);
           //print(error.toString());
