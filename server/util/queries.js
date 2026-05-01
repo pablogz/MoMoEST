@@ -2,9 +2,8 @@ const Mustache = require('mustache');
 const short = require('short-uuid');
 
 const winston = require('./winston');
-const { primaryGraph } = require('./config');
+const { primaryGraph, docomomoGraph } = require('./config');
 const { Task } = require('./pojos/tasks');
-const { forEach } = require('ssl-root-cas');
 
 function getLocationFeatures(bounds) {
     return Mustache.render(
@@ -71,6 +70,107 @@ xsd:decimal(?lng) < {{{east}}}) .
         }).replace(/\s+/g, ' ');
 }
 
+function getInfoFeaturesDocomomo(bounds) {
+    return Mustache.render(`
+PREFIX mo: <http://moult.gsic.uva.es/ontology/>
+PREFIX momo: <http://momoest.gsic.uva.es/ontology/>
+PREFIX dc: <http://purl.org/dc/terms/>
+WITH {{{grafoDocomomo}}}
+SELECT DISTINCT ?feature ?type ?lat ?lng ?label ?links WHERE {
+?feature
+a momo:Feature, ?type ;
+rdfs:label ?label ;
+rdfs:seeAlso ?links ;
+mo:hasGeometry ?point .
+?point
+a mo:Point ;
+geo:lat ?lat ;
+geo:long ?lng .
+FILTER(
+xsd:decimal(?lat) >= {{{south}}} && 
+xsd:decimal(?lat) < {{{north}}} && 
+xsd:decimal(?lng) >= {{{west}}} && 
+xsd:decimal(?lng) < {{{east}}}) .
+}`, {
+        grafoDocomomo: docomomoGraph,
+        north: bounds.north,
+        east: bounds.east,
+        south: bounds.south,
+        west: bounds.west
+    }).replace(/\s+/g, ' ');
+}
+
+function getInfoFeatureDocomomo(idDocomomo) {
+const query = Mustache.render(`
+PREFIX momo: <http://momoest.gsic.uva.es/ontology/>
+PREFIX mo:   <http://moult.gsic.uva.es/ontology/>
+PREFIX md:   <http://moult.gsic.uva.es/data/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc:   <http://purl.org/dc/terms/>
+PREFIX geo:  <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+WITH {{{grafoDocomomo}}}
+SELECT DISTINCT ?type ?label ?comment ?startDate ?endDate ?seeAlso ?architect ?thumb ?media ?lat ?lng
+WHERE {
+BIND(${idDocomomo} AS ?feature)
+?feature a ?type ;
+rdfs:label ?label ;
+momo:startDate ?startDate ;
+momo:endDate ?endDate ;
+rdfs:seeAlso ?seeAlso ;
+momo:architect ?architect ;
+momo:thumbnail ?thumb ;
+mo:media ?media ;
+mo:hasGeometry ?point .
+OPTIONAL { ?feature rdfs:comment ?comment }
+?point a mo:Point ;
+geo:lat ?lat  ;
+geo:long ?lng .
+}`, {
+grafoDocomomo: docomomoGraph,}).replace(/\s+/g, ' ');
+winston.info(query);
+return query;
+}
+
+function getInfoFeatureDocomomoArq(idArqs){
+const query = Mustache.render(`
+PREFIX momo: <http://momoest.gsic.uva.es/ontology/>
+PREFIX mo:   <http://moult.gsic.uva.es/ontology/>
+PREFIX md:   <http://moult.gsic.uva.es/data/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+WITH {{{grafoDocomomo}}}
+SELECT DISTINCT ?arq ?label ?arqLink WHERE {
+VALUES ?arq { ${idArqs} }
+?arq foaf:name ?label ;
+rdfs:seeAlso ?arqLink .
+} 
+`, {
+grafoDocomomo: docomomoGraph,}).replace(/\s+/g, ' ');
+winston.info(query);
+return query;
+}
+
+function getInfoFeatureDocomomoMedia(idMedia){
+const query = Mustache.render(`
+PREFIX momo: <http://momoest.gsic.uva.es/ontology/>
+PREFIX mo:   <http://moult.gsic.uva.es/ontology/>
+PREFIX md:   <http://moult.gsic.uva.es/data/>
+PREFIX schema: <http://schema.org/>
+
+WITH {{{grafoDocomomo}}}
+SELECT DISTINCT ?media ?link ?urlDocomomo ?label WHERE {
+VALUES ?media { ${idMedia} }
+?media schema:urlContent ?link ;
+rdfs:sameAs ?urlDocomomo .
+OPTIONAL {?media rdfs:label ?label .}
+} 
+`, {
+grafoDocomomo: docomomoGraph,}).replace(/\s+/g, ' ');
+winston.info(query);
+return query;
+}
+
 function getInfoFeatureOSM(idFeature, type = 'nwr') {
     return Mustache.render(
         'data=[out:json][timeout:25];{{{type}}}({{{id}}});out meta geom;',
@@ -81,7 +181,7 @@ function getInfoFeatureOSM(idFeature, type = 'nwr') {
     ).replace(/\s+/g, ' ').replace(RegExp('"', 'g'), '%22').replace(RegExp(/\s/, 'g'), '%20');
 }
 
-function getInfoFeaturesOSM(bounds, type) {
+function getInfoFeaturesOSM(bounds) {
     let filter = '';
     let listFilter;
     const area = Mustache.render(
@@ -274,10 +374,12 @@ OPTIONAL { {{{idWiki}}} wdt:P625 ?point .}
 function getInceptionWikidata(values, interval) {
     return Mustache.render(
         `SELECT DISTINCT ?id ?inception WHERE {
-  VALUES ?id { {{{values}}} } 
-  ?id wdt:P571 ?inception .
-  FILTER (YEAR(?inception) >= {{{start}}} && YEAR(?inception) <= {{{end}}})
-  }`, {
+VALUES ?id { {{{values}}} } 
+{ ?id wdt:P571 ?inception .
+FILTER (YEAR(?inception) >= {{{start}}} && YEAR(?inception) <= {{{end}}}) }
+UNION
+{?id wdt:P149 wd:Q245188 .}
+}`, {
     values: values,
     start: interval.start,
     end: interval.end
@@ -1815,6 +1917,10 @@ module.exports = {
     getInfoFeaturesOSM,
     getInfoFeatureOSM,
     getInfoFeaturesSparql,
+    getInfoFeaturesDocomomo,
+    getInfoFeatureDocomomo,
+    getInfoFeatureDocomomoArq,
+    getInfoFeatureDocomomoMedia,
     getCitiesWikidata,
     checkExistenceId,
     insertFeature,

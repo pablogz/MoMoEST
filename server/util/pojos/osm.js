@@ -65,68 +65,71 @@ class ElementOSM {
                     }
                     break;
                 case 'building':
-                    if (tags.building === 'cathedral' && !this._a.includes('mo:PlaceOfWorship')) {
-                        this._a.push('mo:PlaceOfWorship');
+                    if (tags.building === 'cathedral' && !this._a.includes('momo:PlaceOfWorship')) {
+                        this._a.push('momo:PlaceOfWorship');
                     }
-                    if (tags.building === 'church' && !this._a.includes('mo:PlaceOfWorship')) {
-                        this._a.push('mo:PlaceOfWorship');
+                    if (tags.building === 'church' && !this._a.includes('momo:PlaceOfWorship')) {
+                        this._a.push('momo:PlaceOfWorship');
                     }
-                    if ((tags.building === 'chapel' || tags.building === 'mosque') && !this._a.includes('mo:PlaceOfWorship')) {
-                        this._a.push('mo:PlaceOfWorship')
+                    if ((tags.building === 'chapel' || tags.building === 'mosque') && !this._a.includes('momo:PlaceOfWorship')) {
+                        this._a.push('momo:PlaceOfWorship')
                     }
-                    if (tags.building === 'residential' && !this._a.includes('mo:Residential')) {
-                        this._a.push('mo:Residential');
+                    if (tags.building === 'residential' && !this._a.includes('momo:Residential')) {
+                        this._a.push('momo:Residential');
                     }
-                    if (tags.building === 'factory' && !this._a.includes('mo:Factory')) {
-                        this._a.push('mo:Factory');
+                    if (tags.building === 'factory' && !this._a.includes('momo:Factory')) {
+                        this._a.push('momo:Factory');
                     }
-                    if (tags.building === 'hotel' && !this._a.includes('mo:Hotel')) {
-                        this._a.push('mo:Hotel');
+                    if (tags.building === 'hotel' && !this._a.includes('momo:Hotel')) {
+                        this._a.push('momo:Hotel');
                     }
-                    if ((tags.building === 'school' || tags.building === 'college' || tags.building === 'universtiy') && !this._a.includes('mo:Education')) {
-                        this._a.push('mo:Education')
+                    if ((tags.building === 'school' || tags.building === 'college' || tags.building === 'university') && !this._a.includes('momo:Education')) {
+                        this._a.push('momo:Education')
                     }
-                    if (tags.building === 'public' && !this._a.includes('mo:Goverment')) {
-                        this._a.push('mo:Goverment');
+                    if (tags.building === 'public' && !this._a.includes('momo:Goverment')) {
+                        this._a.push('momo:Goverment');
                     }
-                    if (tags.building === 'square' && !this._a.includes('mo:Square')) {
-                            this._a.push('mo:Square');
+                    if (tags.building === 'square' && !this._a.includes('momo:Square')) {
+                            this._a.push('momo:Square');
                     }
                     break;
                 case 'amenity':
-                    if ((tags.amenity === 'place_of_worship' || tags.amenity === 'monastery') && !this._a.includes('mo:PlaceOfWorship')) {
-                        this._a.push('mo:PlaceOfWorship');
+                    if ((tags.amenity === 'place_of_worship' || tags.amenity === 'monastery') && !this._a.includes('momo:PlaceOfWorship')) {
+                        this._a.push('momo:PlaceOfWorship');
                     }
-                    if (tags.amenity === 'cinema' && !this._a.includes('mo:Cinema')) {
-                        this._a.push('mo:Cinema');
+                    if (tags.amenity === 'cinema' && !this._a.includes('momo:Cinema')) {
+                        this._a.push('momo:Cinema');
+                    }
+                    if (tags.amenity === 'university' && !this._a.includes('momo:Education')) {
+                        this._a.push('momo:Education')
                     }
                     break;
                 case 'tourism':
-                    if (tags.tourism === 'hotel' && !this._a.includes('mo:Hotel')) {
-                        this._a.push('mo:Hotel');
+                    if (tags.tourism === 'hotel' && !this._a.includes('momo:Hotel')) {
+                        this._a.push('momo:Hotel');
                     }
-                    if ((tags.amenity === 'place_of_worship') && !this._a.includes('mo:PlaceOfWorship')) {
-                        this._a.push('mo:PlaceOfWorship');
+                    if ((tags.amenity === 'place_of_worship') && !this._a.includes('momo:PlaceOfWorship')) {
+                        this._a.push('momo:PlaceOfWorship');
                     }
                     break;
                 case 'religion':
-                    if (!this._a.includes('mo:PlaceOfWorship')) {
-                        this._a.push('mo:PlaceOfWorship');
+                    if (!this._a.includes('momo:PlaceOfWorship')) {
+                        this._a.push('momo:PlaceOfWorship');
                     }
                     break;
                 case 'goverment':
-                    if (!this._a.includes('mo:Goverment')) {
-                        this._a.push('mo:Goverment');
+                    if (!this._a.includes('momo:Goverment')) {
+                        this._a.push('momo:Goverment');
                     }
                     break;
                 case 'office':
-                    if ((tags.amenity === 'goverment') && !this._a.includes('mo:Goverment')) {
-                        this._a.push('mo:Goverment');
+                    if ((tags.amenity === 'goverment') && !this._a.includes('momo:Goverment')) {
+                        this._a.push('momo:Goverment');
                     }
                     break;
                 case 'place':
-                    if (tags.place === 'square' && !this._a.includes('mo:Square')) {
-                        this._a.push('mo:Square');
+                    if (tags.place === 'square' && !this._a.includes('momo:Square')) {
+                        this._a.push('momo:Square');
                     }
                     break;
                 default:
@@ -167,7 +170,7 @@ class ElementOSM {
             }
         }
 
-        this._a.push('mo:CulturalHeritage');
+        this._a.push('momo:Feature');
         
         if (labels.length > 0) {
             this._labels = labels;

@@ -361,7 +361,7 @@
     "obtBic": "Known as a BIC thanks to Wikidata",
     "obtEnlBic": "The link to the BIC website has been obtained from the",
     "tareaNoEncontrada": "Task not found!",
-    "etiquetaMarcadores": "Markers with labels",
+    "onlyMoMo": "Only modern architecture ({start}-{end})",
     "premiosPublicaciones": "Awards and related papers",
     "datosAbiertosJunta": "Open Data competition of Junta of Castile and León (Castile and León Regional Government)",
     "datosAbiertosJuntaDescripcion": "CHEST won in 2023 the first prize in the category \"Didactic resource\" of the 7th edition of the Open Data contest of the Junta de Castilla y León.",
@@ -560,5 +560,11 @@
     "addFeedback": "Add feedback",
     "editFeedback": "Edit feedback",
     "feedback": "Feedback",
-    "feedbackGuardado": "Feedback saved"
+    "feedbackGuardado": "Feedback saved",
+    "anioInicio": "Start year",
+    "anioFin": "End year",
+    "architects": "Architects",
+    "enlacesExt": "More information",
+    "licenciaInfo": "License",
+    "docomomoFuente": "All information about this site comes from the Fundación Docomomo Ibérico."
 }

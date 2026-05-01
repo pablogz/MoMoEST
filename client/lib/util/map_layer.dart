@@ -11,6 +11,9 @@ class MapLayer {
   static const double maxZoom = 22;
   static const double minZoom = 13;
   static bool onlyIconInfoMap = false;
+  static bool onlyMoMo = true;
+  static int startYear = 1925;
+  static int endYear = 1975;
 
   static Layers? _layer =
       ConfigXest.development ? Layers.openstreetmap : Layers.carto;

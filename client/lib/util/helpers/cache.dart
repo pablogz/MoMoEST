@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:momoest/util/config_xest.dart';
 import 'package:momoest/util/helpers/feature.dart';
+import 'package:momoest/util/map_layer.dart';
 import 'package:momoest/util/queries.dart';
 // import 'package:momoest/util/helpers/auxiliar_mobile.dart'
 //     if (dart.libary.html) 'package:chest/util/helpers/auxiliar_web.dart';
@@ -33,57 +34,6 @@ class MapData {
 
   /// Recover all cache data
   static List<TeselaFeature> get teselaFeature => _teselaFeature;
-
-  /// Ask to the server for the number of Features inside [mapBounds]
-  // static Future<List<NPOI>> checkCurrentMapBounds(
-  //     LatLngBounds mapBounds) async {
-  //   try {
-  //     Future<List<NPOI>> out = http
-  //         .get(Queries.getFeatures({
-  //       'north': mapBounds.north,
-  //       'south': mapBounds.south,
-  //       'west': mapBounds.west,
-  //       'east': mapBounds.east,
-  //       'group': true
-  //     }))
-  //         .then((response) async {
-  //       switch (response.statusCode) {
-  //         case 200:
-  //           return json.decode(response.body);
-  //         case 204:
-  //           return [];
-  //         default:
-  //           return null;
-  //       }
-  //     }).then((data) async {
-  //       if (data != null) {
-  //         List<NPOI> npois = [];
-  //         for (var p in data) {
-  //           try {
-  //             npois.add(NPOI(p['id'], p['lat'], p['long'], p['pois']));
-  //           } catch (e, stackTrace) {
-  //             if (ConfigXest.development) {
-  //               debugPrint(e.toString());
-  //             } else {
-  //               await FirebaseCrashlytics.instance.recordError(e, stackTrace);
-  //             }
-  //           }
-  //         }
-  //         return npois;
-  //       } else {
-  //         return [];
-  //       }
-  //     });
-  //     return out;
-  //   } catch (e, stackTrace) {
-  //     if (ConfigXest.development) {
-  //       debugPrint(e.toString());
-  //     } else {
-  //       await FirebaseCrashlytics.instance.recordError(e, stackTrace);
-  //     }
-  //     return [];
-  //   }
-  // }
 
   /// Split [mapBounds] and check the POIs inside each split. For this,
   /// First check the local cache [_teselaFeature]. If it does not have the
@@ -116,7 +66,8 @@ class MapData {
           encontrado = false;
           late TeselaFeature tp;
           for (tp in _teselaFeature) {
-            if (tp.isEqualPoint(puntoComprobacion)) {
+            if (tp.isEqualPoint(puntoComprobacion,
+                onlyMoMo: MapLayer.onlyMoMo)) {
               encontrado = true;
               break;
             }
@@ -194,7 +145,10 @@ class MapData {
   /// Check if [teselaFeature] was previously added to [_teselaFeature]
   static bool _teselaNotExist(TeselaFeature teselaFeature) {
     for (TeselaFeature tf in _teselaFeature) {
-      if (tf.isEqualPoint(LatLng(teselaFeature.north, teselaFeature.west))) {
+      if (tf.isEqualPoint(
+        LatLng(teselaFeature.north, teselaFeature.west),
+        onlyMoMo: teselaFeature.onlyMoMo,
+      )) {
         return false;
       }
     }
@@ -236,6 +190,8 @@ class MapData {
   }
 
   static Future<TeselaFeature?> _newZone(LatLng? point) async {
+    final bool currentMode = MapLayer.onlyMoMo;
+
     try {
       return http
           .get(Queries.getFeatures({
@@ -249,8 +205,10 @@ class MapData {
         switch (response.statusCode) {
           case 200:
             return json.decode(response.body);
+          case 204:
+            return <dynamic>[]; // FIX: tile vacía válida → lista vacía, no null
           default:
-            return null;
+            return null; // Error real → null, no cachear
         }
       }).then((data) async {
         if (pendingTiles > 0) {
@@ -265,7 +223,6 @@ class MapData {
             try {
               features.add(Feature(p));
             } catch (e, stackTrace) {
-              //El poi está mal formado
               if (ConfigXest.development) {
                 debugPrint(e.toString());
               } else {
@@ -273,7 +230,11 @@ class MapData {
               }
             }
           }
-          return TeselaFeature(point.latitude, point.longitude, features);
+          return features.isNotEmpty
+              ? TeselaFeature(point.latitude, point.longitude, features,
+                  onlyMoMo: currentMode)
+              : TeselaFeature.withoutFeatures(point.latitude, point.longitude,
+                  onlyMoMo: currentMode);
         }
       });
     } catch (e) {

@@ -488,16 +488,15 @@ class Auxiliar {
       capitalize(SpatialThingType.square.name): SpatialThingType.square,
       SpatialThingType.square.name: SpatialThingType.square,
       capitalize(SpatialThingType.square.name): SpatialThingType.square,
-      SpatialThingType.culturalHeritage.name: SpatialThingType.culturalHeritage,
-      capitalize(SpatialThingType.culturalHeritage.name):
-          SpatialThingType.culturalHeritage,
+      SpatialThingType.feature.name: SpatialThingType.feature,
+      capitalize(SpatialThingType.feature.name): SpatialThingType.feature,
     };
     return t[s];
   }
 
   static Map<SpatialThingType, IconData> sttIconData = {
     SpatialThingType.cinema: Icons.movie,
-    SpatialThingType.culturalHeritage: Icons.location_city_outlined,
+    SpatialThingType.feature: Icons.location_city_outlined,
     SpatialThingType.education: Icons.school,
     SpatialThingType.factory: Icons.factory,
     SpatialThingType.goverment: Icons.account_balance,

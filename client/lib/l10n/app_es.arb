@@ -142,7 +142,7 @@
     "errorMailEnUso": "La dirección de correo indicada ya se encuentra en uso. Restablece la contraseña si no la recuerdas",
     "registrarUsuario": "Registrar usuario",
     "infoQueEs": "¿Qué es MoMoEST?",
-    "infoQueEsM": "MoMoEST (Modern Movement Educational Semantic Tool, Herramienta Semántica Educativa de la Arquitectura Moderana) es una aplicación distribuida que utiliza Datos Abiertos de distintas fuentes de información para apoyar el aprendizaje ubicuo. A través de MoMoEST se puede crear nuevos recursos y realizar tareas de aprendizaje (usuarios registrados). Estas tareas pueden estar diseñadas para ser realizadas cerca del lugar o desde cualquier lugar.",
+    "infoQueEsM": "MoMoEST (Modern Movement Educational Semantic Tool, Herramienta Semántica Educativa de la Arquitectura Moderna) es una aplicación distribuida que utiliza Datos Abiertos de distintas fuentes de información para apoyar el aprendizaje ubicuo. A través de MoMoEST se puede crear nuevos recursos y realizar tareas de aprendizaje (usuarios registrados). Estas tareas pueden estar diseñadas para ser realizadas cerca del lugar o desde cualquier lugar.",
     "infoLod": "MoMoEST utiliza Datos Abiertos",
     "infoLodM": "La información de las cosas espaciales se recuperan de forma automática de distintos repositorios de datos abiertos (enlazados) como son los ofrecidos por la <a href='https://docomomoiberico.com/'>Fundación Docomomo Ibérico</a>, <a href='https://www.dbpedia.org/'>DBpedia</a>, <a href='https://www.wikidata.org/wiki/Wikidata:Main_Page'>Wikidata</a> y <a href='https://www.openstreetmap.org'>OpenStreetMap</a>.<br><br>Además de estos datos, los docentes pueden agregar nuevas cosas espaciales, tareas de aprendizaje e itinerarios a través de la interfaz de MoMoEST. Esta nueva información se almacenará, de forma transparente, como Datos Abiertos Enlazados.",
     "infoGSIC": "Una aplicación del grupo GSIC/EMIC",
@@ -313,7 +313,7 @@
     "obtBic": "Se sabe que es un BIC gracias a Wikidata",
     "obtEnlBic": "El enlace al sitio web del BIC se ha obtenido de la",
     "tareaNoEncontrada": "¡Tarea no encontrada!",
-    "etiquetaMarcadores": "Marcadores con etiquetas",
+    "onlyMoMo": "Sólo arquitectura moderna ({start}-{end})",
     "premiosPublicaciones": "Premios y publicaciones relacionadas",
     "datosAbiertosJunta": "Concurso Datos Abiertos de la Junta de Castilla y León",
     "datosAbiertosJuntaDescripcion": "CHEST consiguió el primer premio en la categoría «Recurso didáctico» de la VII edición del concurso de Datos Abiertos de la Junta de Castilla y León.",
@@ -499,5 +499,11 @@
     "addFeedback": "Añadir realimentación",
     "editFeedback": "Editar realimentación",
     "feedback": "Realimentación",
-    "feedbackGuardado": "Realimentación guardada"
+    "feedbackGuardado": "Realimentación guardada",
+    "anioInicio": "Año de inicio",
+    "anioFin": "Año de finalización",
+    "architects": "Arquitectos",
+    "enlacesExt": "Más información",
+    "licenciaInfo": "Licencia",
+    "docomomoFuente": "La información de este lugar proviene de la Fundación Docomomo Ibérico."
 }

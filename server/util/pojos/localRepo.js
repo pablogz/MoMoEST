@@ -136,7 +136,136 @@ class TaskLocalRepo {
     }
 }
 
-module.exports = { FeatureLocalRepo, TaskLocalRepo };
+class FeatureLocalDocomomo {
+    constructor(feature) {
+        this._id = feature.feature;
+        this._shortId = id2ShortId(feature.feature);
+        this._lat = feature.lat;
+        this._long = feature.lng;
+        this._labels = feature.label;
+        if (typeof feature.type === 'string') {
+            feature.type = [feature.type];
+        }
+        this._type = [];
+        if (Array.isArray(feature.type)){
+            feature['type'].forEach((ele) => {
+                if(typeof ele === 'string') {
+                    this._type.push(id2ShortId(ele));
+                }
+            });
+        }
+        if (typeof feature.links === 'string') {
+            feature.links = [feature.links];
+        }
+        if (Array.isArray(feature.links)) {
+            feature['links'].forEach((ele) => {
+                if(typeof ele === 'string') {
+                    const shortId = id2ShortId(ele);
+                    if(shortId !== null) {
+                        switch (shortId.split(':').at(0)) {
+                            case 'wd':
+                                this._wd = shortId;
+                                break;
+                            case 'osmn':
+                            case 'osmr':
+                            case 'osmw':
+                                this._osm = shortId;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    get id() { return this._id; }
+    get shortId() { return this._shortId; }
+    get lat() { return this._lat; }
+    get long() { return this._long; }
+    get labels() { return this._labels; }
+    get type() { return this._type; }
+    get wd() { return this._wd; }
+    get osm() { return this._osm; }
+
+    toChestMap() {
+        return {
+            id: this.id,
+            shortId: this.shortId,
+            type: this.type,
+            lat: this.lat,
+            long: this.long,
+            provider: 'docomomo',
+            labels: this.labels,
+            license: 'Fundación Docomomo Ibérico',
+        }
+    }
+}
+
+class FeatureDocomomoFull {
+    constructor(feature, media, architects) {
+        this._id = feature.feature;
+        this._shortId = id2ShortId(feature.feature);
+        this._lat = feature.lat;
+        this._long = feature.lng;
+        this._labels = Array.isArray(feature.label) ? feature.label : (feature.label != null ? [feature.label] : []);
+        this._comments = Array.isArray(feature.comment) ? feature.comment : (feature.comment != null ? [feature.comment] : []);
+        this._startDate = feature.startDate;
+        this._endDate = feature.endDate;
+        this._seeAlso = Array.isArray(feature.seeAlso) ? feature.seeAlso : (feature.seeAlso != null ? [feature.seeAlso] : []);
+        this._thumb = feature.thumb;
+        if (typeof feature.type === 'string') {
+            feature.type = [feature.type];
+        }
+        this._type = [];
+        if (Array.isArray(feature.type)) {
+            feature.type.forEach(ele => {
+                if (typeof ele === 'string') {
+                    this._type.push(id2ShortId(ele) || ele);
+                }
+            });
+        }
+        this._media = media || [];
+        this._architects = architects || [];
+    }
+
+    get id() { return this._id; }
+    get shortId() { return this._shortId; }
+    get lat() { return this._lat; }
+    get long() { return this._long; }
+    get labels() { return this._labels; }
+    get comments() { return this._comments; }
+    get type() { return this._type; }
+    get startDate() { return this._startDate; }
+    get endDate() { return this._endDate; }
+    get seeAlso() { return this._seeAlso; }
+    get thumb() { return this._thumb; }
+    get media() { return this._media; }
+    get architects() { return this._architects; }
+
+    toCHESTFeature() {
+        return {
+            id: this.id,
+            shortId: this.shortId,
+            type: this.type,
+            lat: this.lat,
+            long: this.long,
+            provider: 'docomomo',
+            labels: this.labels,
+            comments: this.comments,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            seeAlso: this.seeAlso,
+            thumb: this.thumb,
+            media: this.media,
+            architects: this.architects,
+            license: 'Fundación Docomomo Ibérico',
+        };
+    }
+}
+
+module.exports = { FeatureLocalRepo, TaskLocalRepo, FeatureLocalDocomomo, FeatureDocomomoFull };
 
 // delete data {
 //     graph <http://chest.gsic.uva.es> {

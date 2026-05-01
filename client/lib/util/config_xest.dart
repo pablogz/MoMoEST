@@ -11,6 +11,8 @@ class ConfigXest {
   static const String nameApp = 'MoMoEST';
   static const String moultData = 'http://moult.gsic.uva.es/data/';
   static const String moultOntology = 'http://moult.gsic.uva.es/ontology/';
+  static const String appOntology = 'http://momoest.gsic.uva.es/ontology/';
+  static const String prefixApp = 'momo:';
 
 //   static const String tokenMapbox = '';
 }

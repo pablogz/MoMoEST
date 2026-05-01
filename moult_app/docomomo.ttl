@@ -1,41 +1,539 @@
 @prefix momo: <http://momoest.gsic.uva.es/ontology/> .
 @prefix mo: <http://moult.gsic.uva.es/ontology/> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xml: <http://www.w3.org/XML/1998/namespace> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix md: <http://moult.gsic.uva.es/data/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix dc: <http://purl.org/dc/terms/> .
 @prefix schema: <http://schema.org/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-@prefix geoSparql: <http://www.opengis.net/ont/geosparql#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix vann: <http://purl.org/vocab/vann/> .
 @prefix wd: <http://www.wikidata.org/entity/> .
+@prefix osmw: <https://www.openstreetmap.org/way/> .
 
-
-md:docomomo-casa_cuna
-    a momo:Feature ;
+md:docomomo-casa-cuna
+    a momo:Goverment, momo:Feature ;
     rdfs:label "Casa Cuna"@es ;
     rdfs:comment '''<p>El edificio refleja la atención institucional de una época hacia un programa de ayuda a la infancia, tanto en el diseño y planificación de sus espacios interiores como los exteriores.</p><p>Las distintas partes del programa se desarrollan en torno a un patio central de precisa geometría rectangular; el contorno exterior presenta un resultado más laberíntico que deriva de la adecuación tipológica diferenciada y la autonomía funcional de cada parte. Surge así una composición por módulos estructurales, con patios menores que iluminan e introducen la vegetación en cada una de las piezas menores que rodean el patio central, propiciando la escala más íntima de estas piezas de aulas y juegos. El sistema de organización evoca el Orfanato de Ámsterdam, del arquitecto Aldo van Eyck, clara referencias estructuralista para este tipo de edificios. El bloque de dormitorios se desarrolla en cuatro plantas, mientras que el resto del programa tiene una única planta.</p> <p>Es significativo el diálogo de las técnicas constructivas entre modernidad y tradición, que era propio de la década de 1960. En los volúmenes de una sola planta, conviven muros de carga de ladrillo visto con grandes cristaleras y soportes puntuales metálicos. Estos volúmenes se rematan con cubiertas planas, ajardinadas en origen, entre vigas de canto sobre los muros que posibilitan grandes vuelos para proteger las cristaleras orientadas al sur. En las cubiertas se explicita la dirección de los trazados norte-sur que sirven de guía geométrica de estos muros y de la ordenación y deslizamiento de estas partes del programa. El bloque alto de dormitorios subraya la idea de <em>fenêtre en longueur</em>. Lasala de actos, tanto en el trazado de la planta como en la articulación de pendientes contrapuestas entre el techo interior y la cubierta exterior, evoca mecanismos conocidos de la arquitectura de Alvar Aalto.</p><p>La estrategia estructural y material asume el debate de la época entre sistemas tradicionales y modernos, logrando un diálogo crítico que la buena conservación del edificio aún mantiene</p><br />Eusebio Alonso García</p>'''@es ;
     momo:startDate "1968" ;
     momo:endDate "1973" ;
-    momo:architect md:docomomo-rios_gomez, md:docomomo-paredes_sanz ;
+    skos:altLabel "Centro Cívico Casa Cuna"@es ;
+    momo:architect md:docomomo-angel-rios-gomez, md:docomomo-isaias-paredes-sanz ;
     rdfs:seeAlso <https://docomomoiberico.com/edificios/casa-cuna/> ;
+    rdfs:seeAlso <https://www.youtube.com/watch?v=pFCODCm5saI> ;
+    rdfs:seeAlso osmw:806873017 ;
     momo:thumbnail md:AMP_CASTLEON_ESTE_A26_03 ;
-    mo:media md:AMP_CASTLEON_ESTE_A26_03 , md:AMP_CASTLEON_ESTE_A26_02 , md:AMP_CASTLEON_ESTE_A26_01 , md:AMP_CASTLEON_ESTE_A26_04 , md:AMP_CAST_LEONESTE_A26_14 , md:AMP_CAST_LEONESTE_A26_15 , md:AMP_CAST_LEONESTE_A26_16 ;
+    mo:media md:AMP_CASTLEON_ESTE_A26_03, md:AMP_CASTLEON_ESTE_A26_02, md:AMP_CASTLEON_ESTE_A26_01, md:AMP_CASTLEON_ESTE_A26_04, md:AMP_CAST_LEONESTE_A26_14, md:AMP_CAST_LEONESTE_A26_15, md:AMP_CAST_LEONESTE_A26_16, md:AMP_CAST_LEONESTE_A26_17, md:AMP_CAST_LEONESTE_A26_18, md:AMP_CAST_LEONESTE_A26_19, md:AMP_CASTLEON_ESTE_A26_05, md:AMP_CASTLEON_ESTE_A26_12, md:AMP_CASTLEON_ESTE_A26_06, md:AMP_CASTLEON_ESTE_A26_07, md:AMP_CASTLEON_ESTE_A26_08, md:AMP_CASTLEON_ESTE_A26_09, md:AMP_CASTLEON_ESTE_A26_10, md:AMP_CASTLEON_ESTE_A26_11, md:AMP_CAST_LEONESTE_A26_20, md:AMP_CAST_LEONESTE_A26_21 ;
     mo:hasGeometry md:docomomo-casa-cuna-point .
-md:docomomo-rios_gomez
+
+md:docomomo-angel-rios-gomez
     a mo:Person ;
     foaf:name "Ángel Ríos Gómez" ;
     rdfs:seeAlso <https://docomomoiberico.com/autoria/angel-rios-gomez/> .
+
+md:docomomo-isaias-paredes-sanz
+    a mo:Person ;
+    foaf:name "Isaías Paredes Sanz" ;
+    rdfs:seeAlso <https://docomomoiberico.com/autoria/isaias-paredes-sanz/> .
+
 md:AMP_CASTLEON_ESTE_A26_03
     a mo:MediaObject ;
-    schema:urlContent "FIREBASE" ;
-    rdfs:label  "Daniel Villalobos Alonso / Fundación Docomomo Ibérico, 2014" ;
-    owl:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg> .
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso / Fundación Docomomo Ibérico, 2014" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_02
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_02.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico, 2014" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_02.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_01
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_01.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico, 2014" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_01.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_04
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_04.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_04.jpg> .
+
+md:AMP_CAST_LEONESTE_A26_14
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_14.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_14.jpg> .
+
+md:AMP_CAST_LEONESTE_A26_15
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_15.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_15.jpg> .
+
+md:AMP_CAST_LEONESTE_A26_16
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_16.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_16.jpg> .
+
+md:AMP_CAST_LEONESTE_A26_17
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_17.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_17.jpg> .
+
+md:AMP_CAST_LEONESTE_A26_18
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_18.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_18.jpg> .
+
+md:AMP_CAST_LEONESTE_A26_19
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_19.jpg> ;
+    rdfs:label "Daniel Villalobos Alonso/Fundación Docomomo Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_19.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_05
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_05.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_05.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_12
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_12.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_12.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_06
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_06.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_06.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_07
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_07.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_07.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_08
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_08.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_08.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_09
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_09.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_09.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_10
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_10.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_10.jpg> .
+
+md:AMP_CASTLEON_ESTE_A26_11
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_11.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_11.jpg> .
+
+md:AMP_CAST_LEONESTE_A26_20
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_20.jpg> ;
+    rdfs:label "Archivo Municipal Valladolid" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_20.jpg> .
+
+md:AMP_CAST_LEONESTE_A26_21
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_21.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_21.jpg> .
+
 md:docomomo-casa-cuna-point
     a mo:Point ;
     geo:lat 41.631001 ;
     geo:long -4.747057 .
+
+md:docomomo-iglesia-de-santo-domingo-de-guzman
+    a momo:PlaceOfWorship, momo:Feature ;
+    rdfs:label "Iglesia de Santo Domingo de Guzmán"@es ;
+    momo:startDate "1956" ;
+    momo:endDate "1963" ;
+    momo:architect md:docomomo-julio-gonzalez-martin, md:docomomo-manuel-lopez ;
+    rdfs:seeAlso <https://docomomoiberico.com/edificios/iglesia-de-santo-domingo-de-guzman/> ;
+    rdfs:seeAlso wd:Q5912226 ;
+    rdfs:seeAlso osmw:250170845 ;
+    momo:thumbnail md:1CASTLEONESTE_B12_01 ;
+    mo:media md:1CASTLEONESTE_B12_01, md:2CASTLEONESTE_B12_02, md:3CASTLEONESTE_B12_07, md:4CASTLEONESTE_B12_06, md:CASTLEONESTE_B12_03, md:CASTLEONESTE_B12_04, md:CASTLEONESTE_B12_05 ;
+    mo:hasGeometry md:docomomo-iglesia-de-santo-domingo-de-guzman-point .
+
+md:docomomo-julio-gonzalez-martin
+    a mo:Person ;
+    foaf:name "Julio González Martín" ;
+    rdfs:seeAlso <https://docomomoiberico.com/autoria/julio-gonzalez-martin/> .
+
+md:docomomo-manuel-lopez
+    a mo:Person ;
+    foaf:name "Manuel López" ;
+    rdfs:seeAlso <https://docomomoiberico.com/autoria/manuel-lopez/> .
+
+md:1CASTLEONESTE_B12_01
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2021/10/1CASTLEONESTE_B12_01.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2021/10/1CASTLEONESTE_B12_01.jpg> .
+
+md:2CASTLEONESTE_B12_02
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2021/10/2CASTLEONESTE_B12_02.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2021/10/2CASTLEONESTE_B12_02.jpg> .
+
+md:3CASTLEONESTE_B12_07
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2021/10/3CASTLEONESTE_B12_07.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2021/10/3CASTLEONESTE_B12_07.jpg> .
+
+md:4CASTLEONESTE_B12_06
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2021/10/4CASTLEONESTE_B12_06.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2021/10/4CASTLEONESTE_B12_06.jpg> .
+
+md:CASTLEONESTE_B12_03
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_03.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_03.jpg> .
+
+md:CASTLEONESTE_B12_04
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_04.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_04.jpg> .
+
+md:CASTLEONESTE_B12_05
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_05.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_05.jpg> .
+
+md:docomomo-iglesia-de-santo-domingo-de-guzman-point
+    a mo:Point ;
+    geo:lat 41.6339 ;
+    geo:long -4.741234 .
+
+md:docomomo-mercado-central-de-abastos-de-valladolid
+    a momo:Factory, momo:Feature ;
+    rdfs:label "Mercado Central de Abastos de Valladolid"@es ;
+    rdfs:comment '''<p>El antiguo Mercado Central de Abastos de Valladolid constituye un brillante ejemplo de equipamiento industrial que demuestra clara influencia brutalista. Inicialmente, el edificio consta de patio de maniobras, bloque de oficinas y dos naves-almacén que miran hacia la calle Cigüeña. La estructura empleada para cerrar el conjunto es una lámina de hormigón requebrada que define cubierta y paramentos, cuyo ritmo plástico pauta el crecimiento secuencial de la planta, semejando un apilamiento de contenedores de carga. El conjunto destaca por el marcado carácter modular de su estructura repetitiva, sensibilidad que comparte con ejemplos próximos como el Instituto Politécnico Cristo Rey, 1965, de Luis Mª M. Feduchi, ó el Instituto Núñez de Arce, 1961, de Miguel Fisac.</p> <p>La austeridad material del proyecto se cifra en el uso exclusivo del hormigón visto tanto in-situ, como prefabricado, afortunado recurso que intensifica la plasticidad mecánica de sus pliegues y celosías. La sabia combinación unitaria del hormigón demuestra una enorme coherencia formal y constructiva en todo el proyecto, potenciada por la intensa sensación táctil que provoca su tosca materialidad.</p> <p>Finalmente, el crecimiento de Valladolid agota las posibilidades de sus instalaciones que, en 1997, pasan a ser moderno Centro Integrado de Equipamientos, obra de Eduardo de la Peña y Antonio Lleyda. La rehabilitación devuelve al conjunto edificado el papel inicial de hito determinante en la trama urbana como centro neurálgico de la actividad social del Barrio de San Isidro.</p><br />Iván I. Rincón</p>'''@es ;
+    momo:startDate "1965" ;
+    momo:endDate "1966" ;
+    skos:altLabel "Centro Integrado de Equipamientos"@es ;
+    momo:architect md:docomomo-angel-valdes-martinez, md:docomomo-juan-a-aguilo-villahermosa ;
+    rdfs:seeAlso <https://docomomoiberico.com/edificios/mercado-central-de-abastos-de-valladolid/> ;
+    rdfs:seeAlso wd:Q121086602 ;
+    momo:thumbnail md:E_CAST_LEONESTE_A23_59 ;
+    mo:media md:E_CAST_LEONESTE_A23_59, md:E_CAST_LEONESTE_A23_65, md:E_CAST_LEONESTE_A23_63, md:E_CAST_LEONESTE_A23_78, md:E_CAST_LEONESTE_A23_79, md:E_CAST_LEONESTE_A23_70, md:E_CAST_LEONESTE_A23_66, md:E_CAST_LEONESTE_A23_71, md:E_CAST_LEONESTE_A23_67, md:E_CAST_LEONESTE_A23_82, md:E_CAST_LEONESTE_A23_68, md:E_CAST_LEONESTE_A23_69, md:E_CAST_LEONESTE_A23_72, md:E_CAST_LEONESTE_A23_74, md:E_CAST_LEONESTE_A23_77, md:E_CAST_LEONESTE_A23_76, md:E_CAST_LEONESTE_A23_80, md:E_CAST_LEONESTE_A23_81, md:E_CAST_LEONESTE_A23_64, md:E_CAST_LEONESTE_A23_60, md:E_CAST_LEONESTE_A23_61, md:E_CAST_LEONESTE_A23_62, md:E_CAST_LEONESTE_A23_12, md:E_CAST_LEONESTE_A23_11, md:E_CAST_LEONESTE_A23_13, md:E_CAST_LEONESTE_A23_08, md:E_CAST_LEONESTE_A23_18, md:E_CAST_LEONESTE_A23_14, md:E_CAST_LEONESTE_A23_15, md:E_CAST_LEONESTE_A23_16, md:E_CAST_LEONESTE_A23_17, md:E_CAST_LEONESTE_A23_19, md:E_CAST_LEONESTE_A23_20, md:E_CAST_LEONESTE_A23_22, md:E_CAST_LEONESTE_A_23_105, md:E_CAST_LEONESTE_A_23_085, md:E_CAST_LEONESTE_A_23_102, md:E_CAST_LEONESTE_A_23_087, md:E_CAST_LEONESTE_A_23_106, md:E_CAST_LEONESTE_A_23_089, md:E_CAST_LEONESTE_A_23_086, md:E_CAST_LEONESTE_A_23_098, md:E_CAST_LEONESTE_A_23_090, md:E_CAST_LEONESTE_A_23_088, md:E_CAST_LEONESTE_A_23_094, md:E_CAST_LEONESTE_A_23_103, md:E_CAST_LEONESTE_A_23_093, md:E_CAST_LEONESTE_A_23_111, md:E_CAST_LEONESTE_A_23_112, md:E_CAST_LEONESTE_A_23_114 ;
+    mo:hasGeometry md:docomomo-mercado-central-de-abastos-de-valladolid-point .
+
+md:docomomo-angel-valdes-martinez
+    a mo:Person ;
+    foaf:name "Ángel Valdés Martínez" ;
+    rdfs:seeAlso <https://docomomoiberico.com/autoria/angel-valdes-martinez/> .
+
+md:docomomo-juan-a-aguilo-villahermosa
+    a mo:Person ;
+    foaf:name "Juan A. Aguiló Villahermosa" ;
+    rdfs:seeAlso <https://docomomoiberico.com/autoria/juan-a-aguilo-villahermosa/> .
+
+md:E_CAST_LEONESTE_A23_59
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_59.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo / Fundación Docomomo Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_59.jpg> .
+
+md:E_CAST_LEONESTE_A23_65
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_65.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_65.jpg> .
+
+md:E_CAST_LEONESTE_A23_63
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_63.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_63.jpg> .
+
+md:E_CAST_LEONESTE_A23_78
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_78.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_78.jpg> .
+
+md:E_CAST_LEONESTE_A23_79
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_79.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_79.jpg> .
+
+md:E_CAST_LEONESTE_A23_70
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_70.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_70.jpg> .
+
+md:E_CAST_LEONESTE_A23_66
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_66.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_66.jpg> .
+
+md:E_CAST_LEONESTE_A23_71
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_71.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_71.jpg> .
+
+md:E_CAST_LEONESTE_A23_67
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_67.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_67.jpg> .
+
+md:E_CAST_LEONESTE_A23_82
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_82.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_82.jpg> .
+
+md:E_CAST_LEONESTE_A23_68
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_68.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_68.jpg> .
+
+md:E_CAST_LEONESTE_A23_69
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_69.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_69.jpg> .
+
+md:E_CAST_LEONESTE_A23_72
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_72.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_72.jpg> .
+
+md:E_CAST_LEONESTE_A23_74
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_74.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_74.jpg> .
+
+md:E_CAST_LEONESTE_A23_77
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_77.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_77.jpg> .
+
+md:E_CAST_LEONESTE_A23_76
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_76.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_76.jpg> .
+
+md:E_CAST_LEONESTE_A23_80
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_80.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_80.jpg> .
+
+md:E_CAST_LEONESTE_A23_81
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_81.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_81.jpg> .
+
+md:E_CAST_LEONESTE_A23_64
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_64.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_64.jpg> .
+
+md:E_CAST_LEONESTE_A23_60
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_60.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_60.jpg> .
+
+md:E_CAST_LEONESTE_A23_61
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_61.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_61.jpg> .
+
+md:E_CAST_LEONESTE_A23_62
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_62.jpg> ;
+    rdfs:label "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_62.jpg> .
+
+md:E_CAST_LEONESTE_A23_12
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_12.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_12.jpg> .
+
+md:E_CAST_LEONESTE_A23_11
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_11.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_11.jpg> .
+
+md:E_CAST_LEONESTE_A23_13
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_13.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_13.jpg> .
+
+md:E_CAST_LEONESTE_A23_08
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_08.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_08.jpg> .
+
+md:E_CAST_LEONESTE_A23_18
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_18.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_18.jpg> .
+
+md:E_CAST_LEONESTE_A23_14
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_14.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_14.jpg> .
+
+md:E_CAST_LEONESTE_A23_15
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_15.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_15.jpg> .
+
+md:E_CAST_LEONESTE_A23_16
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_16.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_16.jpg> .
+
+md:E_CAST_LEONESTE_A23_17
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_17.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_17.jpg> .
+
+md:E_CAST_LEONESTE_A23_19
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_19.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_19.jpg> .
+
+md:E_CAST_LEONESTE_A23_20
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_20.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_20.jpg> .
+
+md:E_CAST_LEONESTE_A23_22
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_22.jpg> ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_22.jpg> .
+
+md:E_CAST_LEONESTE_A_23_105
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_105.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_105.jpg> .
+
+md:E_CAST_LEONESTE_A_23_085
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_085.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_085.jpg> .
+
+md:E_CAST_LEONESTE_A_23_102
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_102.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_102.jpg> .
+
+md:E_CAST_LEONESTE_A_23_087
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_087.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_087.jpg> .
+
+md:E_CAST_LEONESTE_A_23_106
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_106.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_106.jpg> .
+
+md:E_CAST_LEONESTE_A_23_089
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_089.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_089.jpg> .
+
+md:E_CAST_LEONESTE_A_23_086
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_086.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_086.jpg> .
+
+md:E_CAST_LEONESTE_A_23_098
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_098.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_098.jpg> .
+
+md:E_CAST_LEONESTE_A_23_090
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_090.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_090.jpg> .
+
+md:E_CAST_LEONESTE_A_23_088
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_088.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_088.jpg> .
+
+md:E_CAST_LEONESTE_A_23_094
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_094.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_094.jpg> .
+
+md:E_CAST_LEONESTE_A_23_103
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_103.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_103.jpg> .
+
+md:E_CAST_LEONESTE_A_23_093
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_093.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_093.jpg> .
+
+md:E_CAST_LEONESTE_A_23_111
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_111.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_111.jpg> .
+
+md:E_CAST_LEONESTE_A_23_112
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_112.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_112.jpg> .
+
+md:E_CAST_LEONESTE_A_23_114
+    a mo:MediaObject ;
+    schema:urlContent <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_114.jpg> ;
+    rdfs:label "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico" ;
+    rdfs:sameAs <https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_114.jpg> .
+
+md:docomomo-mercado-central-de-abastos-de-valladolid-point
+    a mo:Point ;
+    geo:lat 41.644721 ;
+    geo:long -4.711021 .

@@ -62,4 +62,5 @@ typings/
 
 .vscode/
 
+package-lock.json
 util/momoest-firebase.json

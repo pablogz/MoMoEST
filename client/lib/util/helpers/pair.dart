@@ -59,6 +59,69 @@ class PairImage {
           : {'image': image};
 }
 
+class DocomomoMedia {
+  final String id, link, urlDocomomo;
+  final String? label;
+
+  DocomomoMedia({
+    required this.id,
+    required this.link,
+    required this.urlDocomomo,
+    this.label,
+  });
+
+  factory DocomomoMedia.fromMap(Map<String, dynamic> data) {
+    String? lbl;
+    if (data.containsKey('label')) {
+      final l = data['label'];
+      lbl = l is Map ? l['value']?.toString() : l?.toString();
+    }
+    return DocomomoMedia(
+      id: data['media'].toString(),
+      link: data['link'].toString(),
+      urlDocomomo: data['urlDocomomo'].toString(),
+      label: lbl,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'link': link,
+        'urlDocomomo': urlDocomomo,
+        if (label != null) 'label': label,
+      };
+
+  Map<String, dynamic> toJson() => toMap();
+}
+
+class DocomomoArchitect {
+  final String id;
+  final String? name, link;
+
+  DocomomoArchitect({required this.id, this.name, this.link});
+
+  factory DocomomoArchitect.fromMap(Map<String, dynamic> data) {
+    String? name;
+    if (data.containsKey('label')) {
+      final l = data['label'];
+      name = l is Map ? l['value']?.toString() : l?.toString();
+    }
+    return DocomomoArchitect(
+      id: data['arq'].toString(),
+      name: name,
+      link: data.containsKey('arqLink') ? data['arqLink'].toString() : null,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        if (name != null) 'name': name,
+        if (link != null) 'link': link,
+      };
+
+  Map<String, dynamic> toJson() => toMap();
+}
+
 class ElementLabels {
   final String idElement;
   late List<PairLang> _labels;

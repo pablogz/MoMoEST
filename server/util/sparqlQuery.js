@@ -20,10 +20,18 @@ class SPARQLQuery {
             const body = await fetch(Mustache.render(
                 '{{{ep}}}?query={{{query}}}',
                 { ep: this.endpoint, query: encodeURIComponent(q.replace(/\s+/g, ' ')) }),
-                { headers: { 'Accept': 'application/json' } });
-            return body.status == 200 ? await body.json() : null;
+                { headers: { 
+                    'Accept': 'application/json', 
+                    'User-Agent': 'MoMoEST/1.0 (https://gsic.uva.es/; momoest@gsic.uva.es)'
+                } });
+            if (body.status !== 200) {
+                console.error(`SPARQLQuery error: HTTP ${body.status} from ${this.endpoint}`);
+                return null;
+            }
+            return await body.json();
         } catch (e) {
             // console.error(e);
+            console.error(`SPARQLQuery exception from ${this.endpoint}:`, e);
             return null;
         }
     }

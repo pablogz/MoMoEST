@@ -63,7 +63,6 @@ class _MyMap extends State<MyMap> {
       _lstItsVacia = false;
   late bool _extendedBar,
       _filterOpen,
-      _visibleLabel,
       _barraAlLado,
       _barraAlLadoExpandida,
       _locationON,
@@ -94,7 +93,6 @@ class _MyMap extends State<MyMap> {
     _controllerFilterIt = TextEditingController();
     _ini = false;
     _rotationDegree = 0;
-    _visibleLabel = true;
     _filterOpen = false;
     _lastMapEventScrollWheelZoom = 0;
     _lastMoveEvent = 0;
@@ -675,38 +673,76 @@ class _MyMap extends State<MyMap> {
                   tooltip: appLoca.tipoMapa,
                   onPressed: () => Auxiliar.showMBS(
                       context,
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Wrap(spacing: 10, runSpacing: 10, children: [
-                              _botonMapa(
-                                Layers.carto,
-                                MediaQuery.of(context).platformBrightness ==
-                                        Brightness.light
-                                    ? 'images/basemap_gallery/estandar_claro.png'
-                                    : 'images/basemap_gallery/estandar_oscuro.png',
-                                appLoca.mapaEstandar,
+                      StatefulBuilder(
+                        builder: (context, setModalState) => Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child:
+                                  Wrap(spacing: 10, runSpacing: 10, children: [
+                                _botonMapa(
+                                  Layers.carto,
+                                  MediaQuery.of(context).platformBrightness ==
+                                          Brightness.light
+                                      ? 'images/basemap_gallery/estandar_claro.png'
+                                      : 'images/basemap_gallery/estandar_oscuro.png',
+                                  appLoca.mapaEstandar,
+                                ),
+                                _botonMapa(
+                                  Layers.satellite,
+                                  'images/basemap_gallery/satelite.png',
+                                  appLoca.mapaSatelite,
+                                ),
+                              ]),
+                            ),
+                            const Divider(),
+                            SwitchListTile.adaptive(
+                              value: MapLayer.onlyMoMo,
+                              onChanged: (bool newValue) {
+                                setModalState(
+                                    () => MapLayer.onlyMoMo = newValue);
+                                setState(() => MapLayer.onlyMoMo = newValue);
+                                Navigator.pop(context);
+                                MapData.resetLocalCache();
+                                checkMarkerType();
+                              },
+                              title: Text(
+                                appLoca.onlyMoMo(
+                                  MapLayer.endYear,
+                                  MapLayer.startYear,
+                                ),
                               ),
-                              _botonMapa(
-                                Layers.satellite,
-                                'images/basemap_gallery/satelite.png',
-                                appLoca.mapaSatelite,
-                              ),
-                            ]),
-                          ),
-                          const Divider(),
-                          SwitchListTile.adaptive(
-                            value: _visibleLabel,
-                            onChanged: (bool newValue) {
-                              setState(() => _visibleLabel = newValue);
-                              Navigator.pop(context);
-                              checkMarkerType();
-                            },
-                            title: Text(appLoca.etiquetaMarcadores),
-                          ),
-                        ],
+                            ),
+                            RangeSlider(
+                                min: 1875,
+                                max: 2000,
+                                values: RangeValues(
+                                  MapLayer.startYear.toDouble(),
+                                  MapLayer.endYear.toDouble(),
+                                ),
+                                divisions: 25,
+                                onChanged: null,
+                                onChangeEnd: (newRangeValues) {
+                                  setModalState(
+                                    () {
+                                      MapLayer.startYear =
+                                          newRangeValues.start.toInt();
+                                      MapLayer.endYear =
+                                          newRangeValues.end.toInt();
+                                    },
+                                  );
+                                  setState(() {
+                                    MapLayer.startYear =
+                                        newRangeValues.start.toInt();
+                                    MapLayer.endYear =
+                                        newRangeValues.end.toInt();
+                                  });
+                                  MapData.resetLocalCache();
+                                  checkMarkerType();
+                                })
+                          ],
+                        ),
                       ),
                       title: appLoca.tipoMapa),
                   // child: const Icon(Icons.layers),
@@ -1972,7 +2008,6 @@ class _MyMap extends State<MyMap> {
           _myMarkers.add(CHESTMarker(context,
               feature: feature,
               icon: icono,
-              visibleLabel: _visibleLabel,
               currentLayer: MapLayer.layer!,
               circleWidthBorder: 2,
               circleWidthColor: colorScheme.primary,

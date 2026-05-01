@@ -1,7 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_network/image_network.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:universal_io/io.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:momoest/l10n/generated/app_localizations.dart';
@@ -11,9 +16,11 @@ import 'package:momoest/util/auxiliar.dart';
 class FullScreenImage extends StatelessWidget {
   final PairImage urlImagen;
   final bool local;
+  final String? label;
   const FullScreenImage(
     this.urlImagen, {
     this.local = false,
+    this.label,
     super.key,
   });
 
@@ -38,6 +45,7 @@ class FullScreenImage extends StatelessWidget {
               onLoading: const CircularProgressIndicator.adaptive(),
             ),
     );
+
     Widget cuerpo;
     if (urlImagen.hasLicense) {
       cuerpo = Column(
@@ -45,6 +53,15 @@ class FullScreenImage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: imagen),
+          label != null
+              ? Padding(
+                  padding: EdgeInsetsGeometry.all(Auxiliar.compactMargin),
+                  child: Text(
+                    label!,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                )
+              : Container(),
           TextButton.icon(
               onPressed: () async {
                 ScaffoldMessengerState sms = ScaffoldMessenger.of(context);
@@ -68,16 +85,72 @@ class FullScreenImage extends StatelessWidget {
         ],
       );
     } else {
-      cuerpo = imagen;
+      cuerpo = Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: imagen),
+          label != null
+              ? Padding(
+                  padding: EdgeInsetsGeometry.all(Auxiliar.compactMargin),
+                  child: Text(
+                    label!,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                )
+              : Container(),
+        ],
+      );
     }
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).primaryColorDark,
-        // leading: const BackButton(color: Colors.white),
         title: Text(AppLocalizations.of(context)!.pantallaCompleta),
+        actions: [
+          if (!local)
+            IconButton(
+              icon: const Icon(Icons.download),
+              tooltip: AppLocalizations.of(context)!.descargar,
+              onPressed: () => _guardarImagen(context),
+            ),
+        ],
       ),
       body: Center(child: cuerpo),
     );
+  }
+
+  Future<void> _guardarImagen(BuildContext context) async {
+    final sms = ScaffoldMessenger.of(context);
+    try {
+      if (kIsWeb) {
+        if (!await launchUrl(
+          Uri.parse(urlImagen.image),
+          mode: LaunchMode.externalApplication,
+        )) {
+          throw Exception();
+        }
+      } else {
+        final response = await http.get(Uri.parse(urlImagen.image));
+        final dir = await getTemporaryDirectory();
+        final uri = Uri.parse(urlImagen.image);
+        final filename =
+            uri.pathSegments.isNotEmpty && uri.pathSegments.last.isNotEmpty
+                ? uri.pathSegments.last
+                : 'image.jpg';
+        final file = File('${dir.path}/$filename');
+        await file.writeAsBytes(response.bodyBytes);
+        await SharePlus.instance.share(
+          ShareParams(files: [XFile(file.path)], subject: label ?? ''),
+        );
+      }
+    } catch (_) {
+      if (!context.mounted) return;
+      sms.clearSnackBars();
+      sms.showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.noLanzarURL),
+        ),
+      );
+    }
   }
 }
 

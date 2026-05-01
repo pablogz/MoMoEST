@@ -5,11 +5,11 @@ const FirebaseAdmin = require('firebase-admin');
 
 const { urlServer } = require('../../util/config');
 const { options4Request, options4RequestOSM, checkUID, getTokenAuth, logHttp, mergeResults, sparqlResponse2Json, endpoints } = require('../../util/auxiliar');
-const { getInfoFeaturesOSM, insertFeature, getInfoFeaturesSparql, getInceptionWikidata } = require('../../util/queries');
+const { getInfoFeaturesOSM, insertFeature, getInfoFeaturesSparql, getInceptionWikidata, getInfoFeaturesDocomomo } = require('../../util/queries');
 const { getInfoUser } = require('../../util/bd');
 const winston = require('../../util/winston');
 const { ElementOSM } = require('../../util/pojos/osm');
-const { FeatureLocalRepo } = require('../../util/pojos/localRepo');
+const { FeatureLocalRepo, FeatureLocalDocomomo } = require('../../util/pojos/localRepo');
 const { updateFeatureCache, FeatureCache, InfoFeatureCache } = require('../../util/cacheFeatures');
 const Config = require('../../util/config');
 const SPARQLQuery = require('../../util/sparqlQuery');
@@ -29,7 +29,7 @@ async function getFeatures(req, res) {
         return out;
     }
     try {
-        let { interval, north, south, west, east, type } = req.query;
+        let { interval, north, south, west, east } = req.query;
         const bounds = { 'north': north, 'south': south, 'west': west, 'east': east };
         ['north', 'south', 'west', 'east'].forEach(l => {
             if (bounds[l] === undefined) {
@@ -38,7 +38,6 @@ async function getFeatures(req, res) {
                 bounds[l] = parseFloat(bounds[l]);
             }
         });
-        //Compruebo que la posición enviada por el cliente "tenga sentido"
         if (bounds.north > 90 ||
             bounds.north <= -90 ||
             bounds.south >= 90 ||
@@ -52,140 +51,158 @@ async function getFeatures(req, res) {
         ) {
             throw new Error('Location problem');
         }
-        //Ya tengo la información en la variable bounds
         north = null; south = null; west = null; east = null;
         if (interval !== undefined) {
             interval = period(interval);
         }
-        // Recupero los datos de OSM
         if (bounds.north - bounds.south > 0.5 || Math.abs(bounds.east - bounds.west) > 0.5) {
             throw new Error('The distance between the ends of the bound has to be less than 0.5 degrees');
         } else {
             const interT = Date.now() - start;
             const listPromise = [];
-            // Petición para recuperar la información de OSM
-            const options = options4RequestOSM(getInfoFeaturesOSM(bounds, type));
+            const options = options4RequestOSM(getInfoFeaturesOSM(bounds));
             listPromise.push(fetch(
                 options.host + options.path,
                 { headers: options.headers }).then(
                     r => { return r.status == 200 ? r.json() : null; }
                 ));
-            // Petición para recuperar los objetos del punto SPARQL
             const queryLocalSparql = getInfoFeaturesSparql(bounds);
             const sparqlQuery = new SPARQLQuery(`http://${Config.addrSparql}:8890/sparql`);
             listPromise.push(sparqlQuery.query(queryLocalSparql));
-            Promise.all(listPromise).then(async ([dataOSM, dataLocalSparql]) => {
+            const queryLocalDocomomo = getInfoFeaturesDocomomo(bounds);
+            listPromise.push(sparqlQuery.query(queryLocalDocomomo));
+
+            Promise.all(listPromise).then(async ([dataOSM, dataLocalSparql, dataLocalDocomomo]) => {
                 const out = [];
                 const vOSM = [];
-                // Proceso los datos de Wikidata
-                if (dataOSM != null) {
-                    // Adapto el resultado para que sea compatible
-                    for (let ele of dataOSM.elements) {
-                        try {
-                            const nOSM = new ElementOSM(ele);
-                            if (interval === undefined || nOSM.wikidata) {
-                                vOSM.push(nOSM);
-                            }
-                            // out.push(nOSM.toChestMap());
-                            // const nFeatureCache = new FeatureCache(nOSM.id);
-                            // // console.log(nOSM.id);
-                            // const nInfoFeatureCache = new InfoFeatureCache('osm', nOSM.id, nOSM);
-                            // nFeatureCache.addInfoFeatureCache(nInfoFeatureCache);
-                            // updateFeatureCache(nFeatureCache);
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    }
-                }
 
-                // let wikidataPromise = null;
-                // if(vOSM.length > 0 && interval !== undefined) {
-                //     // Hago la consulta SPARQL
-                //     let values = '';
-                //     for(let ele  of vOSM) {
-                //         values += ele.wikidata + ' ';
-                //     }
-                //     values = values.trim();
-                //     const wikidataQuery = new SPARQLQuery(endpoints.wikidata);
-                //     winston.info(getInceptionWikidata(values, interval));
-                //     wikidataPromise = wikidataQuery.query(getInceptionWikidata(values, interval));
-                // }
-
-                let wikidataDict = {};
-                let wikidataPromises = null;
-                if (vOSM.length > 0 && interval !== undefined) {
-                    const qids = vOSM
-                        .filter(e => e.wikidata)
-                        .map(e => e.wikidata.trim());
-
-                    const groups = chunk(qids, 20);
-                    const wikidataQuery = new SPARQLQuery(endpoints.wikidata);
-
-                    wikidataPromises = groups.map(g => {
-                        const values = g.join(" ");
-                        const query = getInceptionWikidata(values, interval);
-                        winston.info(query);
-                        try {
-                            return wikidataQuery.query(query);
-                        } catch (err) {
-                            console.error("Error en chunk Wikidata:", err);
-                            return null;
-                        }
-                    });
-                }
-                winston.info(wikidataPromises.length);
-
+                // Procesamos datos del repo local (siempre, independiente del intervalo)
                 if (dataLocalSparql != null) {
                     const data = mergeResults(sparqlResponse2Json(dataLocalSparql), 'feature');
                     data.forEach(f => {
                         try {
                             const feature = new FeatureLocalRepo(f);
                             out.push(feature.toChestMap());
-                            // const nFeatureCache = new FeatureCache(feature.id);
-                            // const nInfoFeatureCache = new InfoFeatureCache('localRepo', feature.id, feature);
-                            // nFeatureCache.addInfoFeatureCache(nInfoFeatureCache);
-                            // updateFeatureCache(nFeatureCache);
                         } catch (error) {
                             console.error(error);
                         }
                     });
                 }
 
+                const docoWd = [];
+                const docoOSM = [];
+                // Proceso los datos del grafo de Docomomo. Originalmente he incluido 3 lugares
+                if(dataLocalDocomomo != null) {
+                    const data = mergeResults(sparqlResponse2Json(dataLocalDocomomo), 'feature');
+                    data.forEach(f => {
+                        try {
+                            const feature = new FeatureLocalDocomomo(f);
+                            out.push(feature.toChestMap());
+                            if(feature.osm) {
+                                docoOSM.push(feature.osm);
+                            }
+                            if(feature.wd) {
+                                docoWd.push(feature.wd);
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    })
+                }
+
+                if (dataOSM != null) {
+                    for (let ele of dataOSM.elements) {
+                        try {
+                            const nOSM = new ElementOSM(ele);
+                            // Si hay intervalo, solo guardamos los que tienen wikidata
+                            if (interval === undefined || nOSM.wikidata) {
+                                // Solo guardo si el identificador no está en docoOSM
+                                if(!docoOSM.includes(nOSM.shortId)) {
+                                    if(nOSM.wikidata) {
+                                        if(!docoWd.includes(nOSM.wikidata)) {
+                                            vOSM.push(nOSM);
+                                        }
+                                    } else {
+                                    vOSM.push(nOSM);
+                                    }
+                                }
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                }
+
                 if (vOSM.length > 0) {
-                    winston.info(wikidataPromises.length);
                     if (interval === undefined) {
+                        // Sin filtro de fecha: incluir todos los elementos OSM
                         for (let ele of vOSM) {
                             out.push(ele.toChestMap());
                         }
                     } else {
-                        if (wikidataPromises) {
+                        // Con filtro de fecha: consultar Wikidata por P571 (inception)
+                        const wikidataDict = {};
+
+                        // FIX: ele.wikidata = "wd:Q42" — extraemos el QID puro para
+                        // construir el VALUES de SPARQL y para indexar el diccionario
+                        const qids = vOSM
+                            .filter(e => e.wikidata)
+                            .map(e => {
+                                const match = String(e.wikidata).match(/(Q\d+)$/);
+                                return match ? match[1] : null;
+                            })
+                            .filter(Boolean);
+
+                        if (qids.length > 0) {
+                            const groups = chunk(qids, 20);
+                            const wikidataQuery = new SPARQLQuery(endpoints.wikidata);
+
+                            // FIX: añadimos prefijo "wd:" en cada chunk antes de pasarlo
+                            // a getInceptionWikidata, que espera "wd:Q42 wd:Q84 ..."
+                            const wikidataPromises = groups.map(g => {
+                                const values = g.map(q => `wd:${q}`).join(' ');
+                                const query = getInceptionWikidata(values, interval);
+                                winston.info(query);
+                                return wikidataQuery.query(query).catch(err => {
+                                    console.error('Error en chunk Wikidata:', err);
+                                    return null;
+                                });
+                            });
+
                             const responses = await Promise.all(wikidataPromises);
-                            let wikidataResults = [];
-                            
+
                             for (const r of responses) {
                                 if (!r) continue;
                                 const parsed = sparqlResponse2Json(r);
                                 if (!parsed) continue;
                                 const merged = mergeResults(parsed, 'id');
-                                wikidataResults = wikidataResults.concat(merged);
-                            }
-
-                            for (let w of wikidataResults) {
-                                if (w.id) {
-                                    wikidataDict[w.id] = w;
+                                for (const w of merged) {
+                                    if (w.id) {
+                                        // FIX: la respuesta de Wikidata devuelve ?id como
+                                        // URI completa "http://www.wikidata.org/entity/Q42"
+                                        // → extraemos "Q42" para indexar el diccionario
+                                        const match = String(w.id).match(/(Q\d+)$/);
+                                        if (match) {
+                                            wikidataDict[match[1]] = w;
+                                        }
+                                    }
                                 }
                             }
+                        }
 
-                            for (let ele of vOSM) {
-                                if (!ele.wikidata) continue;
-                                if (!wikidataDict[ele.wikidata]) continue;
+                        // FIX: ele.wikidata = "wd:Q42" → extraemos "Q42" para buscar
+                        // en wikidataDict (que está indexado por QID puro)
+                        for (let ele of vOSM) {
+                            if (!ele.wikidata) continue;
+                            const match = String(ele.wikidata).match(/(Q\d+)$/);
+                            const qid = match ? match[1] : null;
+                            if (qid && wikidataDict[qid]) {
                                 out.push(ele.toChestMap());
                             }
                         }
                     }
                 }
 
-                // Se envía al cliente
                 winston.info(Mustache.render(
                     'getFeatures,{{{out}}},{{{inter}}},{{{time}}}',
                     {
@@ -205,7 +222,6 @@ async function getFeatures(req, res) {
                 console.error(error);
                 res.sendStatus(500);
             });
-
         }
     } catch (error) {
         winston.error(Mustache.render(
@@ -311,7 +327,7 @@ curl -X POST --user pablo:pablo -H "Content-Type: application/json" -d "{\"lat\"
 
                                         if (body.type) {
                                             let type = body.type;
-                                            if (typeof a === 'string') {
+                                            if (typeof type === 'string') {
                                                 type = [type];
                                             }
                                             let types = [];
@@ -450,7 +466,7 @@ curl -X POST --user pablo:pablo -H "Content-Type: application/json" -d "{\"lat\"
             }
         ));
         logHttp(req, 400, 'newFeature', start);
-        res.status(400).send(Mustache.render('{{{error}}}\n{{{parameteres}}}', { error: error, parameters: needParameters }));
+        res.status(400).send(Mustache.render('{{{error}}}\n{{{parameters}}}', { error: error, parameters: needParameters }));
     }
 }
 

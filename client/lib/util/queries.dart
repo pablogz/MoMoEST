@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:momoest/util/config_xest.dart';
 import 'package:momoest/util/auxiliar.dart';
+import 'package:momoest/util/map_layer.dart';
 
 class Queries {
   /*+++++++++++++++++++++++++++++++++++
@@ -33,17 +34,20 @@ class Queries {
 
   //GET info features bounds
   static Uri getFeatures(Map<String, dynamic> parameters) {
-    String lType;
-    switch (layerType) {
-      case LayerType.forest:
-      case LayerType.schools:
-        lType = '&type=${layerType.name}';
-        break;
-      default:
-        lType = '';
-    }
-    return Uri.parse(
-        '${ConfigXest.addServer}/features?north=${parameters['north']}&west=${parameters['west']}&south=${parameters['south']}&east=${parameters['east']}&group=${parameters['group']}$lType');
+    // String lType;
+    // switch (layerType) {
+    //   case LayerType.forest:
+    //   case LayerType.schools:
+    //     lType = '&type=${layerType.name}';
+    //     break;
+    //   default:
+    //     lType = '';
+    // }
+    String bounds =
+        'north=${parameters['north']}&west=${parameters['west']}&south=${parameters['south']}&east=${parameters['east']}';
+    return Uri.parse(MapLayer.onlyMoMo
+        ? '${ConfigXest.addServer}/features?$bounds&interval=${MapLayer.startYear}-${MapLayer.endYear}'
+        : '${ConfigXest.addServer}/features?$bounds');
   }
 
   //POST

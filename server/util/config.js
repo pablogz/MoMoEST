@@ -8,6 +8,7 @@ const userSparql = 'pablo';
 const passSparql = 'pablo';
 const tokenCraft = '6d8097f8-9fff-40a2-9043-bd57fe89bcb3';
 const primaryGraph = '<http://momoest.gsic.uva.es>';
+const docomomoGraph = '<http://momoest.gsic.uva.es/docomomo>';
 
 // const addrOPA = 'https://overpass-api.de/api/interpreter';
 // const portOPA = 443;
@@ -60,6 +61,7 @@ module.exports = {
     mongoName,
     mongoAdd,
     primaryGraph,
+    docomomoGraph,
     typeST,
     classTypeST,
 }
