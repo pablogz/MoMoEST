@@ -439,18 +439,19 @@ class _AddEditItinerary extends State<AddEditItinerary> {
             children: [
               MapLayer.tileLayerWidget(brightness: td.brightness),
               MapLayer.atributionWidget(),
-              PolylineLayer(
-                polylines: [
-                  Polyline(
-                    points: _pointsTrack,
-                    pattern: const StrokePattern.dotted(),
-                    color: MapLayer.layer != Layers.satellite
-                        ? colorScheme.tertiary
-                        : Colors.white,
-                    strokeWidth: 5,
-                  )
-                ],
-              ),
+              if (_pointsTrack.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: _pointsTrack,
+                      pattern: const StrokePattern.dotted(),
+                      color: MapLayer.layer != Layers.satellite
+                          ? colorScheme.tertiary
+                          : Colors.white,
+                      strokeWidth: 5,
+                    )
+                  ],
+                ),
               MarkerClusterLayerWidget(
                 options: MarkerClusterLayerOptions(
                   maxClusterRadius: 120,
@@ -1091,18 +1092,19 @@ class _AddEditItinerary extends State<AddEditItinerary> {
             children: [
               MapLayer.tileLayerWidget(brightness: td.brightness),
               MapLayer.atributionWidget(),
-              PolylineLayer(
-                polylines: [
-                  Polyline(
-                    points: _pointsTrack,
-                    pattern: const StrokePattern.dotted(),
-                    color: MapLayer.layer != Layers.satellite
-                        ? colorScheme.tertiary
-                        : Colors.white,
-                    strokeWidth: 5,
-                  )
-                ],
-              ),
+              if (_pointsTrack.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: _pointsTrack,
+                      pattern: const StrokePattern.dotted(),
+                      color: MapLayer.layer != Layers.satellite
+                          ? colorScheme.tertiary
+                          : Colors.white,
+                      strokeWidth: 5,
+                    )
+                  ],
+                ),
               MarkerLayer(markers: markersIt)
             ],
           ),

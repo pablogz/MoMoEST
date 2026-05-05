@@ -62,7 +62,9 @@ class _NewUser extends State<NewUser> {
     List<Widget> formNewUserLst = _formNewUser();
     List<Widget> btNewUserLst = _btNewUser();
     return Scaffold(
-      body: CustomScrollView(slivers: [
+      body: Form(
+        key: _keyNewUser,
+        child: CustomScrollView(slivers: [
         SliverAppBar(
           title: Text(AppLocalizations.of(context)!.nuevoUsuario,
               overflow: TextOverflow.ellipsis, maxLines: 1),
@@ -75,9 +77,7 @@ class _NewUser extends State<NewUser> {
           sliver: SliverSafeArea(
             bottom: false,
             minimum: EdgeInsets.symmetric(horizontal: margenLateral),
-            sliver: Form(
-              key: _keyNewUser,
-              child: SliverList(
+            sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => Padding(
                     padding: const EdgeInsets.only(bottom: 15),
@@ -91,7 +91,6 @@ class _NewUser extends State<NewUser> {
                   ),
                   childCount: formNewUserLst.length,
                 ),
-              ),
             ),
           ),
         ),
@@ -118,6 +117,7 @@ class _NewUser extends State<NewUser> {
           ),
         ),
       ]),
+      ),
     );
   }
 
@@ -252,99 +252,6 @@ class _NewUser extends State<NewUser> {
             } else {
               GoRouter.of(context).go('/home');
             }
-            // http
-            //     .put(Queries.putUser(),
-            //         headers: {
-            //           'content-type': 'application/json',
-            //           'Authorization': Template('Bearer {{{token}}}')
-            //               .renderString({
-            //             'token': await FirebaseAuth.instance.currentUser!
-            //                 .getIdToken()
-            //           })
-            //         },
-            //         body: json.encode({}))
-            //     .then((response) async {
-            //   switch (response.statusCode) {
-            //     case 201:
-            //       http.get(Queries.signIn(), headers: {
-            //         'Authorization': Template('Bearer {{{token}}}')
-            //             .renderString({
-            //           'token':
-            //               await FirebaseAuth.instance.currentUser!.getIdToken()
-            //         })
-            //       }).then((response) async {
-            //         switch (response.statusCode) {
-            //           case 200:
-            //             Map<String, dynamic> data = json.decode(response.body);
-            //             UserXEST.userXEST = UserXEST(data);
-            //             if (UserXEST.userXEST.alias != null) {
-            //               smState.clearSnackBars();
-            //               smState.showSnackBar(SnackBar(
-            //                   content: Text(
-            //                       '${appLoca.hola} ${UserXEST.userXEST.alias}')));
-            //             }
-            //             Auxiliar.allowNewUser = false;
-            //             if (widget.lat != null &&
-            //                 widget.long != null &&
-            //                 widget.zoom != null) {
-            //               UserXEST.userXEST.lastMapView = LastPosition(
-            //                   widget.lat!, widget.long!, widget.zoom!);
-            //               http
-            //                   .put(Queries.preferences(),
-            //                       headers: {
-            //                         'content-type': 'application/json',
-            //                         'Authorization':
-            //                             Template('Bearer {{{token}}}')
-            //                                 .renderString({
-            //                           'token': await FirebaseAuth
-            //                               .instance.currentUser!
-            //                               .getIdToken()
-            //                         })
-            //                       },
-            //                       body: json.encode({
-            //                         'lastPointView':
-            //                             UserXEST.userXEST.lastMapView.toJSON()
-            //                       }))
-            //                   .then((response) {
-            //                 GoRouter.of(context).go(
-            //                     '/home?center=${UserXEST.userXEST.lastMapView.lat!},${UserXEST.userXEST.lastMapView.long!}&zoom=${UserXEST.userXEST.lastMapView.zoom!}');
-            //               }).onError((error, stackTrace) {
-            //                 GoRouter.of(context).go(
-            //                     '/home?center=${UserXEST.userXEST.lastMapView.lat!},${UserXEST.userXEST.lastMapView.long!}&zoom=${UserXEST.userXEST.lastMapView.zoom!}');
-            //               });
-            //             } else {
-            //               if (!ConfigXest.development) {
-            //                 FirebaseAnalytics.instance
-            //                     .logLogin(loginMethod: "Google")
-            //                     .then((a) {
-            //                   GoRouter.of(context).go(Auxiliar
-            //                           .userCHEST.lastMapView.init
-            //                       ? '/home?center=${UserXEST.userXEST.lastMapView.lat!},${UserXEST.userXEST.lastMapView.long!}&zoom=${UserXEST.userXEST.lastMapView.zoom!}'
-            //                       : '/home');
-            //                 });
-            //               } else {
-            //                 GoRouter.of(context).go(Auxiliar
-            //                         .userCHEST.lastMapView.init
-            //                     ? '/home?center=${UserXEST.userXEST.lastMapView.lat!},${UserXEST.userXEST.lastMapView.long!}&zoom=${UserXEST.userXEST.lastMapView.zoom!}'
-            //                     : '/home');
-            //               }
-            //             }
-            //             break;
-            //           default:
-            //             FirebaseAuth.instance.signOut();
-            //             smState.clearSnackBars();
-            //             smState.showSnackBar(SnackBar(
-            //                 backgroundColor: colorScheme.error,
-            //                 content: Text(
-            //                     'Error in GET. Status code: ${response.statusCode}',
-            //                     style: bodyMedium.copyWith(
-            //                         color: colorScheme.onError))));
-            //         }
-            //       });
-            //       break;
-            //     default:
-            //   }
-            // });
           } catch (e, stackTrace) {
             setState(() => _enableBt = true);
             if (ConfigXest.development) {
@@ -800,7 +707,9 @@ class _EditUser extends State<EditUser> {
     List<Widget> formEditUserLst = _formEditUser();
     List<Widget> btEditUserLst = _btEditUser();
     return Scaffold(
-      body: CustomScrollView(slivers: [
+      body: Form(
+        key: _keyEditUser,
+        child: CustomScrollView(slivers: [
         SliverAppBar(
           centerTitle: false,
           title: Text(
@@ -815,22 +724,19 @@ class _EditUser extends State<EditUser> {
           sliver: SliverSafeArea(
             bottom: false,
             minimum: EdgeInsets.symmetric(horizontal: margenLateral),
-            sliver: Form(
-              key: _keyEditUser,
-              child: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: Center(
-                      child: Container(
-                        constraints:
-                            const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-                        child: formEditUserLst.elementAt(index),
-                      ),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: Center(
+                    child: Container(
+                      constraints:
+                          const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+                      child: formEditUserLst.elementAt(index),
                     ),
                   ),
-                  childCount: formEditUserLst.length,
                 ),
+                childCount: formEditUserLst.length,
               ),
             ),
           ),
@@ -858,6 +764,7 @@ class _EditUser extends State<EditUser> {
           ),
         ),
       ]),
+      ),
     );
   }
 

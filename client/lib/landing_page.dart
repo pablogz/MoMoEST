@@ -113,7 +113,7 @@ class _LandingPage extends State<LandingPage> {
                         onPressed: () async {
                           try {
                             if (!await launchUrl(Uri.parse(
-                                "https://play.google.com/store/apps/details?id=es.uva.gsic.chest"))) {
+                                "https://play.google.com/store/apps/details?id=es.uva.gsic.momoest"))) {
                               throw Exception();
                             }
                           } catch (error) {
@@ -134,7 +134,7 @@ class _LandingPage extends State<LandingPage> {
                         onPressed: () async {
                           try {
                             if (!await launchUrl(Uri.parse(
-                                "https://apps.apple.com/us/app/chest-gsic/id6654914759"))) {
+                                "https://apps.apple.com/us/app/momoest-gsic/id6764352259"))) {
                               throw Exception();
                             }
                           } catch (error) {
@@ -447,7 +447,7 @@ class _LandingPage extends State<LandingPage> {
                       onTap: () async {
                         try {
                           if (!await launchUrl(Uri.parse(
-                              "https://play.google.com/store/apps/details?id=es.uva.gsic.chest"))) {
+                              "https://play.google.com/store/apps/details?id=es.uva.gsic.momoest"))) {
                             throw Exception();
                           }
                         } catch (error) {
@@ -474,7 +474,7 @@ class _LandingPage extends State<LandingPage> {
                       onTap: () async {
                         try {
                           if (!await launchUrl(Uri.parse(
-                              "https://apps.apple.com/us/app/chest-gsic/id6654914759"))) {
+                              "https://apps.apple.com/us/app/momoest-gsic/id6764352259"))) {
                             throw Exception();
                           }
                         } catch (error) {

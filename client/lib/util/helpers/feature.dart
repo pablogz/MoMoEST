@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:momoest/util/auxiliar.dart';
@@ -149,6 +150,8 @@ class Feature {
         }
         if (data.containsKey('author')) {
           _author = data['author'].toString();
+        } else {
+          _author = (Random().nextDouble() * 256000).toString();
         }
 
         if (data.containsKey('comments')) {
@@ -869,9 +872,7 @@ class Feature {
             data is LocalRepo ? data : LocalRepo(data as Map<String, dynamic>);
         break;
       case 'docomomo':
-        obj = data is Docomomo
-            ? data
-            : Docomomo(data as Map<String, dynamic>);
+        obj = data is Docomomo ? data : Docomomo(data as Map<String, dynamic>);
         break;
       default:
         obj = null;
