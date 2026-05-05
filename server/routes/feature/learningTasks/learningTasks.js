@@ -64,7 +64,7 @@ async function getTasksFeature(req, res) {
 async function postTaskFeture(req, res) {
     const start = Date.now();
     const needParameters = Mustache.render(
-        'Mandatory parameters in the request body are: aT[text/mcq/tf/photo/multiplePhotos/video/photoText/videoText/multiplePhotosText] (answerType); inSpace[virtual/physical] ; comment[string]; hasFeature[uriFeature]\nOptional parameters: image[{image: url, liense: url}], label[string]',
+        'Mandatory parameters in the request body are: aT[mcq/tf/text/uploadFile/draw] (answerType); inSpace[virtual/physical] ; comment[string]; hasFeature[uriFeature]\nOptional parameters: image[{image: url, license: url}], label[string]',
         { urlServer: urlServer });
     try {
         const feature = shortId2Id(req.params.feature);

@@ -13,6 +13,7 @@ class Feed {
   late List<PairLang> _labels, _comments;
   late List<String> _subscribersId;
   late List<Subscriber> _subscribers;
+  late List<String> _teachers;
   // late List<String> _lstStLt, _lstItineraries;
   // late List<PointItinerary> _stLt;
   // late List<Task> _tasks;
@@ -60,6 +61,13 @@ class Feed {
       _pass = data['password'];
     } else {
       _pass = '';
+    }
+
+    _teachers = [];
+    if (data.containsKey('teachers') && data['teachers'] is List) {
+      for (final t in data['teachers']) {
+        if (t is String && t.isNotEmpty) _teachers.add(t);
+      }
     }
 
     _subscribersId = [];
@@ -216,6 +224,7 @@ class Feed {
     _comments = [];
     _subscribersId = [];
     _subscribers = [];
+    _teachers = [];
     _owner = '';
     // _feeders = [feeder];
     // _lstFeatures = [];
@@ -254,6 +263,20 @@ class Feed {
   String get owner => _owner;
   set owner(String owner) {
     _owner = owner;
+  }
+
+  List<String> get teachers => _teachers;
+
+  bool addTeacher(String id) {
+    if (!_teachers.contains(id)) {
+      _teachers.add(id);
+      return true;
+    }
+    return false;
+  }
+
+  bool removeTeacher(String id) {
+    return _teachers.remove(id);
   }
 
   List<Subscriber> get subscribers => _subscribers;

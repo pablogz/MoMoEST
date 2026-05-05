@@ -122,6 +122,8 @@ class Auxiliar {
       AnswerType.tf: appLoca.tfTitle,
       AnswerType.video: appLoca.videoTitle,
       AnswerType.videoText: appLoca.videoTextTitle,
+      AnswerType.uploadFile: appLoca.selectTipoRespuestaUploadFile,
+      AnswerType.draw: appLoca.selectTipoRespuestaDraw,
     };
 
     return mapAnswerTypeName[aT] ?? '';
@@ -432,13 +434,13 @@ class Auxiliar {
         globalKey.currentContext!.findRenderObject() as RenderBox?;
     Rect? rect = box!.localToGlobal(Offset.zero) & box.size;
     return isUri
-        ? await Share.shareUri(
-            Uri.parse(textToShare),
-            sharePositionOrigin: rect,
-          )
-        : await Share.share(
-            textToShare,
-            sharePositionOrigin: rect,
+        ? await SharePlus.instance.share(
+            ShareParams(uri: Uri.parse(textToShare), sharePositionOrigin: rect))
+        : await SharePlus.instance.share(
+            ShareParams(
+              text: textToShare,
+              sharePositionOrigin: rect,
+            ),
           );
   }
 
@@ -559,10 +561,11 @@ class Auxiliar {
     return ((n * mul).round()) / mul;
   }
 
-  static QuillSimpleToolbar quillToolbar(QuillController quillcontroller) =>
+  static QuillSimpleToolbar quillToolbar(
+          QuillController quillcontroller, ColorScheme cS) =>
       QuillSimpleToolbar(
         controller: quillcontroller,
-        config: const QuillSimpleToolbarConfig(
+        config: QuillSimpleToolbarConfig(
           showAlignmentButtons: false,
           showBackgroundColorButton: false,
           showCenterAlignment: false,
@@ -590,6 +593,20 @@ class Auxiliar {
           showSubscript: false,
           showSuperscript: false,
           multiRowsDisplay: true,
+          buttonOptions: QuillSimpleToolbarButtonOptions(
+            base: QuillToolbarBaseButtonOptions(
+              iconTheme: QuillIconTheme(
+                iconButtonSelectedData: IconButtonData(
+                  color: cS.onPrimaryContainer,
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(cS.surfaceBright),
+                  ),
+                ),
+                iconButtonUnselectedData:
+                    IconButtonData(color: cS.onPrimaryContainer),
+              ),
+            ),
+          ),
         ),
       );
 

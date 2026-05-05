@@ -202,7 +202,8 @@ class _FormFeedTeacher extends State<FormFeedTeacher> {
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
                                 ),
-                                child: Auxiliar.quillToolbar(_quillController),
+                                child: Auxiliar.quillToolbar(
+                                    _quillController, colorScheme),
                               ),
                             ),
                             Container(
@@ -737,6 +738,7 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
   late bool _passVisible,
       _noFeedFound,
       _isOwner,
+      _isCoTeacher,
       _isTeacherAndOwner,
       _isEnableFeed;
 
@@ -745,6 +747,10 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
     _feed = FeedCache.getFeed(widget.idFeed);
     _noFeedFound = _feed == null;
     _isOwner = !_noFeedFound && _feed!.owner == UserXEST.userXEST.id;
+    _isCoTeacher = !_noFeedFound &&
+        !_isOwner &&
+        UserXEST.userXEST.canEditNow &&
+        _feed!.teachers.contains(UserXEST.userXEST.id);
     _isTeacherAndOwner = _isOwner && UserXEST.userXEST.canEditNow;
     _isEnableFeed = !_noFeedFound &&
         UserXEST.userXEST.hasFeedEnable &&
@@ -816,7 +822,7 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                           Tab(text: appLoca.infor),
                           // Tab(text: appLoca.resources),
                           Tab(
-                            text: _isOwner
+                            text: (_isOwner || _isCoTeacher)
                                 ? appLoca.participantes
                                 : appLoca.misRespuestas,
                           )
@@ -824,116 +830,164 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                       ),
                       actions: _isOwner
                           ? null
-                          : [
-                              IconButton(
-                                  onPressed: () async {
-                                    ScaffoldMessengerState? sMState = mounted
-                                        ? ScaffoldMessenger.of(context)
-                                        : null;
-                                    bool? bajaCanal =
-                                        await Auxiliar.deleteDialog(
-                                            context,
-                                            appLoca.salirCanal,
-                                            appLoca.salirCanalExplica);
-                                    if (bajaCanal is bool && bajaCanal) {
-                                      http.delete(
-                                          Queries.feedSubscriber(_feed!.shortId,
+                          : _isCoTeacher
+                              ? [
+                                  IconButton(
+                                    onPressed: () async {
+                                      ScaffoldMessengerState? sMState = mounted
+                                          ? ScaffoldMessenger.of(context)
+                                          : null;
+                                      bool? baja = await Auxiliar.deleteDialog(
+                                          context,
+                                          appLoca.salirCanalProfe,
+                                          appLoca.salirCanalProfeExplica);
+                                      if (baja is bool && baja) {
+                                        http.delete(
+                                          Queries.feedTeacher(_feed!.shortId,
                                               UserXEST.userXEST.id),
                                           headers: {
                                             'Authorization':
                                                 'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
-                                          }).then((response) async {
-                                        switch (response.statusCode) {
-                                          case 200:
-                                            if (mounted) {
-                                              setState(() =>
-                                                  FeedCache.removeFeed(_feed!));
+                                          },
+                                        ).then((response) {
+                                          if (response.statusCode == 200) {
+                                            if (sMState != null) {
+                                              sMState.clearSnackBars();
+                                              sMState.showSnackBar(SnackBar(
+                                                content:
+                                                    Text(appLoca.canalBorrado),
+                                                duration:
+                                                    const Duration(seconds: 5),
+                                              ));
                                             }
-                                            if (!ConfigXest.development) {
-                                              await FirebaseAnalytics.instance
-                                                  .logEvent(
-                                                name: "unsubscribedFeed",
-                                                parameters: {
-                                                  "iri": _feed!.shortId,
-                                                  "user": UserXEST.userXEST.id,
-                                                },
-                                              ).then(
-                                                (value) {
+                                            if (mounted) context.pop();
+                                          }
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.logout_outlined),
+                                  )
+                                ]
+                              : [
+                                  IconButton(
+                                      onPressed: () async {
+                                        ScaffoldMessengerState? sMState =
+                                            mounted
+                                                ? ScaffoldMessenger.of(context)
+                                                : null;
+                                        bool? bajaCanal =
+                                            await Auxiliar.deleteDialog(
+                                                context,
+                                                appLoca.salirCanal,
+                                                appLoca.salirCanalExplica);
+                                        if (bajaCanal is bool && bajaCanal) {
+                                          http.delete(
+                                              Queries.feedSubscriber(
+                                                  _feed!.shortId,
+                                                  UserXEST.userXEST.id),
+                                              headers: {
+                                                'Authorization':
+                                                    'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
+                                              }).then((response) async {
+                                            switch (response.statusCode) {
+                                              case 200:
+                                                if (mounted) {
+                                                  setState(() =>
+                                                      FeedCache.removeFeed(
+                                                          _feed!));
+                                                }
+                                                if (!ConfigXest.development) {
+                                                  await FirebaseAnalytics
+                                                      .instance
+                                                      .logEvent(
+                                                    name: "unsubscribedFeed",
+                                                    parameters: {
+                                                      "iri": _feed!.shortId,
+                                                      "user":
+                                                          UserXEST.userXEST.id,
+                                                    },
+                                                  ).then(
+                                                    (value) {
+                                                      if (sMState != null) {
+                                                        sMState
+                                                            .clearSnackBars();
+                                                        sMState.showSnackBar(
+                                                          SnackBar(
+                                                            content: Text(appLoca
+                                                                .canalBorrado),
+                                                            duration: Duration(
+                                                              seconds: 10,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                      if (mounted)
+                                                        context.pop();
+                                                    },
+                                                  ).onError(
+                                                          (error, stackTrace) {
+                                                    if (sMState != null) {
+                                                      sMState.clearSnackBars();
+                                                      sMState.showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            appLoca
+                                                                .canalBorrado,
+                                                          ),
+                                                          duration: Duration(
+                                                            seconds: 10,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                    if (mounted) context.pop();
+                                                  });
+                                                } else {
                                                   if (sMState != null) {
                                                     sMState.clearSnackBars();
-                                                    sMState.showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(appLoca
-                                                            .canalBorrado),
-                                                        duration: Duration(
-                                                          seconds: 10,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                  if (mounted) context.pop();
-                                                },
-                                              ).onError((error, stackTrace) {
-                                                if (sMState != null) {
-                                                  sMState.clearSnackBars();
-                                                  sMState.showSnackBar(
-                                                    SnackBar(
+                                                    sMState
+                                                        .showSnackBar(SnackBar(
                                                       content: Text(
                                                         appLoca.canalBorrado,
                                                       ),
                                                       duration: Duration(
                                                         seconds: 10,
                                                       ),
-                                                    ),
-                                                  );
+                                                    ));
+                                                  }
+                                                  if (mounted) context.pop();
                                                 }
-                                                if (mounted) context.pop();
-                                              });
-                                            } else {
-                                              if (sMState != null) {
-                                                sMState.clearSnackBars();
-                                                sMState.showSnackBar(SnackBar(
-                                                  content: Text(
-                                                    appLoca.canalBorrado,
-                                                  ),
-                                                  duration: Duration(
-                                                    seconds: 10,
-                                                  ),
-                                                ));
-                                              }
-                                              if (mounted) context.pop();
+                                                break;
+                                              default:
+                                                if (sMState != null) {
+                                                  sMState.clearSnackBars();
+                                                  sMState.showSnackBar(SnackBar(
+                                                    content: Text(
+                                                      'Status code: ${response.statusCode}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium!
+                                                          .copyWith(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .onErrorContainer),
+                                                    ),
+                                                    duration: Duration(
+                                                      seconds: 10,
+                                                    ),
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .colorScheme
+                                                            .errorContainer,
+                                                  ));
+                                                }
                                             }
-                                            break;
-                                          default:
-                                            if (sMState != null) {
-                                              sMState.clearSnackBars();
-                                              sMState.showSnackBar(SnackBar(
-                                                content: Text(
-                                                  'Status code: ${response.statusCode}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .colorScheme
-                                                              .onErrorContainer),
-                                                ),
-                                                duration: Duration(
-                                                  seconds: 10,
-                                                ),
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .errorContainer,
-                                              ));
-                                            }
+                                          });
                                         }
-                                      });
-                                    }
-                                  },
-                                  icon: Icon(Icons.logout_outlined))
-                            ],
+                                      },
+                                      icon: Icon(Icons.logout_outlined))
+                                ],
                     ),
                   )
                 ],
@@ -1020,15 +1074,19 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: SelectableText.rich(
-                        TextSpan(text: '${appLoca.idFeed}: ', children: [
-                          TextSpan(
-                            text: _feed!.shortId,
+                        TextSpan(
+                            text: '${appLoca.idFeed}: ',
                             style: td.textTheme.bodyLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.onTertiaryContainer,
-                            ),
-                          )
-                        ]),
+                                color: colorScheme.onTertiaryContainer),
+                            children: [
+                              TextSpan(
+                                text: _feed!.shortId,
+                                style: td.textTheme.bodyLarge!.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onTertiaryContainer,
+                                ),
+                              )
+                            ]),
                       ),
                     ),
                     SizedBox(
@@ -1064,8 +1122,14 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                             padding: const EdgeInsets.only(top: 10, bottom: 5),
                             child: SwitchListTile.adaptive(
                                 value: _passVisible,
-                                title: Text(appLoca.showPassword),
-                                activeColor: colorScheme.primary,
+                                title: Text(
+                                  appLoca.showPassword,
+                                  style: td.textTheme.bodyLarge!.copyWith(
+                                    color: colorScheme.onTertiaryContainer,
+                                  ),
+                                ),
+                                activeTrackColor: colorScheme.primary,
+                                inactiveTrackColor: colorScheme.surface,
                                 onChanged: (bool v) =>
                                     setState(() => _passVisible = v)),
                           )
@@ -1076,11 +1140,17 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                             ? SelectableText(
                                 _feed!.pass,
                                 style: GoogleFonts.robotoMono().copyWith(
-                                    fontSize:
-                                        td.textTheme.headlineMedium!.fontSize),
+                                  fontSize:
+                                      td.textTheme.headlineMedium!.fontSize,
+                                  color: colorScheme.onTertiaryContainer,
+                                ),
                               )
-                            : Text('* * * * *',
-                                style: GoogleFonts.robotoMono()),
+                            : Text(
+                                '* * * * *',
+                                style: GoogleFonts.robotoMono().copyWith(
+                                  color: colorScheme.onTertiaryContainer,
+                                ),
+                              ),
                   ]
                 : [
                     SwitchListTile.adaptive(
@@ -1101,8 +1171,72 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                   ],
           ),
         ),
-        SizedBox(height: 80),
+        _isTeacherAndOwner ? _widgetTeachers() : const SizedBox.shrink(),
+        const SizedBox(height: 80),
       ],
+    );
+  }
+
+  Widget _widgetTeachers() {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    ThemeData td = Theme.of(context);
+    ColorScheme colorScheme = td.colorScheme;
+    double mLateral =
+        Auxiliar.getLateralMargin(MediaQuery.of(context).size.width);
+    final teachers = _feed!.teachers;
+    return Container(
+      constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+      margin: EdgeInsets.only(top: mLateral),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child:
+                Text(appLoca.profesoresCanal, style: td.textTheme.titleMedium),
+          ),
+          teachers.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 8),
+                  child: Text(appLoca.sinProfesoresCanal,
+                      style: td.textTheme.bodyMedium),
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: teachers
+                      .map((tId) => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(tId,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: td.textTheme.bodyMedium),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  http.delete(
+                                    Queries.feedTeacher(_feed!.shortId, tId),
+                                    headers: {
+                                      'Authorization':
+                                          'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
+                                    },
+                                  ).then((response) {
+                                    if (response.statusCode == 200 && mounted) {
+                                      setState(() => _feed!.removeTeacher(tId));
+                                    }
+                                  });
+                                },
+                                style: TextButton.styleFrom(
+                                    foregroundColor: colorScheme.error),
+                                child: Text(appLoca.borrarProfeCanal),
+                              ),
+                            ],
+                          ))
+                      .toList(),
+                ),
+        ],
+      ),
     );
   }
 
@@ -1431,13 +1565,13 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
   Widget _widgetAnswers() {
     return _feed!.subscribers.isEmpty
         ? FutureBuilder(
-            future: _isOwner && UserXEST.userXEST.canEditNow
+            future: (_isOwner || _isCoTeacher) && UserXEST.userXEST.canEditNow
                 ? _getSubscribers()
                 : _getSubscriber(),
             builder: (context, snapshot) {
               if (!snapshot.hasError && snapshot.hasData) {
                 Object? body = snapshot.data;
-                if (_isOwner) {
+                if (_isOwner || _isCoTeacher) {
                   // body tendrá una lista
                   if (body != null && body is List) {
                     for (Map ele in body) {
@@ -1573,10 +1707,9 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                       alignment: WrapAlignment.end,
                       crossAxisAlignment: WrapCrossAlignment.end,
                       children: [
-                        _isOwner
+                        _isOwner && !_isCoTeacher
                             ? TextButton(
                                 onPressed: () async {
-                                  // TODO borrado del usuario de la lista de participantes
                                   http.delete(
                                       Queries.feedSubscriber(
                                           _feed!.shortId, subscriber.id),
@@ -1703,6 +1836,223 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
       default:
         return Container();
     }
+  }
+}
+
+class FormFeedTeacherSubscriber extends StatefulWidget {
+  const FormFeedTeacherSubscriber({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _FormFeedTeacherSubscriber();
+}
+
+class _FormFeedTeacherSubscriber extends State<FormFeedTeacherSubscriber> {
+  late GlobalKey<FormState> _formKey;
+  late String _id, _pass;
+  late bool _enviando;
+
+  @override
+  void initState() {
+    _formKey = GlobalKey<FormState>();
+    _enviando = false;
+    _id = '';
+    _pass = '';
+    super.initState();
+  }
+
+  void _showError(ScaffoldMessengerState? sMState, String message) {
+    ThemeData td = Theme.of(context);
+    ColorScheme colorScheme = td.colorScheme;
+    sMState?.clearSnackBars();
+    sMState?.showSnackBar(SnackBar(
+      content: Text(
+        message,
+        style: td.textTheme.bodyMedium!.copyWith(
+          color: colorScheme.onErrorContainer,
+        ),
+      ),
+      duration: const Duration(seconds: 8),
+      backgroundColor: colorScheme.errorContainer,
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    ScaffoldMessengerState? sMState =
+        mounted ? ScaffoldMessenger.of(context) : null;
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    return Form(
+      key: _formKey,
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+                centerTitle: false, title: Text(appLoca.apuntarmeProfeCanal)),
+            SliverSafeArea(
+              top: false,
+              bottom: false,
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+                    margin: EdgeInsets.all(Auxiliar.getLateralMargin(w)),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          maxLines: 1,
+                          enabled: !_enviando,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: appLoca.idFeed,
+                            hintText: 'md:ABCDEFGHIJ0123456789jihgfedcba',
+                            helperText: appLoca.requerido,
+                            hintMaxLines: 1,
+                            hintStyle: const TextStyle(
+                                overflow: TextOverflow.ellipsis),
+                          ),
+                          maxLength: 80,
+                          keyboardType: TextInputType.text,
+                          autovalidateMode: AutovalidateMode.onUnfocus,
+                          validator: (value) {
+                            if (value is String &&
+                                value.trim().isNotEmpty &&
+                                value.trim().startsWith('md:') &&
+                                !value.trim().contains('/')) {
+                              _id = value.trim();
+                              return null;
+                            }
+                            return appLoca.idFeedError;
+                          },
+                          initialValue: _id,
+                        ),
+                        const SizedBox(height: 15),
+                        TextFormField(
+                          maxLines: 1,
+                          enabled: !_enviando,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: appLoca.passFeed,
+                            hintText: appLoca.passFeed,
+                            hintMaxLines: 1,
+                            hintStyle: const TextStyle(
+                                overflow: TextOverflow.ellipsis),
+                          ),
+                          maxLength: 120,
+                          style: GoogleFonts.robotoMono().copyWith(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .fontSize),
+                          keyboardType: TextInputType.visiblePassword,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (value is String && value.trim().isNotEmpty) {
+                              _pass = value.trim();
+                            }
+                            return null;
+                          },
+                          initialValue: _pass,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SliverSafeArea(
+              top: false,
+              bottom: false,
+              sliver: SliverPadding(
+                padding: EdgeInsets.all(Auxiliar.getLateralMargin(w)),
+                sliver: SliverToBoxAdapter(
+                  child: Center(
+                    child: Container(
+                      constraints:
+                          const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: FilledButton(
+                          onPressed: _enviando
+                              ? null
+                              : () async {
+                                  if (_formKey.currentState != null &&
+                                      _formKey.currentState!.validate()) {
+                                    setState(() => _enviando = true);
+                                    final Map<String, dynamic> body = {};
+                                    if (_pass.isNotEmpty) {
+                                      body['password'] = _pass;
+                                    }
+                                    http
+                                        .put(
+                                      Queries.feedTeacher(
+                                          _id, UserXEST.userXEST.id),
+                                      headers: {
+                                        'Authorization':
+                                            'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}',
+                                        'Content-Type': 'application/json',
+                                      },
+                                      body: jsonEncode(body),
+                                    )
+                                        .then((response) {
+                                      switch (response.statusCode) {
+                                        case 204:
+                                          if (sMState != null) {
+                                            sMState.clearSnackBars();
+                                            sMState.showSnackBar(SnackBar(
+                                              content: Text(
+                                                  appLoca.teApuntasteProfe),
+                                              duration:
+                                                  const Duration(seconds: 5),
+                                            ));
+                                          }
+                                          if (mounted) Navigator.pop(context);
+                                          break;
+                                        case 409:
+                                          // El usuario ya es propietario del canal
+                                          _showError(sMState,
+                                              appLoca.errorYaPropietarioCanal);
+                                          setState(() => _enviando = false);
+                                          break;
+                                        case 400:
+                                          // Contraseña incorrecta o ya es co-profesor
+                                          _showError(sMState,
+                                              appLoca.idFeedErrorContra);
+                                          setState(() => _enviando = false);
+                                          break;
+                                        case 404:
+                                          _showError(sMState,
+                                              appLoca.canalNoEncontrado);
+                                          setState(() => _enviando = false);
+                                          break;
+                                        default:
+                                          if (ConfigXest.development) {
+                                            debugPrint(
+                                                'newTeacher status: ${response.statusCode}');
+                                          }
+                                          setState(() => _enviando = false);
+                                      }
+                                    }).onError((error, stackTrace) {
+                                      setState(() => _enviando = false);
+                                      if (ConfigXest.development) {
+                                        debugPrint(error.toString());
+                                      }
+                                    });
+                                  }
+                                },
+                          child: Text(appLoca.apuntarmeProfeCanal),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

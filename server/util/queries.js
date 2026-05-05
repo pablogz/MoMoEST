@@ -585,31 +585,30 @@ function fields(uid, p4R) {
                 ));
                 break;
             case 'aT':
-                var type;
                 switch (p4R[key]) {
-                    // TODO depende del dominio
                     case 'mcq':
                     case 'tf':
-                    case 'photo':
-                    case 'multiplePhotos':
-                    case 'video':
-                    case 'photoText':
-                    case 'videoText':
-                    case 'multiplePhotosText':
                     case 'text':
-                    case 'noAnswer':
-                        type = p4R[key];
+                        triples.push(Mustache.render(
+                            '<{{{uid}}}> mo:answerType mo:{{{aT}}} . ',
+                            { uid: uid, aT: p4R[key] }
+                        ));
+                        break;
+                    case 'uploadFile':
+                        triples.push(Mustache.render(
+                            '<{{{uid}}}> mo:answerType <http://momoest.gsic.uva.es/ontology/UploadFile> . ',
+                            { uid: uid }
+                        ));
+                        break;
+                    case 'draw':
+                        triples.push(Mustache.render(
+                            '<{{{uid}}}> mo:answerType <http://momoest.gsic.uva.es/ontology/Draw> . ',
+                            { uid: uid }
+                        ));
                         break;
                     default:
                         throw new Error('Problem with the client aT');
                 }
-                triples.push(Mustache.render(
-                    '<{{{uid}}}> mo:answerType mo:{{{aT}}} . ',
-                    {
-                        uid: uid,
-                        aT: type
-                    }
-                ));
                 break;
             case 'inSpace':
                 var v = [];
@@ -1226,30 +1225,30 @@ function checkInfo(uid, p4R) {
                 }
                 break;
             case 'aT':
-                var type;
                 switch (p4R[key]) {
                     case 'mcq':
                     case 'tf':
-                    case 'photo':
-                    case 'multiplePhotos':
-                    case 'video':
-                    case 'photoText':
-                    case 'videoText':
-                    case 'multiplePhotosText':
                     case 'text':
-                    case 'noAnswer':
-                        type = p4R[key];
+                        triples.push(Mustache.render(
+                            '<{{{uid}}}> mo:answerType mo:{{{aT}}} . ',
+                            { uid: uid, aT: p4R[key] }
+                        ));
+                        break;
+                    case 'uploadFile':
+                        triples.push(Mustache.render(
+                            '<{{{uid}}}> mo:answerType <http://momoest.gsic.uva.es/ontology/UploadFile> . ',
+                            { uid: uid }
+                        ));
+                        break;
+                    case 'draw':
+                        triples.push(Mustache.render(
+                            '<{{{uid}}}> mo:answerType <http://momoest.gsic.uva.es/ontology/Draw> . ',
+                            { uid: uid }
+                        ));
                         break;
                     default:
                         throw new Error('Problem with the client aT');
                 }
-                triples.push(Mustache.render(
-                    '<{{{uid}}}> mo:answerType mo:{{{aT}}} . ',
-                    {
-                        uid: uid,
-                        aT: type
-                    }
-                ));
                 break;
             case 'inSpace':
                 var v = [];

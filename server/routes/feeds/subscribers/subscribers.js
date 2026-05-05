@@ -4,7 +4,7 @@ const FirebaseAdmin = require('firebase-admin');
 const winston = require('../../../util/winston');
 const { logHttp, getTokenAuth, shortId2Id } = require('../../../util/auxiliar');
 const { InfoUser, FeedsUser } = require('../../../util/pojos/user');
-const { getInfoUser, getFeedsUser, getInfoSubscriber } = require('../../../util/bd');
+const { getInfoUser, getFeedsUser, getInfoSubscriber, findCollectionAndFeed } = require('../../../util/bd');
 const { Feed } = require('../../../util/pojos/feed');
 
 
@@ -19,17 +19,29 @@ async function listSubscribers(req, res) {
                     // Recupero la información del usuario para conocer si es profesor
                     const infoUser = new InfoUser(await getInfoUser(uid));
                     if (infoUser.isTeacher) {
-                        // Recupero el identificador del canal y compruebo si está entre los suyos
-                        const feedsUser = new FeedsUser(await getFeedsUser(uid));
                         const shortIdFeed = req.params.feed;
                         const idFeed = shortId2Id(shortIdFeed);
                         if (idFeed !== null) {
-                            const index = feedsUser.owner.findIndex(feed => {
+                            // Compruebo si es el propietario del canal
+                            const feedsUser = new FeedsUser(await getFeedsUser(uid));
+                            let index = feedsUser.owner.findIndex(feed => {
                                 feed = new Feed(feed);
                                 return feed.id === idFeed;
                             });
+                            // Si no es propietario, busco si es co-profesor
+                            let feed = null;
                             if (index > -1) {
-                                const feed = new Feed(feedsUser.owner.at(index));
+                                feed = new Feed(feedsUser.owner.at(index));
+                            } else {
+                                const objCollFeed = await findCollectionAndFeed(idFeed);
+                                if (objCollFeed !== null) {
+                                    const f = new Feed(objCollFeed.dataFeed);
+                                    if (f.teachers.includes(uid)) {
+                                        feed = f;
+                                    }
+                                }
+                            }
+                            if (feed !== null) {
                                 // Al cliente le envío una lista de objetos que contrendrá: el identificador del subscriber, la fecha de subscripción, su alias (si lo tuviera), el número de respuestas que tiene hasta ese momento
                                 const out = [];
                                 const promesas = [];

@@ -143,6 +143,12 @@ class Task {
             case 'http://moult.gsic.uva.es/ontology/NoAnswer':
               aT = AnswerType.noAnswer;
               break;
+            case 'http://momoest.gsic.uva.es/ontology/UploadFile':
+              aT = AnswerType.uploadFile;
+              break;
+            case 'http://momoest.gsic.uva.es/ontology/Draw':
+              aT = AnswerType.draw;
+              break;
             default:
               throw TaskException('at');
           }
@@ -623,7 +629,9 @@ enum AnswerType {
   videoText,
   multiplePhotosText,
   text,
-  noAnswer
+  noAnswer,
+  uploadFile,
+  draw
 }
 
 enum ContainerTask { spatialThing, itinerary }

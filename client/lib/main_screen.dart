@@ -1125,8 +1125,11 @@ class _MyMap extends State<MyMap> {
           title: Text(appLoca.myFeeds),
         ),
         SliverPadding(
-          padding:
-              EdgeInsets.symmetric(horizontal: Auxiliar.getLateralMargin(w)),
+          padding: EdgeInsets.only(
+            left: Auxiliar.getLateralMargin(w),
+            right: Auxiliar.getLateralMargin(w),
+            bottom: 120,
+          ),
           sliver: SliverToBoxAdapter(
             child: UserXEST.userXEST.isGuest
                 ? Center(
@@ -1214,6 +1217,16 @@ class _MyMap extends State<MyMap> {
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: Text(
               appLoca.canalesApuntado,
+              style:
+                  textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+            ),
+          )
+        ],
+        listaFeedsProfeColab = [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Text(
+              appLoca.canalesProfeColab,
               style:
                   textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
             ),
@@ -1390,6 +1403,8 @@ class _MyMap extends State<MyMap> {
         } else {
           if (feed.owner == UserXEST.userXEST.id) {
             listaFeedsPropios.add(cardFeed);
+          } else if (feed.teachers.contains(UserXEST.userXEST.id)) {
+            listaFeedsProfeColab.add(cardFeed);
           } else {
             listaFeedsApuntado.add(cardFeed);
           }
@@ -1402,6 +1417,10 @@ class _MyMap extends State<MyMap> {
       }
       if (listaFeedsPropios.length > 1) {
         childrenFeeds.addAll(listaFeedsPropios);
+        childrenFeeds.add(SizedBox(height: 20));
+      }
+      if (listaFeedsProfeColab.length > 1) {
+        childrenFeeds.addAll(listaFeedsProfeColab);
         childrenFeeds.add(SizedBox(height: 20));
       }
       if (listaFeedsApuntado.length > 1) {
@@ -1916,22 +1935,43 @@ class _MyMap extends State<MyMap> {
             : null;
       case 2:
         if (UserXEST.userXEST.canEditNow) {
-          return FloatingActionButton.extended(
-            heroTag: Auxiliar.mainFabHero,
-            onPressed: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute<Feed?>(
-                    builder: (BuildContext context) => FormFeedTeacher(Feed()),
-                    fullscreenDialog: true),
-              ).then((Feed? feed) {
-                if (feed is Feed && mounted) {
-                  GoRouter.of(context).push('/home/feeds/${feed.shortId}');
-                }
-              });
-            },
-            label: Text(appLoca.addFeed),
-            icon: Icon(Icons.add, semanticLabel: appLoca.addFeed),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FloatingActionButton.extended(
+                heroTag: null,
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          const FormFeedTeacherSubscriber(),
+                      fullscreenDialog: true),
+                ),
+                label: Text(appLoca.apuntarmeProfeCanal),
+                icon: const Icon(Icons.people_alt_outlined),
+              ),
+              SizedBox(height: 9),
+              FloatingActionButton.extended(
+                heroTag: Auxiliar.mainFabHero,
+                label: Text(appLoca.addFeed),
+                icon: const Icon(Icons.add),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<Feed?>(
+                      builder: (BuildContext context) =>
+                          FormFeedTeacher(Feed()),
+                      fullscreenDialog: true),
+                ).then(
+                  (Feed? feed) {
+                    if (feed is Feed && mounted) {
+                      GoRouter.of(context).push('/home/feeds/${feed.shortId}');
+                    }
+                  },
+                ),
+              )
+            ],
           );
         } else {
           if (UserXEST.userXEST.isNotGuest && FeedCache.feedsIsNotNull) {
@@ -2157,6 +2197,12 @@ class _MyMap extends State<MyMap> {
               if (data.containsKey('subscribed') &&
                   data['subscribed'] is List) {
                 for (Map<String, dynamic> f in data['subscribed']) {
+                  Feed feed = Feed.json(f);
+                  feedL.add(feed);
+                }
+              }
+              if (data.containsKey('teaching') && data['teaching'] is List) {
+                for (Map<String, dynamic> f in data['teaching']) {
                   Feed feed = Feed.json(f);
                   feedL.add(feed);
                 }

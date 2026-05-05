@@ -3095,7 +3095,8 @@ class _FormFeature extends State<FormFeature> {
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
                                 ),
-                                child: Auxiliar.quillToolbar(_quillController),
+                                child: Auxiliar.quillToolbar(
+                                    _quillController, colorScheme),
                               ),
                             ),
                             Container(

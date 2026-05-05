@@ -270,7 +270,7 @@ class _AddEditItinerary extends State<AddEditItinerary> {
                     decoration: BoxDecoration(
                       color: colorScheme.primaryContainer,
                     ),
-                    child: Auxiliar.quillToolbar(_quillController),
+                    child: Auxiliar.quillToolbar(_quillController, colorScheme),
                   ),
                 ),
                 Container(
@@ -1876,7 +1876,8 @@ class _AddEditPointItinerary extends State<AddEditPointItineary> {
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
                           ),
-                          child: Auxiliar.quillToolbar(_quillController),
+                          child: Auxiliar.quillToolbar(
+                              _quillController, colorScheme),
                         ),
                       ),
                     ),

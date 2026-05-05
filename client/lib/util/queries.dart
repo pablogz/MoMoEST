@@ -179,6 +179,9 @@ class Queries {
   static Uri feedAnswer(String idFeed, String idSubscriber, String idAnswer) =>
       Uri.parse(
           '${ConfigXest.addServer}/feeds/$idFeed/subscribers/$idSubscriber/answers/$idAnswer/');
+  // PUT, DELETE
+  static Uri feedTeacher(String idFeed, String idTeacher) =>
+      Uri.parse('${ConfigXest.addServer}/feeds/$idFeed/teachers/$idTeacher');
 }
 
 enum ActionSubcription { unsubscribe }
