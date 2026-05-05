@@ -193,12 +193,12 @@ async function saveNewFeed(userCol, feed) {
     }
 }
 
-async function addTeacherToFeed(ownerCol, feedId, teacherId) {
+async function addTeacherToFeed(ownerCol, feedId, teacherObj) {
     try {
         const db = await connectToDatabase();
         const resultado = await db.collection(ownerCol).updateOne(
             { _id: DOCUMENT_FEEDS, "owner._id": feedId },
-            { $addToSet: { "owner.$.teachers": teacherId } }
+            { $push: { "owner.$.teachers": teacherObj } }
         );
         return resultado.modifiedCount === 1;
     } catch (error) {
@@ -212,7 +212,7 @@ async function removeTeacherFromFeed(ownerCol, feedId, teacherId) {
         const db = await connectToDatabase();
         const resultado = await db.collection(ownerCol).updateOne(
             { _id: DOCUMENT_FEEDS, "owner._id": feedId },
-            { $pull: { "owner.$.teachers": teacherId } }
+            { $pull: { "owner.$.teachers": { uid: teacherId } } }
         );
         return resultado.modifiedCount === 1;
     } catch (error) {

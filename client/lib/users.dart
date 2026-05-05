@@ -65,19 +65,19 @@ class _NewUser extends State<NewUser> {
       body: Form(
         key: _keyNewUser,
         child: CustomScrollView(slivers: [
-        SliverAppBar(
-          title: Text(AppLocalizations.of(context)!.nuevoUsuario,
-              overflow: TextOverflow.ellipsis, maxLines: 1),
-          centerTitle: false,
-          pinned: true,
-          automaticallyImplyLeading: false,
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.only(top: 20),
-          sliver: SliverSafeArea(
-            bottom: false,
-            minimum: EdgeInsets.symmetric(horizontal: margenLateral),
-            sliver: SliverList(
+          SliverAppBar(
+            title: Text(AppLocalizations.of(context)!.nuevoUsuario,
+                overflow: TextOverflow.ellipsis, maxLines: 1),
+            centerTitle: false,
+            pinned: true,
+            automaticallyImplyLeading: false,
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 20),
+            sliver: SliverSafeArea(
+              bottom: false,
+              minimum: EdgeInsets.symmetric(horizontal: margenLateral),
+              sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => Padding(
                     padding: const EdgeInsets.only(bottom: 15),
@@ -91,32 +91,32 @@ class _NewUser extends State<NewUser> {
                   ),
                   childCount: formNewUserLst.length,
                 ),
+              ),
             ),
           ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.only(top: 20),
-          sliver: SliverSafeArea(
-            minimum: EdgeInsets.all(margenLateral),
-            sliver: SliverToBoxAdapter(
-              child: Center(
-                child: Container(
-                  constraints:
-                      const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-                  child: Wrap(
-                    direction: Axis.horizontal,
-                    alignment: WrapAlignment.center,
-                    runAlignment: WrapAlignment.center,
-                    spacing: margenLateral,
-                    runSpacing: margenLateral,
-                    children: btNewUserLst,
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 20),
+            sliver: SliverSafeArea(
+              minimum: EdgeInsets.all(margenLateral),
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      alignment: WrapAlignment.center,
+                      runAlignment: WrapAlignment.center,
+                      spacing: margenLateral,
+                      runSpacing: margenLateral,
+                      children: btNewUserLst,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ]),
+        ]),
       ),
     );
   }
@@ -710,60 +710,60 @@ class _EditUser extends State<EditUser> {
       body: Form(
         key: _keyEditUser,
         child: CustomScrollView(slivers: [
-        SliverAppBar(
-          centerTitle: false,
-          title: Text(
-            AppLocalizations.of(context)!.editarUsuario,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+          SliverAppBar(
+            centerTitle: false,
+            title: Text(
+              AppLocalizations.of(context)!.editarUsuario,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            pinned: true,
           ),
-          pinned: true,
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.only(top: 20),
-          sliver: SliverSafeArea(
-            bottom: false,
-            minimum: EdgeInsets.symmetric(horizontal: margenLateral),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: Center(
-                    child: Container(
-                      constraints:
-                          const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-                      child: formEditUserLst.elementAt(index),
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 20),
+            sliver: SliverSafeArea(
+              bottom: false,
+              minimum: EdgeInsets.symmetric(horizontal: margenLateral),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: Center(
+                      child: Container(
+                        constraints:
+                            const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+                        child: formEditUserLst.elementAt(index),
+                      ),
+                    ),
+                  ),
+                  childCount: formEditUserLst.length,
+                ),
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 20),
+            sliver: SliverSafeArea(
+              minimum: EdgeInsets.all(margenLateral),
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      alignment: WrapAlignment.center,
+                      runAlignment: WrapAlignment.center,
+                      spacing: margenLateral,
+                      runSpacing: margenLateral,
+                      children: btEditUserLst,
                     ),
                   ),
                 ),
-                childCount: formEditUserLst.length,
               ),
             ),
           ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.only(top: 20),
-          sliver: SliverSafeArea(
-            minimum: EdgeInsets.all(margenLateral),
-            sliver: SliverToBoxAdapter(
-              child: Center(
-                child: Container(
-                  constraints:
-                      const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-                  child: Wrap(
-                    direction: Axis.horizontal,
-                    alignment: WrapAlignment.center,
-                    runAlignment: WrapAlignment.center,
-                    spacing: margenLateral,
-                    runSpacing: margenLateral,
-                    children: btEditUserLst,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ]),
+        ]),
       ),
     );
   }

@@ -91,21 +91,16 @@ class UserXEST {
           }
           if (data['comment'] is List) {
             for (Map<String, dynamic> d in data['comment']) {
-              if (d['comment'].containsKey('value') &&
-                  d['comment'].containsKey('lang')) {
+              if (d.containsKey('value') && d.containsKey('lang')) {
                 _comment ??= [];
-                _comment!
-                    .add(PairLang(d['comment']['lang'], d['comment']['value']));
-              } else {
-                if (d['comment'].containsKey('value')) {
-                  _comment ??= [];
-                  _comment!.add(PairLang.withoutLang(d['comment']['value']));
-                } else {
-                  if (_comment != null && _comment!.isEmpty) {
-                    _comment = null;
-                  }
-                }
+                _comment!.add(PairLang(d['lang'], d['value']));
+              } else if (d.containsKey('value')) {
+                _comment ??= [];
+                _comment!.add(PairLang.withoutLang(d['value']));
               }
+            }
+            if (_comment != null && _comment!.isEmpty) {
+              _comment = null;
             }
           }
         } else {

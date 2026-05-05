@@ -271,7 +271,7 @@ async function byeFeed(req, res) {
                                 }
                                 // Limpio las entradas de co-profesores
                                 for (let index = 0, tama = feed.teachers.length; index < tama; index++) {
-                                    const teacherId = feed.teachers[index];
+                                    const teacherId = feed.teachers[index].uid;
                                     promesas.push(deleteTeachingFeedBD(teacherId, feed.id));
                                 }
                                 // Tengo que borrar el canal del propietario

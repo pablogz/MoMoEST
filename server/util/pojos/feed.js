@@ -6,7 +6,9 @@ class Feed {
             this._labels = data.labels !== undefined && Array.isArray(data.labels) ? data.labels : [];
             this._comments = data.comments !== undefined && Array.isArray(data.comments) ? data.comments : [];
             this._subscribers = data.subscribers !== undefined && Array.isArray(data.subscribers) ? data.subscribers : [];
-            this._teachers = data.teachers !== undefined && Array.isArray(data.teachers) ? data.teachers : [];
+            this._teachers = data.teachers !== undefined && Array.isArray(data.teachers)
+                ? data.teachers.map(t => typeof t === 'string' ? { uid: t, alias: t } : t)
+                : [];
             this._password = data.password !== undefined && typeof data.password === 'string' ? data.password : null;
             this._date = data.date !== undefined && typeof data.date === 'string' ? data.date : null;
             this._owner = data.owner !== undefined && typeof data.owner === 'string' ? data.owner : null;
@@ -55,15 +57,15 @@ class Feed {
         }
     }
 
-    addTeacher(teacher) {
-        if (typeof teacher === 'string' && !this._teachers.includes(teacher)) {
-            this._teachers.push(teacher);
+    addTeacher(uid, alias) {
+        if (typeof uid === 'string' && !this._teachers.some(t => t.uid === uid)) {
+            this._teachers.push({ uid, alias: alias || uid });
         }
     }
 
-    removeTeacher(teacher) {
-        if (typeof teacher === 'string') {
-            this._teachers = this._teachers.filter(t => t !== teacher);
+    removeTeacher(uid) {
+        if (typeof uid === 'string') {
+            this._teachers = this._teachers.filter(t => t.uid !== uid);
         }
     }
 

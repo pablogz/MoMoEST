@@ -19,7 +19,7 @@ async function _findFeedForTeacher(uid, feedId) {
     const objCollFeed = await findCollectionAndFeed(feedId);
     if (objCollFeed !== null) {
         const feed = new Feed(objCollFeed.dataFeed);
-        if (feed.teachers.includes(uid)) {
+        if (feed.teachers.some(t => t.uid === uid)) {
             return { feed, ownerId: objCollFeed.userId };
         }
     }
