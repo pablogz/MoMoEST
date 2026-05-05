@@ -6,6 +6,7 @@ class Feed {
             this._labels = data.labels !== undefined && Array.isArray(data.labels) ? data.labels : [];
             this._comments = data.comments !== undefined && Array.isArray(data.comments) ? data.comments : [];
             this._subscribers = data.subscribers !== undefined && Array.isArray(data.subscribers) ? data.subscribers : [];
+            this._teachers = data.teachers !== undefined && Array.isArray(data.teachers) ? data.teachers : [];
             this._password = data.password !== undefined && typeof data.password === 'string' ? data.password : null;
             this._date = data.date !== undefined && typeof data.date === 'string' ? data.date : null;
             this._owner = data.owner !== undefined && typeof data.owner === 'string' ? data.owner : null;
@@ -18,6 +19,7 @@ class Feed {
     get labels() { return this._labels; }
     get comments() { return this._comments; }
     get subscribers() { return this._subscribers; }
+    get teachers() { return this._teachers; }
     get password() { return this._password; }
     get date() { return this._date; }
     get owner() { return this._owner; }
@@ -53,6 +55,18 @@ class Feed {
         }
     }
 
+    addTeacher(teacher) {
+        if (typeof teacher === 'string' && !this._teachers.includes(teacher)) {
+            this._teachers.push(teacher);
+        }
+    }
+
+    removeTeacher(teacher) {
+        if (typeof teacher === 'string') {
+            this._teachers = this._teachers.filter(t => t !== teacher);
+        }
+    }
+
     setPassword(password) {
         this._password = typeof password === 'string' ? password : null;
     }
@@ -69,6 +83,7 @@ class Feed {
             owner: this._owner,
             password: this._password === null ? undefined : this._password,
             subscribers: this._subscribers,
+            teachers: this._teachers,
             date: this._date
         }
     }

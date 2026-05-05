@@ -68,6 +68,8 @@
     "selectTipoRespuestaVideo": "Vídeo",
     "selectTipoRespuestaSR": "Sem resposta",
     "selectTipoRespuestaVideoText": "Vídeo e texto",
+    "selectTipoRespuestaUploadFile": "Carregar um ficheiro",
+    "selectTipoRespuestaDraw": "Desenhar",
     "tituloNTLabel": "Título*",
     "tituloNT": "Escreva aqui o novo título da tarefa",
     "textAsociadoNTLabel": "Declaração de tarefa*",
@@ -312,5 +314,16 @@
     "datosAbiertosJunta": "Concurso de dados abertos da Junta de Castela e Leão (Governo Regional de Castela e Leão)",
     "datosAbiertosJuntaDescripcion": "O CHEST ganhou em 2023 o primeiro prémio na categoria \"Recurso didático\" da VII edição do concurso de dados abertos da Junta de Castela e Leão.",
     "publicaciones": "Trabalhos relacionados",
-    "alPortapapeles": "Copiado para a área de transferência"
+    "alPortapapeles": "Copiado para a área de transferência",
+    "salirCanalProfe": "Sair do canal como co-professor",
+    "salirCanalProfeExplica": "Tem a certeza de que quer sair deste canal como co-professor? Deixará de ter acesso à lista de participantes e às suas respostas.",
+    "apuntarmeProfeCanal": "Juntar-se como co-professor",
+    "teApuntasteProfe": "Juntou-se ao canal como co-professor!",
+    "canalesProfeColab": "Canais como co-professor",
+    "profesoresCanal": "Co-professores",
+    "sinProfesoresCanal": "Ainda não há co-professores neste canal.",
+    "borrarProfeCanal": "Remover do canal",
+    "errorYaPropietarioCanal": "Já é o proprietário deste canal.",
+    "idFeedErrorContra": "A palavra-passe está incorrecta ou já é co-professor deste canal.",
+    "canalNoEncontrado": "Canal não encontrado."
 }

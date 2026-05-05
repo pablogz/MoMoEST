@@ -110,7 +110,7 @@ async function getTasks(req, res) {
  */
 async function newTask(req, res) {
     const needParameters = Mustache.render(
-        'Mandatory parameters in the request body are: aT[text/mcq/tf/photo/multiplePhotos/video/photoText/videoText/multiplePhotosText] (answerType); inSpace[virtual/physical] ; comment[string]; hasFeature[uriFeature]\nOptional parameters: image[{image: url, liense: url}], label[string]',
+        'Mandatory parameters in the request body are: aT[mcq/tf/text/uploadFile/draw] (answerType); inSpace[virtual/physical] ; comment[string]; hasFeature[uriFeature]\nOptional parameters: image[{image: url, license: url}], label[string]',
         { urlServer: urlServer });
     const start = Date.now();
     try {

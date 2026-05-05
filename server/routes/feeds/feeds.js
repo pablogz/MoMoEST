@@ -29,7 +29,30 @@ async function listFeeds(req, res) {
                                     nFeeds += feedsToClient.owner.length;
                                 }
 
-                                // Compruebo si está subscrito a algún canal. 
+                                // Compruebo si es co-profesor en algún canal
+                                if (feedsUser.teaching.length > 0) {
+                                    const promesas = [];
+                                    const teachingEntries = [];
+                                    for (let i = 0, tama = feedsUser.teaching.length; i < tama; i++) {
+                                        const entry = feedsUser.teaching.at(i);
+                                        teachingEntries.push(entry);
+                                        promesas.push(getFeed(entry.idOwner, entry.idFeed));
+                                    }
+                                    const arrayFeeds = await Promise.all(promesas);
+                                    feedsToClient.teaching = [];
+                                    for (let i = 0, tama = arrayFeeds.length; i < tama; i++) {
+                                        const feed = arrayFeeds.at(i);
+                                        const entry = teachingEntries.at(i);
+                                        if (feed !== null) {
+                                            const f = feed.toMap();
+                                            f.date = entry.date;
+                                            feedsToClient.teaching.push(f);
+                                            nFeeds += 1;
+                                        }
+                                    }
+                                }
+
+                                // Compruebo si está subscrito a algún canal.
                                 if (feedsUser.subscribed.length > 0) {
                                     const promesas = [];
                                     const feedsSubscriptor = [];

@@ -4,7 +4,7 @@ const FirebaseAdmin = require('firebase-admin');
 const { logHttp, getTokenAuth, shortId2Id } = require('../../util/auxiliar');
 const winston = require('../../util/winston');
 const { InfoUser, FeedsUser } = require('../../util/pojos/user');
-const { getInfoUser, getFeedsUser, getFeed, deleteFeedOwner, deleteFeedSubscriber, updateFeedDB } = require('../../util/bd');
+const { getInfoUser, getFeedsUser, getFeed, deleteFeedOwner, deleteFeedSubscriber, updateFeedDB, deleteTeachingFeedBD } = require('../../util/bd');
 const { Feed, FeedSubscriber } = require('../../util/pojos/feed');
 
 
@@ -66,8 +66,30 @@ async function objFeed(req, res) {
                                     res.sendStatus(400);
                                 }
                             } else {
-                                logHttp(req, 400, 'objFeed', start);
-                                res.sendStatus(400);
+                                // Compruebo si es co-profesor del canal
+                                let teachingEntry = null;
+                                feedsUser.teaching.forEach(t => {
+                                    if (t.idFeed === idFeed) teachingEntry = t;
+                                });
+                                if (teachingEntry !== null) {
+                                    const feed = await getFeed(teachingEntry.idOwner, idFeed);
+                                    if (feed !== null) {
+                                        const feedOut = feed.toMap();
+                                        winston.info(Mustache.render('objFeed (co-teacher) || idUser: {{{idUser}}} - feed: {{{feed}}} || {{{time}}}', {
+                                            idUser: user.id,
+                                            feed: feedOut.id,
+                                            time: Date.now() - start
+                                        }));
+                                        logHttp(req, 200, 'objFeed', start);
+                                        res.send(JSON.stringify(feedOut));
+                                    } else {
+                                        logHttp(req, 400, 'objFeed', start);
+                                        res.sendStatus(400);
+                                    }
+                                } else {
+                                    logHttp(req, 400, 'objFeed', start);
+                                    res.sendStatus(400);
+                                }
                             }
                         }
                     } else {
@@ -246,6 +268,11 @@ async function byeFeed(req, res) {
                                 for (let index = 0, tama = feed.subscribers.length; index < tama; index++) {
                                     const subscriberId = feed.subscribers[index];
                                     promesas.push(deleteFeedSubscriber(subscriberId, feed.id));
+                                }
+                                // Limpio las entradas de co-profesores
+                                for (let index = 0, tama = feed.teachers.length; index < tama; index++) {
+                                    const teacherId = feed.teachers[index];
+                                    promesas.push(deleteTeachingFeedBD(teacherId, feed.id));
                                 }
                                 // Tengo que borrar el canal del propietario
                                 promesas.push(deleteFeedOwner(uid, feed.id));

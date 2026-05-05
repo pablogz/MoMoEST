@@ -36,6 +36,7 @@ const feed = require('./routes/feeds/feed');
 // const feedResource = require('./routes/feeds/resources/resource');
 const feedSubscribers = require('./routes/feeds/subscribers/subscribers');
 const feedSubscriber = require('./routes/feeds/subscribers/subscriber');
+const feedTeacher = require('./routes/feeds/teachers/teacher');
 const feedSubscriberAnswers = require('./routes/feeds/subscribers/answers/answers');
 const feedSubscriberAnswer = require('./routes/feeds/subscribers/answers/answer');
 
@@ -79,6 +80,7 @@ const rutas = {
     feed: '/feeds/:feed',
     feedSubscribers: '/feeds/:feed/subscribers/',
     feedSubscriber: '/feeds/:feed/subscribers/:subscriber',
+    feedTeacher: '/feeds/:feed/teachers/:teacher',
     feedSubscriberAnswers: '/feeds/:feed/subscribers/:subscriber/answers',
     feedSubscriberAnswer: '/feeds/:feed/subscribers/:subscriber/answers/:answer',
     feedResources: '/feeds/:feed/learningResources/',
@@ -559,6 +561,23 @@ app
         methods: ['GET', 'PUT', 'DELETE', 'OPTIONS']
     }))
     .all(rutas.feedSubscriber, cors({
+        origin: '*'
+    }), error405)
+    .put(rutas.feedTeacher, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        feedTeacher.newTeacher(req, res) :
+        res.sendStatus(401))
+    .delete(rutas.feedTeacher, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        feedTeacher.byeTeacher(req, res) :
+        res.sendStatus(401))
+    .options(rutas.feedTeacher, cors({
+        origin: '*',
+        methods: ['PUT', 'DELETE', 'OPTIONS']
+    }))
+    .all(rutas.feedTeacher, cors({
         origin: '*'
     }), error405)
     .get(rutas.feedSubscriberAnswers, cors({

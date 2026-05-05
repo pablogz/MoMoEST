@@ -158,14 +158,17 @@ class FeedsUser {
         if (data === null || typeof data !== 'object') {
             this._subcribed = [];
             this._owner = [];
+            this._teaching = [];
         } else {
             this._subcribed = data.subscribed !== undefined && Array.isArray(data.subscribed) ? data.subscribed : [];
             this._owner = data.owner !== undefined && Array.isArray(data.owner) ? data.owner : [];
+            this._teaching = data.teaching !== undefined && Array.isArray(data.teaching) ? data.teaching : [];
         }
     }
 
     get owner() { return this._owner; }
     get subscribed() { return this._subcribed; }
+    get teaching() { return this._teaching; }
 
     addOwnFeed(feed) {
         if(typeof feed === Feed) {

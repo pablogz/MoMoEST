@@ -8,6 +8,23 @@ const {
     getInfoUser, getFeedsUser, getInfoSubscriber,
     findCollectionAndFeed, updateFeedDB, updateSubscribedFeedBD,
     deleteFeedSubscriber, deleteSubscriber } = require('../../../util/bd');
+
+async function _findFeedForTeacher(uid, feedId) {
+    // Devuelve { feed, ownerId } si uid es propietario o co-profesor del canal; null en caso contrario
+    const feedsUser = new FeedsUser(await getFeedsUser(uid));
+    const index = feedsUser.owner.findIndex(f => f.id === feedId);
+    if (index > -1) {
+        return { feed: new Feed(feedsUser.owner.at(index)), ownerId: uid };
+    }
+    const objCollFeed = await findCollectionAndFeed(feedId);
+    if (objCollFeed !== null) {
+        const feed = new Feed(objCollFeed.dataFeed);
+        if (feed.teachers.includes(uid)) {
+            return { feed, ownerId: objCollFeed.userId };
+        }
+    }
+    return null;
+}
 const { Feed } = require('../../../util/pojos/feed');
 
 async function subscriber(req, res) {
@@ -45,13 +62,10 @@ async function subscriber(req, res) {
                             }
                         } else {
                             if (user.isTeacher) {
-                                // Es posible que el profesor esté solicitando información sobre uno de sus estudiantes. Voy a ver si el feed es de los que ha creado él y si uno de los estudiantes tiene el id subscriberId. Si es así le envío la información del estudiante.
-                                const feedsUser = new FeedsUser(await getFeedsUser(user.id));
-                                let index = feedsUser.owner.findIndex(f => {
-                                    return f.id === feedId;
-                                });
-                                if (index > - 1) {
-                                    const feed = new Feed(feedsUser.owner.at(index));
+                                // Compruebo si el profesor es propietario o co-profesor del canal
+                                const result = await _findFeedForTeacher(user.id, feedId);
+                                if (result !== null) {
+                                    const { feed } = result;
                                     if (feed.subscribers.includes(subscriberId)) {
                                         // El profesor puede solicitar la información
                                         const infoSubscriber = await getInfoSubscriber(subscriberId, feedId);
@@ -259,19 +273,16 @@ async function byeSubscriber(req, res) {
                             res.sendStatus(404);
                         }
                     } else {
-                        // Este tipo de operaciones solo las puede hacer un profesor
+                        // Este tipo de operaciones solo las puede hacer un profesor (propietario o co-profesor)
                         const user = new InfoUser(await getInfoUser(uid));
                         if (user.isTeacher) {
-                            // Es posible que el profesor quiera dar de baja al estudiante. Lo compruebo y actuo
-                            const feedsTeacher = new FeedsUser(await getFeedsUser(uid));
-                            const index = feedsTeacher.owner.findIndex(f => {
-                                return f.id === feedId;
-                            });
-                            if (index > -1) {
-                                if (feedsTeacher.owner.at(index).subscribers.includes(reqSubscriberId)) {
+                            const result = await _findFeedForTeacher(uid, feedId);
+                            if (result !== null) {
+                                const { feed, ownerId } = result;
+                                if (feed.subscribers.includes(reqSubscriberId)) {
                                     // Borro al estudiante de subscritores de su canal y borro también el objeto del canal del documento del estudiante
                                     const promesas = [];
-                                    promesas.push(deleteSubscriber(uid, feedId, reqSubscriberId));
+                                    promesas.push(deleteSubscriber(ownerId, feedId, reqSubscriberId));
                                     promesas.push(deleteFeedSubscriber(reqSubscriberId, feedId));
                                     const arrayPromesas = await Promise.all(promesas);
                                     const todoBien = arrayPromesas.every(Boolean);

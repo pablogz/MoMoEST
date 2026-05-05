@@ -1725,15 +1725,10 @@ class _FormTask extends State<FormTask> {
             ? [
                 null,
                 AnswerType.mcq.name,
-                AnswerType.multiplePhotos.name,
-                AnswerType.multiplePhotosText.name,
-                AnswerType.noAnswer.name,
-                AnswerType.photo.name,
-                AnswerType.photoText.name,
-                AnswerType.text.name,
                 AnswerType.tf.name,
-                AnswerType.video.name,
-                AnswerType.videoText.name
+                AnswerType.text.name,
+                AnswerType.uploadFile.name,
+                AnswerType.draw.name,
               ]
             : [
                 null,
@@ -1743,17 +1738,10 @@ class _FormTask extends State<FormTask> {
         widget.task.containerType! == ContainerTask.spatialThing
             ? {
                 AnswerType.mcq: appLoca.selectTipoRespuestaMcq,
-                AnswerType.multiplePhotos:
-                    appLoca.selectTipoRespuestaMultiPhotos,
-                AnswerType.multiplePhotosText:
-                    appLoca.selectTipoRespuestaMultiPhotosText,
-                AnswerType.noAnswer: appLoca.selectTipoRespuestaSR,
-                AnswerType.photo: appLoca.selectTipoRespuestaPhoto,
-                AnswerType.photoText: appLoca.selectTipoRespuestaPhotoText,
-                AnswerType.text: appLoca.selectTipoRespuestaTexto,
                 AnswerType.tf: appLoca.selectTipoRespuestaVF,
-                AnswerType.video: appLoca.selectTipoRespuestaVideo,
-                AnswerType.videoText: appLoca.selectTipoRespuestaVideoText
+                AnswerType.text: appLoca.selectTipoRespuestaTexto,
+                AnswerType.uploadFile: appLoca.selectTipoRespuestaUploadFile,
+                AnswerType.draw: appLoca.selectTipoRespuestaDraw,
               }
             : {
                 AnswerType.text: appLoca.selectTipoRespuestaTexto,
@@ -1831,7 +1819,7 @@ class _FormTask extends State<FormTask> {
                   decoration: BoxDecoration(
                     color: cS.primaryContainer,
                   ),
-                  child: Auxiliar.quillToolbar(_quillController),
+                  child: Auxiliar.quillToolbar(_quillController, cS),
                 ),
               ),
               Container(

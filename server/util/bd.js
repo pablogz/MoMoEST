@@ -179,6 +179,7 @@ async function saveNewFeed(userCol, feed) {
                         labels: feed.labels,
                         comments: feed.comments,
                         subscribers: feed.subscribers,
+                        teachers: [],
                         password: feed.password,
                         date: feed.date,
                     }
@@ -189,6 +190,63 @@ async function saveNewFeed(userCol, feed) {
     } catch (error) {
         winston.error(error);
         return null;
+    }
+}
+
+async function addTeacherToFeed(ownerCol, feedId, teacherId) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(ownerCol).updateOne(
+            { _id: DOCUMENT_FEEDS, "owner._id": feedId },
+            { $addToSet: { "owner.$.teachers": teacherId } }
+        );
+        return resultado.modifiedCount === 1;
+    } catch (error) {
+        winston.error('addTeacherToFeed:', error);
+        return false;
+    }
+}
+
+async function removeTeacherFromFeed(ownerCol, feedId, teacherId) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(ownerCol).updateOne(
+            { _id: DOCUMENT_FEEDS, "owner._id": feedId },
+            { $pull: { "owner.$.teachers": teacherId } }
+        );
+        return resultado.modifiedCount === 1;
+    } catch (error) {
+        winston.error('removeTeacherFromFeed:', error);
+        return false;
+    }
+}
+
+async function updateTeachingFeedBD(teacherCol, data) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(teacherCol).updateOne(
+            { _id: DOCUMENT_FEEDS },
+            { $push: { teaching: data } },
+            { upsert: true }
+        );
+        return resultado.modifiedCount === 1 || resultado.upsertedId !== null;
+    } catch (error) {
+        winston.error('updateTeachingFeedBD:', error);
+        return false;
+    }
+}
+
+async function deleteTeachingFeedBD(teacherCol, feedId) {
+    try {
+        const db = await connectToDatabase();
+        const results = await db.collection(teacherCol).updateOne(
+            { _id: DOCUMENT_FEEDS },
+            { $pull: { teaching: { idFeed: feedId } } }
+        );
+        return results.modifiedCount === 1;
+    } catch (error) {
+        winston.error('deleteTeachingFeedBD:', error);
+        return false;
     }
 }
 
@@ -433,4 +491,8 @@ module.exports = {
     addAnswerFeedDB,
     deleteAnswerFeedDB,
     updateFeedbackAnswer,
+    addTeacherToFeed,
+    removeTeacherFromFeed,
+    updateTeachingFeedBD,
+    deleteTeachingFeedBD,
 }
