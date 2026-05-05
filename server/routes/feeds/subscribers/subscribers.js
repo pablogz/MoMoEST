@@ -36,7 +36,7 @@ async function listSubscribers(req, res) {
                                 const objCollFeed = await findCollectionAndFeed(idFeed);
                                 if (objCollFeed !== null) {
                                     const f = new Feed(objCollFeed.dataFeed);
-                                    if (f.teachers.includes(uid)) {
+                                    if (f.teachers.some(t => t.uid === uid)) {
                                         feed = f;
                                     }
                                 }

@@ -750,7 +750,7 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
     _isCoTeacher = !_noFeedFound &&
         !_isOwner &&
         UserXEST.userXEST.canEditNow &&
-        _feed!.teachers.contains(UserXEST.userXEST.id);
+        _feed!.teachers.any((t) => t.uid == UserXEST.userXEST.id);
     _isTeacherAndOwner = _isOwner && UserXEST.userXEST.canEditNow;
     _isEnableFeed = !_noFeedFound &&
         UserXEST.userXEST.hasFeedEnable &&
@@ -1205,25 +1205,35 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
               : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: teachers
-                      .map((tId) => Row(
+                      .map((t) => Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                child: Text(tId,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: td.textTheme.bodyMedium),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(t.alias,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: td.textTheme.bodyMedium),
+                                    Text(t.uid,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: td.textTheme.bodySmall?.copyWith(
+                                            color: colorScheme.outline)),
+                                  ],
+                                ),
                               ),
                               TextButton(
                                 onPressed: () async {
                                   http.delete(
-                                    Queries.feedTeacher(_feed!.shortId, tId),
+                                    Queries.feedTeacher(_feed!.shortId, t.uid),
                                     headers: {
                                       'Authorization':
                                           'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
                                     },
                                   ).then((response) {
                                     if (response.statusCode == 200 && mounted) {
-                                      setState(() => _feed!.removeTeacher(tId));
+                                      setState(() => _feed!.removeTeacher(t.uid));
                                     }
                                   });
                                 },

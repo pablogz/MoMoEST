@@ -12,291 +12,177 @@ const Config = require('../../util/config');
 async function getUser(req, res) {
     const start = Date.now();
     try {
-        FirebaseAdmin.auth().verifyIdToken(getTokenAuth(req.headers.authorization))
-            .then(async (dToken) => {
-                const { uid } = dToken;
-                getInfoUser(uid).then(async (infoUser) => {
-                    if (infoUser !== null) {
-                        const toCHESTUser = {
-                            id: uid,
-                            rol: infoUser.rol,
-                            alias: infoUser.alias === null ? undefined : infoUser.alias,
-                            lastMapView: infoUser.lpv === null || infoUser.lpv === undefined ? undefined : {
-                                lat: infoUser.lpv.lat,
-                                long: infoUser.lpv.long,
-                                zoom: infoUser.lpv.zoom,
-                            },
-                            defaultMap: infoUser.defaultMap === null ? undefined : infoUser.defaultMap,
-                        };
-                        const sparqlQuery = new SPARQLQuery(`http://${Config.addrSparql}:8890/sparql`);
-                        const query = getDescription(uid);
-                        sparqlQuery.query(query).then((response) => {
-                            if (response != null && typeof response !== 'undefined' && typeof response.results !== 'undefined' && typeof response.results.bindings !== 'undefined') {
-                                const comment = [];
-                                response.results.bindings.forEach(binding => {
-                                    if (typeof binding.comment['xml:lang'] !== 'undefined') {
-                                        comment.push(
-                                            {
-                                                value: binding.comment['value'],
-                                                lang: binding.comment['xml:lang']
-                                            }
-                                        );
-                                    } else {
-                                        comment.push(
-                                            {
-                                                value: binding.comment['value']
-                                            }
-                                        );
-                                    }
-                                });
-                                if (comment.length > 0) {
-                                    toCHESTUser['comment'] = comment;
-                                }
-                            }
-                            winston.info(Mustache.render(
-                                'getUser || {{{uid}}} || {{{time}}}',
-                                {
-                                    uid: uid,
-                                    time: Date.now() - start
-                                }
-                            ));
-                            logHttp(req, 200, 'getUser', start);
-                            res.send(JSON.stringify(toCHESTUser));
-                        });
-                    } else {
-                        logHttp(req, 404, 'getUser', start);
-                        res.sendStatus(404);
+        const dToken = await FirebaseAdmin.auth().verifyIdToken(getTokenAuth(req.headers.authorization));
+        const { uid } = dToken;
+        const infoUser = await getInfoUser(uid);
+        if (infoUser !== null) {
+            const toCHESTUser = {
+                id: uid,
+                rol: infoUser.rol,
+                alias: infoUser.alias == null ? undefined : infoUser.alias,
+                lastMapView: infoUser.lpv == null ? undefined : {
+                    lat: infoUser.lpv.lat,
+                    long: infoUser.lpv.long,
+                    zoom: infoUser.lpv.zoom,
+                },
+                defaultMap: infoUser.defaultMap == null ? undefined : infoUser.defaultMap,
+            };
+            try {
+                const sparqlQuery = new SPARQLQuery(`http://${Config.addrSparql}:8890/sparql`);
+                const response = await sparqlQuery.query(getDescription(uid));
+                if (response != null && typeof response.results !== 'undefined' && typeof response.results.bindings !== 'undefined') {
+                    const comment = [];
+                    response.results.bindings.forEach(binding => {
+                        if (typeof binding.comment['xml:lang'] !== 'undefined') {
+                            comment.push({ value: binding.comment['value'], lang: binding.comment['xml:lang'] });
+                        } else {
+                            comment.push({ value: binding.comment['value'] });
+                        }
+                    });
+                    if (comment.length > 0) {
+                        toCHESTUser['comment'] = comment;
                     }
-                });
-            })
-            .catch(error => {
-                winston.error(Mustache.render(
-                    'getUser || {{{error}}} || {{{time}}}',
-                    {
-                        error: error,
-                        time: Date.now() - start
-                    }
-                ));
-                logHttp(req, 401, 'getUser', start);
-                res.status(401).send(error.message);
-            });
-    } catch (error) {
-        winston.error(Mustache.render(
-            'getUser || {{{error}}} || {{{time}}}',
-            {
-                error: error,
-                time: Date.now() - start
+                }
+            } catch (sparqlError) {
+                winston.error(Mustache.render('getUser SPARQL || {{{error}}}', { error: sparqlError }));
             }
-        ));
-        logHttp(req, 500, 'getUser', start);
-        res.status(500).send(error.message);
+            winston.info(Mustache.render('getUser || {{{uid}}} || {{{time}}}', { uid, time: Date.now() - start }));
+            logHttp(req, 200, 'getUser', start);
+            res.send(JSON.stringify(toCHESTUser));
+        } else {
+            logHttp(req, 404, 'getUser', start);
+            res.sendStatus(404);
+        }
+    } catch (error) {
+        winston.error(Mustache.render('getUser || {{{error}}} || {{{time}}}', { error, time: Date.now() - start }));
+        const status = error.code && error.code.startsWith('auth/') ? 401 : 500;
+        logHttp(req, status, 'getUser', start);
+        res.status(status).send(error.message);
     }
 }
 
 
-// curl -X PUT -H "Authorization: Bearer 1" -H "Content-Type: application/json" -d '{"code": "qTubp5ziML3Q", "confTeacherLOD": "20240304b", "alias": "pepito123", "confAliasLOD": "20240304a", "comment": {"value": "Descripción de 123", "lang": "es"}}' "localhost:11110/users/user" -v
+// curl -X PUT -H "Authorization: Bearer 1" -H "Content-Type: application/json" -d '{"code": "qTubp5ziML3Q", "confTeacherLOD": "20240304b", "alias": "pepito123", "confAliasLOD": "20240304a", "comment": "Descripción de 123"}' "localhost:11110/users/user" -v
 async function editUser(req, res) {
     const start = Date.now();
     try {
-        FirebaseAdmin.auth().verifyIdToken(getTokenAuth(req.headers.authorization))
-            .then(async dToken => {
-                const { uid, email } = dToken;
-                if (uid !== '') {
-                    getInfoUser(uid).then(async infoUser => {
-                        if (infoUser !== null) {
-                            // Usuario registrado
-                            let { alias, code, comment, confAliasLOD, confTeacherLOD } = req.body;
-                            alias = _validaString(alias);
-                            code = _validaString(code);
-                            confAliasLOD = _validaString(confAliasLOD);
-                            confTeacherLOD = _validaString(confTeacherLOD);
-                            var commentV = null;
-                            if (typeof comment === 'object' && typeof comment['value'] !== 'undefined' && typeof comment['lang'] !== 'undefined') {
-                                commentV = { value: _validaString(comment.value), lang: _validaString(comment.lang) };
-                            }
-                            // ¿Qué información tenemos ya del usuario? Está contenida en infoUser.
-                            // El usuario va a poder cambiar el alias y su descripción. Una vez que pase a ser profesor no podrá dejar de serlo
-                            if (typeof code !== 'undefined' && typeof confTeacherLOD !== 'undefined') {
-                                // El usuario quiere pasar a ser profesor
-                                _compruebaCodigoProfe(code, email).then((codeValido) => {
-                                    if (codeValido) {
-                                        // Si trae alias y confAliasLOD el usuario quiere cambiar el alias. Por ello tengo que comprobar si está disponible.
-                                        if (typeof alias !== 'undefined' && typeof confAliasLOD !== 'undefined') {
-                                            _aliasUtilizado(alias).then((aliasV) => {
-                                                if (!aliasV) {
-                                                    _creaProfe(true, uid, alias, confAliasLOD, code, confTeacherLOD, commentV, infoUser.alias).then((v) => {
-                                                        if (v === true) {
-                                                            logHttp(req, 204, 'editUser', start);
-                                                            res.sendStatus(204);
-                                                        } else {
-                                                            logHttp(req, 500, 'editUser', start);
-                                                            res.status(500).send('Internal error!');
-                                                        }
-                                                    })
-                                                } else {
-                                                    logHttp(req, 400, 'editUser', start);
-                                                    res.status(400).send('Use another alias!');
-                                                }
-                                            });
-                                        } else {
-                                            // El profe ya tenía que tener un alias 
-                                            if (infoUser.alias !== 'undefined' && infoUser.alias !== null) {
-                                                _creaProfe(true, uid, infoUser.alias, infoUser.confAliasLOD, code, confTeacherLOD, commentV).then((v) => {
-                                                    if (v === true) {
-                                                        res.sendStatus(204);
-                                                    } else {
-                                                        logHttp(req, 500, 'editUser', start);
-                                                        res.status(500).send('Internal error!');
-                                                    }
-                                                });
-                                            } else {
-                                                logHttp(req, 400, 'editUser', start);
-                                                res.status(400).send('We need an alias for the teacher!');
-                                            }
-                                        }
-                                    } else {
-                                        logHttp(req, 403, 'editUser', start);
-                                        res.status(403).send('Code is not valid!');
-                                    }
-                                })
-                            } else {
-                                // Si trae alias y confAliasLOD el usuario quiere cambiar el alias. Por ello tengo que comprobar si está disponible.
-                                if (typeof alias !== 'undefined' && typeof confAliasLOD !== 'undefined') {
-                                    _aliasUtilizado(alias).then((aliasV) => {
-                                        if (!aliasV) {
-                                            _actualizaPersona(uid, alias, confAliasLOD, infoUser.alias).then((v) => {
-                                                if (v === true) {
-                                                    if (commentV !== null) {
-                                                        // El usuario quiere incluir//cambiar su descripción
-                                                        _actualizaDescripcion(uid, commentV).then((r) => {
-                                                            if (r) {
-                                                                logHttp(req, 204, 'editUser', start);
-                                                                res.sendStatus(204);
-                                                            } else {
-                                                                logHttp(req, 200, 'editUser', start);
-                                                                res.sendStatus(200);
-                                                            }
-                                                        });
-                                                    } else {
-                                                        logHttp(req, 204, 'editUser', start);
-                                                        res.sendStatus(204);
-                                                    }
-                                                } else {
-                                                    logHttp(req, 500, 'editUser', start);
-                                                    res.status(500).send('Internal error!');
-                                                }
-                                            });
-                                        } else {
-                                            logHttp(req, 400, 'editUser', start);
-                                            res.status(400).send('Use another alias!');
-                                        }
-                                    });
-                                } else {
-                                    // Compruebo si el usuario quiere modifiar su descripción
-                                    if (commentV !== null) {
-                                        // El usuario quiere incluir//cambiar su descripción
-                                        _actualizaDescripcion(uid, commentV).then((r) => {
-                                            if (r) {
-                                                logHttp(req, 204, 'editUser', start);
-                                                res.sendStatus(204);
-                                            } else {
-                                                logHttp(req, 200, 'editUser', start);
-                                                res.sendStatus(200);
-                                            }
-                                        });
-                                    } else {
-                                        logHttp(req, 200, 'editUser', start);
-                                        res.sendStatus(200);
-                                    }
-                                }
-                            }
-                        } else {
-                            // Usuario todavía no almacenado
-                            // Alias es opcional. Si viene alias tiene que venir confAliasLOD.
-                            // Code y comment es opcional. Si viene code tiene que venir confTeacherLOD, alias y aliasData.
-                            let { alias, code, comment, confAliasLOD, confTeacherLOD } = req.body;
-                            alias = _validaString(alias);
-                            code = _validaString(code);
-                            confAliasLOD = _validaString(confAliasLOD);
-                            confTeacherLOD = _validaString(confTeacherLOD);
-                            // Si ha enviado code compruebo si es válido para su email. De ser afirmativo el alias, confAliasLOD y confTeacherLOD son obligatorios.
-                            if (typeof code !== 'undefined') {
-                                if (typeof confTeacherLOD !== 'undefined' && typeof code === 'string' && typeof alias !== 'undefined' && typeof confAliasLOD !== 'undefined') {
-                                    _compruebaCodigoProfe(code, email).then((codeValido) => {
-                                        if (codeValido) {
-                                            var commentV = null;
-                                            if (typeof comment === 'object' && typeof comment['value'] !== 'undefined' && typeof comment['lang'] !== 'undefined') {
-                                                commentV = { value: _validaString(comment.value), lang: _validaString(comment.lang) };
-                                            }
-                                            _aliasUtilizado(alias).then((aliasV) => {
-                                                if (!aliasV) {
-                                                    _creaProfe(false, uid, alias, confAliasLOD, code, confTeacherLOD, commentV).then((v) => {
-                                                        if (v === true) {
-                                                            logHttp(req, 201, 'editUser', start);
-                                                            res.sendStatus(201);
-                                                        } else {
-                                                            logHttp(req, 500, 'editUser', start);
-                                                            res.status(500).send('Internal error!');
-                                                        }
-                                                    })
-                                                } else {
-                                                    logHttp(req, 400, 'editUser', start);
-                                                    res.status(400).send('Use another alias!');
-                                                }
-                                            });
-                                        } else {
-                                            logHttp(req, 403, 'editUser', start);
-                                            res.status(403).send('Code is not valid!');
-                                        }
-                                    });
-                                } else {
-                                    logHttp(req, 400, 'editUser', start);
-                                    res.status(400).send('We need more parameters!');
-                                }
-                            } else {
-                                if (typeof alias !== 'undefined' && typeof confAliasLOD !== 'undefined') {
-                                    // Si ha enviado alias y confAliasLOD compruebo si está disponible. Si está disponible lo almaceno en la BBDD y en LOD
-                                    _aliasUtilizado(alias).then((aliasV) => {
-                                        if (!aliasV) {
-                                            _creaPersona(uid, alias, confAliasLOD).then((v) => {
-                                                if (v === true) {
-                                                    logHttp(req, 201, 'editUser', start);
-                                                    res.sendStatus(201);
-                                                } else {
-                                                    logHttp(req, 500, 'editUser', start);
-                                                    res.status(500).send('Internal error!');
-                                                }
-                                            });
-                                        } else {
-                                            logHttp(req, 400, 'editUser', start);
-                                            res.status(400).send('Use another alias!');
-                                        }
-                                    });
-                                } else {
-                                    _creaPersona(uid, undefined, undefined).then((v) => {
-                                        if (v === true) {
-                                            logHttp(req, 201, 'editUser', start);
-                                            res.sendStatus(201);
-                                        } else {
-                                            logHttp(req, 500, 'editUser', start);
-                                            res.status(500).send('Internal error!');
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    }
-                    )
+        const dToken = await FirebaseAdmin.auth().verifyIdToken(getTokenAuth(req.headers.authorization));
+        const { uid, email } = dToken;
+        if (!uid) {
+            logHttp(req, 400, 'editUser', start);
+            return res.status(400).send('Invalid token!');
+        }
+        const infoUser = await getInfoUser(uid);
+        if (infoUser !== null) {
+            // Usuario registrado
+            let { alias, code, comment, confAliasLOD, confTeacherLOD } = req.body;
+            alias = _validaString(alias);
+            code = _validaString(code);
+            confAliasLOD = _validaString(confAliasLOD);
+            confTeacherLOD = _validaString(confTeacherLOD);
+            const commentV = _parseComment(comment);
+            if (typeof code !== 'undefined' && typeof confTeacherLOD !== 'undefined') {
+                // El usuario quiere pasar a ser profesor
+                const codeValido = await _compruebaCodigoProfe(code, email);
+                if (!codeValido) {
+                    logHttp(req, 403, 'editUser', start);
+                    return res.status(403).send('Code is not valid!');
                 }
-            });
-    } catch (error) {
-        winston.error(Mustache.render(
-            'editUser || {{{error}}} || {{{time}}}',
-            {
-                error: error,
-                time: Date.now() - start
+                if (typeof alias !== 'undefined' && typeof confAliasLOD !== 'undefined') {
+                    const aliasV = await _aliasUtilizado(alias);
+                    if (aliasV) {
+                        logHttp(req, 400, 'editUser', start);
+                        return res.status(400).send('Use another alias!');
+                    }
+                    const v = await _creaProfe(true, uid, alias, confAliasLOD, code, confTeacherLOD, commentV, infoUser.alias);
+                    logHttp(req, v === true ? 204 : 500, 'editUser', start);
+                    return v === true ? res.sendStatus(204) : res.status(500).send('Internal error!');
+                } else {
+                    // El profe ya tenía que tener un alias
+                    if (infoUser.alias !== undefined && infoUser.alias !== null) {
+                        const v = await _creaProfe(true, uid, infoUser.alias, infoUser.confAliasLOD, code, confTeacherLOD, commentV);
+                        logHttp(req, v === true ? 204 : 500, 'editUser', start);
+                        return v === true ? res.sendStatus(204) : res.status(500).send('Internal error!');
+                    } else {
+                        logHttp(req, 400, 'editUser', start);
+                        return res.status(400).send('We need an alias for the teacher!');
+                    }
+                }
+            } else {
+                if (typeof alias !== 'undefined' && typeof confAliasLOD !== 'undefined') {
+                    const aliasV = await _aliasUtilizado(alias);
+                    if (aliasV) {
+                        logHttp(req, 400, 'editUser', start);
+                        return res.status(400).send('Use another alias!');
+                    }
+                    const v = await _actualizaPersona(uid, alias, confAliasLOD, infoUser.alias);
+                    if (v !== true) {
+                        logHttp(req, 500, 'editUser', start);
+                        return res.status(500).send('Internal error!');
+                    }
+                    if (commentV !== null) {
+                        const r = await _actualizaDescripcion(uid, commentV);
+                        logHttp(req, r ? 204 : 200, 'editUser', start);
+                        return res.sendStatus(r ? 204 : 200);
+                    }
+                    logHttp(req, 204, 'editUser', start);
+                    return res.sendStatus(204);
+                } else {
+                    if (commentV !== null) {
+                        const r = await _actualizaDescripcion(uid, commentV);
+                        logHttp(req, r ? 204 : 200, 'editUser', start);
+                        return res.sendStatus(r ? 204 : 200);
+                    }
+                    logHttp(req, 200, 'editUser', start);
+                    return res.sendStatus(200);
+                }
             }
-        ));
+        } else {
+            // Usuario todavía no almacenado
+            let { alias, code, comment, confAliasLOD, confTeacherLOD } = req.body;
+            alias = _validaString(alias);
+            code = _validaString(code);
+            confAliasLOD = _validaString(confAliasLOD);
+            confTeacherLOD = _validaString(confTeacherLOD);
+            if (typeof code !== 'undefined') {
+                if (typeof confTeacherLOD !== 'undefined' && typeof code === 'string' && typeof alias !== 'undefined' && typeof confAliasLOD !== 'undefined') {
+                    const codeValido = await _compruebaCodigoProfe(code, email);
+                    if (!codeValido) {
+                        logHttp(req, 403, 'editUser', start);
+                        return res.status(403).send('Code is not valid!');
+                    }
+                    const commentV = _parseComment(comment);
+                    const aliasV = await _aliasUtilizado(alias);
+                    if (aliasV) {
+                        logHttp(req, 400, 'editUser', start);
+                        return res.status(400).send('Use another alias!');
+                    }
+                    const v = await _creaProfe(false, uid, alias, confAliasLOD, code, confTeacherLOD, commentV);
+                    logHttp(req, v === true ? 201 : 500, 'editUser', start);
+                    return v === true ? res.sendStatus(201) : res.status(500).send('Internal error!');
+                } else {
+                    logHttp(req, 400, 'editUser', start);
+                    return res.status(400).send('We need more parameters!');
+                }
+            } else {
+                if (typeof alias !== 'undefined' && typeof confAliasLOD !== 'undefined') {
+                    const aliasV = await _aliasUtilizado(alias);
+                    if (aliasV) {
+                        logHttp(req, 400, 'editUser', start);
+                        return res.status(400).send('Use another alias!');
+                    }
+                    const v = await _creaPersona(uid, alias, confAliasLOD);
+                    logHttp(req, v === true ? 201 : 500, 'editUser', start);
+                    return v === true ? res.sendStatus(201) : res.status(500).send('Internal error!');
+                } else {
+                    const v = await _creaPersona(uid);
+                    logHttp(req, v === true ? 201 : 500, 'editUser', start);
+                    return v === true ? res.sendStatus(201) : res.status(500).send('Internal error!');
+                }
+            }
+        }
+    } catch (error) {
+        winston.error(Mustache.render('editUser || {{{error}}} || {{{time}}}', { error, time: Date.now() - start }));
         logHttp(req, 500, 'editUser', start);
         res.status(500).send(error.message);
     }
@@ -359,21 +245,21 @@ async function _aliasUtilizado(alias) {
     const query = checkExistenceAlias(alias);
     const sparqlQuery = new SPARQLQuery(`http://${Config.addrSparql}:8890/sparql`);
     try {
-        var response = await sparqlQuery.query(query);
-        return typeof 'response' !== 'undefined' && typeof response.boolean !== 'undefined' ? response.boolean : true;
+        const response = await sparqlQuery.query(query);
+        return typeof response !== 'undefined' && typeof response.boolean !== 'undefined' ? response.boolean : true;
     } catch (e) {
-        console.error(e);
+        winston.error(`_aliasUtilizado error: ${e}`);
         return true;
     }
 }
 
 async function _creaProfe(personaYaCreada, uid, alias, confAliasLOD, code, confTeacherLOD, commentV = undefined, prevAlias = undefined) {
     const personaCreada = personaYaCreada ?
-        await _actualizaPersona(uid, alias, confAliasLOD) :
-        await _creaPersona(uid, alias, confAliasLOD, prevAlias);
+        await _actualizaPersona(uid, alias, confAliasLOD, prevAlias) :
+        await _creaPersona(uid, alias, confAliasLOD);
     if (personaCreada) {
         const date = _getCurrentUTCString();
-        let err = await updateDocument(
+        const err = await updateDocument(
             uid,
             DOCUMENT_INFO,
             {
@@ -404,38 +290,31 @@ async function _creaPersona(uid, alias = undefined, confAliasLOD = undefined) {
         alias: alias,
         confAliasLOD: confAliasLOD,
     };
-    var v = await newDocument(uid, doc);
+    const v = await newDocument(uid, doc);
     if (v !== null) {
-        let lodPerson = {
-            uid: uid,
-            created: creation,
-        }
+        const lodPerson = { uid: uid, created: creation };
         if (typeof alias !== 'undefined') {
             lodPerson['label'] = alias;
         }
         const requests = insertPerson(lodPerson);
-        const promises = [];
-        requests.forEach((request) => {
-            const options = options4Request(request, true);
-            promises.push(
-                fetch(options.url, options.init));
-        });
-        var values = await Promise.all(promises);
-        let allOk = true;
-        values.forEach((v) => {
-            if (v.status !== 200) {
-                allOk = false;
-            }
-        });
-        return allOk;
+        try {
+            const values = await Promise.all(requests.map((request) => {
+                const options = options4Request(request, true);
+                return fetch(options.url, options.init);
+            }));
+            return values.every((v) => v.status === 200);
+        } catch (e) {
+            winston.error(`_creaPersona LOD error: ${e}`);
+            return false;
+        }
     }
     return false;
 }
 
 async function _actualizaPersona(uid, alias = undefined, confAliasLOD = undefined, prevAlias = undefined) {
     let todoOk = true;
-    let date = _getCurrentUTCString();
-    let err = await updateDocument(
+    const date = _getCurrentUTCString();
+    const err = await updateDocument(
         uid,
         DOCUMENT_INFO,
         {
@@ -444,28 +323,27 @@ async function _actualizaPersona(uid, alias = undefined, confAliasLOD = undefine
             alias: alias,
             confAliasLOD: confAliasLOD
         }
-    )
+    );
     if (err !== null && typeof err.acknowledged !== 'undefined' && err.acknowledged) {
-        if (typeof prevAlias !== 'undefined') {
-            // BORRO de LOD el alias
-            const request = borraAlias(uid, prevAlias);
-            const options = options4Request(request, true);
-            const response = await fetch(options.url, options.init);
-            todoOk = response.status === 200;
-        }
-        if (todoOk && typeof alias !== 'undefined') {
-            const rs = insertPerson({ uid: uid, label: alias, date: date });
-            const ps = [];
-            rs.forEach((r) => {
-                const options = options4Request(r, true);
-                ps.push(fetch(options.url, options.init))
-            });
-            let values = await Promise.all(ps);
-            values.forEach((v) => {
-                if (v.status !== 200) {
-                    todoOk = false;
-                }
-            });
+        try {
+            if (typeof prevAlias !== 'undefined') {
+                const request = borraAlias(uid, prevAlias);
+                const options = options4Request(request, true);
+                const response = await fetch(options.url, options.init);
+                todoOk = response.status === 200;
+            }
+            if (todoOk && typeof alias !== 'undefined') {
+                const values = await Promise.all(
+                    insertPerson({ uid: uid, label: alias, date: date }).map((r) => {
+                        const options = options4Request(r, true);
+                        return fetch(options.url, options.init);
+                    })
+                );
+                todoOk = values.every((v) => v.status === 200);
+            }
+        } catch (e) {
+            winston.error(`_actualizaPersona LOD error: ${e}`);
+            return false;
         }
         return todoOk;
     } else {
@@ -474,34 +352,44 @@ async function _actualizaPersona(uid, alias = undefined, confAliasLOD = undefine
 }
 
 async function _actualizaDescripcion(uid, nuevaDescripcion = undefined, date = undefined) {
-    // Borro la descripción actual
-    let allOk = true;
     if (typeof date === 'undefined') {
         date = _getCurrentUTCString();
     }
-    const request = borraDescription(uid);
-    const options = options4Request(request, true);
-    const response = await fetch(options.url, options.init);
-    if (response.status !== 200) {
-        allOk = false;
+    try {
+        const request = borraDescription(uid);
+        const options = options4Request(request, true);
+        const response = await fetch(options.url, options.init);
+        if (response.status !== 200) {
+            return false;
+        }
+        if (nuevaDescripcion !== undefined && nuevaDescripcion !== null) {
+            const values = await Promise.all(
+                insertCommentPerson({ uid: uid, comment: nuevaDescripcion, date: date }).map((request) => {
+                    const options = options4Request(request, true);
+                    return fetch(options.url, options.init);
+                })
+            );
+            return values.every((v) => v.status === 200);
+        }
+        return true;
+    } catch (e) {
+        winston.error(`_actualizaDescripcion LOD error: ${e}`);
+        return false;
     }
-    if (allOk && nuevaDescripcion !== undefined && nuevaDescripcion !== null) {
-        // Agrego la nueva descripción
-        const requests = insertCommentPerson({ uid: uid, comment: nuevaDescripcion, date: date });
-        const promises = [];
-        requests.forEach((request) => {
-            const options = options4Request(request, true);
-            promises.push(fetch(options.url, options.init));
-        });
-        let values = await Promise.all(promises);
-        values.forEach((v) => {
-            if (v.status !== 200) {
-                allOk = false;
-            }
-        });
-        return allOk;
+}
+
+function _parseComment(comment) {
+    if (typeof comment === 'string' && comment.trim() !== '') {
+        return { value: comment.trim() };
     }
-    return allOk;
+    if (typeof comment === 'object' && comment !== null && typeof comment['value'] !== 'undefined') {
+        const c = { value: _validaString(comment.value) };
+        if (typeof comment['lang'] !== 'undefined') {
+            c.lang = _validaString(comment.lang);
+        }
+        return c.value !== undefined ? c : null;
+    }
+    return null;
 }
 
 function _validaString(string) {

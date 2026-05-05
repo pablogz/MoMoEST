@@ -49,7 +49,7 @@ async function newTeacher(req, res) {
                         return res.sendStatus(409);
                     }
                     // Ya es co-profesor
-                    if (feed.teachers.includes(uid)) {
+                    if (feed.teachers.some(t => t.uid === uid)) {
                         logHttp(req, 400, 'newTeacher', start);
                         return res.sendStatus(400);
                     }
@@ -62,13 +62,14 @@ async function newTeacher(req, res) {
                         }
                     }
                     // Añado el profesor al array teachers del canal y el canal al array teaching del profesor
+                    const teacherObj = { uid, alias: user.alias || uid };
                     const teachingObj = {
                         idFeed: feedId,
                         idOwner: ownerId,
                         date: (new Date(Date.now())).toISOString(),
                     };
                     const [okFeed, okTeacher] = await Promise.all([
-                        addTeacherToFeed(ownerId, feedId, uid),
+                        addTeacherToFeed(ownerId, feedId, teacherObj),
                         updateTeachingFeedBD(uid, teachingObj),
                     ]);
                     const todoBien = okFeed && okTeacher;
@@ -129,7 +130,7 @@ async function byeTeacher(req, res) {
                     }
                     const ownerId = objCollFeed.userId;
                     const feed = new Feed(objCollFeed.dataFeed);
-                    if (!feed.teachers.includes(teacherId)) {
+                    if (!feed.teachers.some(t => t.uid === teacherId)) {
                         logHttp(req, 404, 'byeTeacher', start);
                         return res.sendStatus(404);
                     }

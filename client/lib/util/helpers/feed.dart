@@ -7,13 +7,19 @@ import 'package:momoest/util/helpers/answers.dart';
 import 'package:momoest/util/helpers/pair.dart';
 import 'package:flutter/widgets.dart';
 
+class FeedTeacher {
+  final String uid;
+  final String alias;
+  const FeedTeacher({required this.uid, required this.alias});
+}
+
 /// Clase que define un canal
 class Feed {
   late String _id, _shortId, _iri, _pass, _owner;
   late List<PairLang> _labels, _comments;
   late List<String> _subscribersId;
   late List<Subscriber> _subscribers;
-  late List<String> _teachers;
+  late List<FeedTeacher> _teachers;
   // late List<String> _lstStLt, _lstItineraries;
   // late List<PointItinerary> _stLt;
   // late List<Task> _tasks;
@@ -66,7 +72,13 @@ class Feed {
     _teachers = [];
     if (data.containsKey('teachers') && data['teachers'] is List) {
       for (final t in data['teachers']) {
-        if (t is String && t.isNotEmpty) _teachers.add(t);
+        if (t is Map) {
+          final uid = t['uid']?.toString() ?? '';
+          final alias = t['alias']?.toString() ?? uid;
+          if (uid.isNotEmpty) _teachers.add(FeedTeacher(uid: uid, alias: alias));
+        } else if (t is String && t.isNotEmpty) {
+          _teachers.add(FeedTeacher(uid: t, alias: t));
+        }
       }
     }
 
@@ -265,18 +277,20 @@ class Feed {
     _owner = owner;
   }
 
-  List<String> get teachers => _teachers;
+  List<FeedTeacher> get teachers => _teachers;
 
-  bool addTeacher(String id) {
-    if (!_teachers.contains(id)) {
-      _teachers.add(id);
+  bool addTeacher(String uid, String alias) {
+    if (!_teachers.any((t) => t.uid == uid)) {
+      _teachers.add(FeedTeacher(uid: uid, alias: alias));
       return true;
     }
     return false;
   }
 
-  bool removeTeacher(String id) {
-    return _teachers.remove(id);
+  bool removeTeacher(String uid) {
+    final before = _teachers.length;
+    _teachers.removeWhere((t) => t.uid == uid);
+    return _teachers.length < before;
   }
 
   List<Subscriber> get subscribers => _subscribers;
