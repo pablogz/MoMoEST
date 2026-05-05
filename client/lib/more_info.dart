@@ -126,7 +126,7 @@ class _MoreInfo extends State<MoreInfo> {
     return Scaffold(
         body: CustomScrollView(slivers: [
       SliverAppBar(
-        title: Text(AppLocalizations.of(context)!.sobreCHEST),
+        title: Text(AppLocalizations.of(context)!.sobrexest),
         centerTitle: false,
         pinned: true,
       ),

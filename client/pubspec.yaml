@@ -60,21 +60,22 @@ dependencies:
 
 # dart run flutter_launcher_icons
 #   flutter_launcher_icons: ^0.14.4
+
 # flutter_launcher_icons:
 #   android: true
 #   ios: true
 #   remove_alpha_ios: true
-#   image_path: "images/icon/chestIcon.png"
+#   image_path: "images/icon/icon.png"
 #   adaptive_icon_background: "#FFFFFF"
-#   adaptive_icon_foreground: "images/icon/chestIcon.png"
+#   adaptive_icon_foreground: "images/icon/icon.png"
 #   adaptive_icon_foreground_inset: 24
-#   adaptive_icon_monochrome: "images/icon/chestIconMonochrome.png"
+#   adaptive_icon_monochrome: "images/icon/iconMonochrome.png"
 #   min_sdk_android: 21
 #   web: 
 #     generate: true
-#     image_path: "images/icon/chestIcon.png"
+#     image_path: "images/icon/icon.png"
 #     backgroudn_color: "#FFFFFF"
-#     theme_color: "#276C29"
+#     theme_color: "#1B3D27"
 #   windows:
 #     generate: false
 #   macos:

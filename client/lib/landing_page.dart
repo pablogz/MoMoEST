@@ -36,7 +36,6 @@ class _LandingPage extends State<LandingPage> {
       queEsChest(textTheme, colorScheme, appLoca, widthContainer),
       datosQueUsamos(textTheme, colorScheme, appLoca, widthContainer),
       quienesSomos(textTheme, colorScheme, appLoca, widthContainer),
-      premiosPublicaciones(textTheme, colorScheme, appLoca, widthContainer),
     ];
 
     double desplazaAppBar = size.height * 0.35;
@@ -60,7 +59,7 @@ class _LandingPage extends State<LandingPage> {
                 child: SvgPicture.asset(
                   'images/logo.svg',
                   width: 48,
-                  semanticsLabel: appLoca!.chest,
+                  semanticsLabel: appLoca!.xest,
                 ),
               ),
               title: Center(
@@ -114,7 +113,7 @@ class _LandingPage extends State<LandingPage> {
                         onPressed: () async {
                           try {
                             if (!await launchUrl(Uri.parse(
-                                "https://play.google.com/store/apps/details?id=es.uva.gsic.chest"))) {
+                                "https://play.google.com/store/apps/details?id=es.uva.gsic.momoest"))) {
                               throw Exception();
                             }
                           } catch (error) {
@@ -135,7 +134,7 @@ class _LandingPage extends State<LandingPage> {
                         onPressed: () async {
                           try {
                             if (!await launchUrl(Uri.parse(
-                                "https://apps.apple.com/us/app/chest-gsic/id6654914759"))) {
+                                "https://apps.apple.com/us/app/momoest-gsic/id6764352259"))) {
                               throw Exception();
                             }
                           } catch (error) {
@@ -210,7 +209,7 @@ class _LandingPage extends State<LandingPage> {
         Padding(
           padding: const EdgeInsets.only(bottom: 40, top: 20),
           child: Text(
-            appLoca!.lpPreguntaCHEST,
+            appLoca!.lpPreguntaxest,
             style: textTheme.headlineSmall!.copyWith(
               color: colorScheme.onPrimaryContainer,
               fontWeight: FontWeight.bold,
@@ -227,8 +226,8 @@ class _LandingPage extends State<LandingPage> {
           children: [
             _columnCard(
               textTheme,
-              appLoca.lpCHESTEs,
-              title: appLoca.lpCHESTEsTitle,
+              appLoca.lpxestEs,
+              title: appLoca.lpxestEsTitle,
               width: widthContainer,
               colorBackground: colorBackground,
               colorText: colorText,
@@ -333,6 +332,7 @@ class _LandingPage extends State<LandingPage> {
   Widget quienesSomos(TextTheme textTheme, ColorScheme colorScheme,
       AppLocalizations? appLoca, double widthContainer) {
     double tresColum = (widthContainer / 3) - 45;
+    double dosColum = (widthContainer / 2) - 45;
     bool ancho = tresColum * 3 < 599;
     Color colorBackground = colorScheme.primary;
     Color colorText = colorScheme.onPrimary;
@@ -374,93 +374,15 @@ class _LandingPage extends State<LandingPage> {
               textTheme,
               appLoca.lpBecaUVaSantander,
               title: appLoca.lpBecaUVaSantanderTitle,
-              width: ancho ? widthContainer : tresColum,
+              width: ancho ? widthContainer : dosColum,
               colorBackground: colorBackground,
               colorText: colorText,
             ),
             _columnCard(
               textTheme,
-              appLoca.lpH2O,
-              title: appLoca.lpH2OTitle,
-              width: ancho ? widthContainer : tresColum,
-              colorBackground: colorBackground,
-              colorText: colorText,
-            ),
-            _columnCard(
-              textTheme,
-              appLoca.lpLodForTrees,
-              title: appLoca.lpLodForTreesTitle,
-              width: ancho ? widthContainer : tresColum,
-              colorBackground: colorBackground,
-              colorText: colorText,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget premiosPublicaciones(TextTheme textTheme, ColorScheme colorScheme,
-      AppLocalizations? appLoca, double widthContainer) {
-    Color colorBackground = colorScheme.secondary;
-    Color colorText = colorScheme.onSecondary;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 40, top: 20),
-          child: Text(
-            appLoca!.premiosPublicaciones,
-            style: textTheme.headlineSmall!.copyWith(
-              color: colorScheme.onSecondaryContainer,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Wrap(
-          spacing: 20,
-          runSpacing: 20,
-          alignment: WrapAlignment.spaceEvenly,
-          crossAxisAlignment: WrapCrossAlignment.start,
-          runAlignment: WrapAlignment.center,
-          direction: Axis.horizontal,
-          children: [
-            _columnCard(
-              textTheme,
-              appLoca.datosAbiertosJuntaDescripcion,
-              title: appLoca.datosAbiertosJunta,
-              width: widthContainer,
-              image: 'images/landing/jcyl.jpg',
-              fitImage: BoxFit.fitWidth,
-              heightImg: 200,
-              colorBackground: colorBackground,
-              colorText: colorText,
-              uriString:
-                  "https://bocyl.jcyl.es/boletines/2023/11/09/pdf/BOCYL-D-09112023-20.pdf",
-            ),
-            _columnCard(
-              textTheme,
-              appLoca.dcEctel,
-              uriString: "https://ceur-ws.org/Vol-3539/paper10.pdf",
-              width: widthContainer,
-              colorBackground: colorBackground,
-              colorText: colorText,
-            ),
-            _columnCard(
-              textTheme,
-              appLoca.ectel22,
-              uriString: "https://doi.org/10.1007/978-3-031-16290-9_34",
-              width: widthContainer,
-              colorBackground: colorBackground,
-              colorText: colorText,
-            ),
-            _columnCard(
-              textTheme,
-              appLoca.las22,
-              uriString: "https://doi.org/10.1145/3491140.3528335",
-              width: widthContainer,
+              appLoca.lpGenieLearn,
+              title: appLoca.lpGenieLearnTitle,
+              width: ancho ? widthContainer : dosColum,
               colorBackground: colorBackground,
               colorText: colorText,
             ),
@@ -494,14 +416,14 @@ class _LandingPage extends State<LandingPage> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: RichText(
                     text: TextSpan(
-                      text: appLoca!.descargaApp.replaceFirst(
-                          appLoca.descargaApp.split(', ').last, ''),
+                      text: appLoca!.descargaxest.replaceFirst(
+                          appLoca.descargaxest.split(', ').last, ''),
                       style: textTheme.titleLarge!.copyWith(
                         color: colorScheme.onTertiaryContainer,
                       ),
                       children: [
                         TextSpan(
-                          text: appLoca.descargaApp.split(', ').last,
+                          text: appLoca.descargaxest.split(', ').last,
                           style: textTheme.titleLarge!.copyWith(
                             color: colorScheme.onTertiaryContainer,
                             fontWeight: FontWeight.bold,
@@ -525,7 +447,7 @@ class _LandingPage extends State<LandingPage> {
                       onTap: () async {
                         try {
                           if (!await launchUrl(Uri.parse(
-                              "https://play.google.com/store/apps/details?id=es.uva.gsic.chest"))) {
+                              "https://play.google.com/store/apps/details?id=es.uva.gsic.momoest"))) {
                             throw Exception();
                           }
                         } catch (error) {
@@ -540,11 +462,11 @@ class _LandingPage extends State<LandingPage> {
                         }
                       },
                       child: Tooltip(
-                        message: appLoca.descargaAppAndroid,
+                        message: appLoca.descargaxestAndroid,
                         child: SvgPicture.asset(
                           'images/landing/badges/google-play-badge-${MyApp.currentLang == 'es' ? 'es' : MyApp.currentLang == 'pt' ? 'pt' : 'en'}.svg',
                           width: 200,
-                          semanticsLabel: appLoca.descargaAppAndroid,
+                          semanticsLabel: appLoca.descargaxestAndroid,
                         ),
                       ),
                     ),
@@ -552,7 +474,7 @@ class _LandingPage extends State<LandingPage> {
                       onTap: () async {
                         try {
                           if (!await launchUrl(Uri.parse(
-                              "https://apps.apple.com/us/app/chest-gsic/id6654914759"))) {
+                              "https://apps.apple.com/us/app/momoest-gsic/id6764352259"))) {
                             throw Exception();
                           }
                         } catch (error) {
@@ -568,11 +490,11 @@ class _LandingPage extends State<LandingPage> {
                         }
                       },
                       child: Tooltip(
-                        message: appLoca.descargaAppIOS,
+                        message: appLoca.descargaxestIOS,
                         child: SvgPicture.asset(
                           'images/landing/badges/app-store-badge-${MyApp.currentLang == 'es' ? 'es' : MyApp.currentLang == 'pt' ? 'pt' : 'en'}.svg',
                           width: 200,
-                          semanticsLabel: appLoca.descargaAppIOS,
+                          semanticsLabel: appLoca.descargaxestIOS,
                         ),
                       ),
                     ),

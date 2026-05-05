@@ -59,10 +59,10 @@ class _MyMap extends State<MyMap> {
   bool _userIded = false,
       _mapCenterInUser = false,
       _cargaInicial = true,
-      _tryingSignIn = false;
+      _tryingSignIn = false,
+      _lstItsVacia = false;
   late bool _extendedBar,
       _filterOpen,
-      _visibleLabel,
       _barraAlLado,
       _barraAlLadoExpandida,
       _locationON,
@@ -93,7 +93,6 @@ class _MyMap extends State<MyMap> {
     _controllerFilterIt = TextEditingController();
     _ini = false;
     _rotationDegree = 0;
-    _visibleLabel = true;
     _filterOpen = false;
     _lastMapEventScrollWheelZoom = 0;
     _lastMoveEvent = 0;
@@ -317,7 +316,7 @@ class _MyMap extends State<MyMap> {
                                         ? "images/logoName_light.svg"
                                         : "images/logoName_dark.svg",
                                     height: 42,
-                                    semanticsLabel: appLoca.chest,
+                                    semanticsLabel: appLoca.xest,
                                   )
                                 ],
                               )
@@ -331,9 +330,9 @@ class _MyMap extends State<MyMap> {
                                 }),
                               )
                         : Text(
-                            appLoca.chest,
+                            appLoca.xest,
                             style: textTheme.titleLarge,
-                            semanticsLabel: appLoca.chest,
+                            semanticsLabel: appLoca.xest,
                           ),
                     groupAlignment: -1,
                     onDestinationSelected: (int index) => changePage(index),
@@ -418,26 +417,24 @@ class _MyMap extends State<MyMap> {
               : Icons.filter_alt),
     ));
     Set<SpatialThingType> sFilters = {
-      SpatialThingType.artwork,
-      SpatialThingType.attraction,
-      SpatialThingType.castle,
-      SpatialThingType.fountain,
-      SpatialThingType.museum,
-      SpatialThingType.palace,
+      SpatialThingType.cinema,
+      SpatialThingType.education,
+      SpatialThingType.factory,
+      SpatialThingType.goverment,
+      SpatialThingType.hotel,
       SpatialThingType.placeOfWorship,
+      SpatialThingType.residential,
       SpatialThingType.square,
-      SpatialThingType.tower,
     };
     Map<SpatialThingType, String> sFilterLabel = {
-      SpatialThingType.artwork: appLoca.artwork,
-      SpatialThingType.attraction: appLoca.attraction,
-      SpatialThingType.castle: appLoca.castle,
-      SpatialThingType.fountain: appLoca.fountain,
-      SpatialThingType.museum: appLoca.museum,
-      SpatialThingType.palace: appLoca.palace,
+      SpatialThingType.cinema: appLoca.cinema,
+      SpatialThingType.education: appLoca.education,
+      SpatialThingType.factory: appLoca.factory,
+      SpatialThingType.goverment: appLoca.goverment,
+      SpatialThingType.hotel: appLoca.hotel,
       SpatialThingType.placeOfWorship: appLoca.placeOfWorship,
+      SpatialThingType.residential: appLoca.residential,
       SpatialThingType.square: appLoca.square,
-      SpatialThingType.tower: appLoca.tower,
     };
 
     filterbar.addAll(
@@ -448,26 +445,14 @@ class _MyMap extends State<MyMap> {
           child: Padding(
             padding: const EdgeInsets.only(left: 4),
             child: FilterChip(
+              avatar: _filtrosActivos.contains(sf)
+                  ? Icon(Icons.check)
+                  : Icon(Auxiliar.sttIconData[sf]),
               label: Text(sFilterLabel[sf]!),
-              showCheckmark: false,
-              selectedColor: colorScheme.primaryContainer,
               selected: _filtrosActivos.contains(sf),
+              showCheckmark: false,
               onSelected: (bool v) {
                 setState(() {
-                  switch (sf) {
-                    case SpatialThingType.placeOfWorship:
-                      Set<SpatialThingType> lugarCulto = {
-                        SpatialThingType.cathedral,
-                        SpatialThingType.church,
-                        SpatialThingType.placeOfWorship
-                      };
-                      v
-                          ? _filtrosActivos.addAll(lugarCulto)
-                          : _filtrosActivos.removeAll(lugarCulto);
-                      break;
-                    default:
-                      v ? _filtrosActivos.add(sf) : _filtrosActivos.remove(sf);
-                  }
                   v ? _filtrosActivos.add(sf) : _filtrosActivos.remove(sf);
                 });
                 checkMarkerType();
@@ -688,38 +673,76 @@ class _MyMap extends State<MyMap> {
                   tooltip: appLoca.tipoMapa,
                   onPressed: () => Auxiliar.showMBS(
                       context,
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Wrap(spacing: 10, runSpacing: 10, children: [
-                              _botonMapa(
-                                Layers.carto,
-                                MediaQuery.of(context).platformBrightness ==
-                                        Brightness.light
-                                    ? 'images/basemap_gallery/estandar_claro.png'
-                                    : 'images/basemap_gallery/estandar_oscuro.png',
-                                appLoca.mapaEstandar,
+                      StatefulBuilder(
+                        builder: (context, setModalState) => Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child:
+                                  Wrap(spacing: 10, runSpacing: 10, children: [
+                                _botonMapa(
+                                  Layers.carto,
+                                  MediaQuery.of(context).platformBrightness ==
+                                          Brightness.light
+                                      ? 'images/basemap_gallery/estandar_claro.png'
+                                      : 'images/basemap_gallery/estandar_oscuro.png',
+                                  appLoca.mapaEstandar,
+                                ),
+                                _botonMapa(
+                                  Layers.satellite,
+                                  'images/basemap_gallery/satelite.png',
+                                  appLoca.mapaSatelite,
+                                ),
+                              ]),
+                            ),
+                            const Divider(),
+                            SwitchListTile.adaptive(
+                              value: MapLayer.onlyMoMo,
+                              onChanged: (bool newValue) {
+                                setModalState(
+                                    () => MapLayer.onlyMoMo = newValue);
+                                setState(() => MapLayer.onlyMoMo = newValue);
+                                Navigator.pop(context);
+                                MapData.resetLocalCache();
+                                checkMarkerType();
+                              },
+                              title: Text(
+                                appLoca.onlyMoMo(
+                                  MapLayer.endYear,
+                                  MapLayer.startYear,
+                                ),
                               ),
-                              _botonMapa(
-                                Layers.satellite,
-                                'images/basemap_gallery/satelite.png',
-                                appLoca.mapaSatelite,
-                              ),
-                            ]),
-                          ),
-                          const Divider(),
-                          SwitchListTile.adaptive(
-                            value: _visibleLabel,
-                            onChanged: (bool newValue) {
-                              setState(() => _visibleLabel = newValue);
-                              Navigator.pop(context);
-                              checkMarkerType();
-                            },
-                            title: Text(appLoca.etiquetaMarcadores),
-                          ),
-                        ],
+                            ),
+                            RangeSlider(
+                                min: 1875,
+                                max: 2000,
+                                values: RangeValues(
+                                  MapLayer.startYear.toDouble(),
+                                  MapLayer.endYear.toDouble(),
+                                ),
+                                divisions: 25,
+                                onChanged: null,
+                                onChangeEnd: (newRangeValues) {
+                                  setModalState(
+                                    () {
+                                      MapLayer.startYear =
+                                          newRangeValues.start.toInt();
+                                      MapLayer.endYear =
+                                          newRangeValues.end.toInt();
+                                    },
+                                  );
+                                  setState(() {
+                                    MapLayer.startYear =
+                                        newRangeValues.start.toInt();
+                                    MapLayer.endYear =
+                                        newRangeValues.end.toInt();
+                                  });
+                                  MapData.resetLocalCache();
+                                  checkMarkerType();
+                                })
+                          ],
+                        ),
                       ),
                       title: appLoca.tipoMapa),
                   // child: const Icon(Icons.layers),
@@ -837,38 +860,44 @@ class _MyMap extends State<MyMap> {
           centerTitle: true,
           title: Text(appLoca.itinerarios),
         ),
-        SliverAppBar(
-          floating: false,
-          pinned: true,
-          centerTitle: false,
-          toolbarHeight: 48,
-          title: TextField(
-            controller: _controllerFilterIt,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              icon: Icon(Icons.search),
-              hintText: appLoca.busquedaIt,
-              hintMaxLines: 1,
+        SliverVisibility(
+          visible: _itineraries.isNotEmpty,
+          sliver: SliverAppBar(
+            floating: false,
+            pinned: true,
+            centerTitle: false,
+            toolbarHeight: 48,
+            title: TextField(
+              controller: _controllerFilterIt,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                icon: Icon(Icons.search),
+                hintText: appLoca.busquedaIt,
+                hintMaxLines: 1,
+              ),
+              onChanged: (value) => setState(() => _filtroIt = value.trim()),
             ),
-            onChanged: (value) => setState(() => _filtroIt = value.trim()),
+            actions: _filtroIt.isNotEmpty
+                ? [
+                    IconButton(
+                        onPressed: () {
+                          _controllerFilterIt.clear();
+                          setState(() => _filtroIt = '');
+                        },
+                        icon: Icon(Icons.close))
+                  ]
+                : null,
           ),
-          actions: _filtroIt.isNotEmpty
-              ? [
-                  IconButton(
-                      onPressed: () {
-                        _controllerFilterIt.clear();
-                        setState(() => _filtroIt = '');
-                      },
-                      icon: Icon(Icons.close))
-                ]
-              : null,
         ),
         SliverPadding(
           padding: EdgeInsets.only(
               left: margenLateral, right: margenLateral, top: 10, bottom: 80),
           sliver: _itineraries.isEmpty
-              ? const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator.adaptive()))
+              ? SliverToBoxAdapter(
+                  child: Center(
+                      child: _lstItsVacia
+                          ? Text(appLoca.sinItinerarios)
+                          : const CircularProgressIndicator.adaptive()))
               : SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     Itinerary it = _itineraries[index];
@@ -1067,8 +1096,9 @@ class _MyMap extends State<MyMap> {
   }
 
   Future<List> _getItineraries() {
-    return http.get(Queries.getItineraries()).then((response) =>
-        response.statusCode == 200 ? json.decode(response.body) : []);
+    return http.get(Queries.getItineraries()).then((response) {
+      return response.statusCode == 200 ? json.decode(response.body) : [];
+    });
   }
 
   Future<Map> _getFeedsUser() async {
@@ -1584,7 +1614,7 @@ class _MyMap extends State<MyMap> {
                   '/users/${UserXEST.userXEST.id.split('/').last}/settings');
             }
           : null,
-      label: Text(appLoca.ajustesCHEST, semanticsLabel: appLoca.ajustesCHEST),
+      label: Text(appLoca.ajustesxest, semanticsLabel: appLoca.ajustesxest),
       icon: const Icon(Icons.settings),
     ));
 
@@ -1680,7 +1710,8 @@ class _MyMap extends State<MyMap> {
         child: TextButton.icon(
           key: shareKey,
           onPressed: () async => Auxiliar.share(shareKey, ConfigXest.addClient),
-          label: Text(appLoca.comparteApp, semanticsLabel: appLoca.comparteApp),
+          label:
+              Text(appLoca.compartexest, semanticsLabel: appLoca.compartexest),
           icon: const Icon(Icons.share),
         ),
       ),
@@ -1960,11 +1991,7 @@ class _MyMap extends State<MyMap> {
         Widget icono;
         icono = Center(
           child: Icon(
-            Queries.layerType == LayerType.ch
-                ? Icons.castle_outlined
-                : Queries.layerType == LayerType.schools
-                    ? Icons.school_outlined
-                    : Icons.forest_outlined,
+            Auxiliar.getIcon(feature.spatialThingTypes),
             color: colorScheme.onPrimaryContainer,
           ),
         );
@@ -1981,7 +2008,6 @@ class _MyMap extends State<MyMap> {
           _myMarkers.add(CHESTMarker(context,
               feature: feature,
               icon: icono,
-              visibleLabel: _visibleLabel,
               currentLayer: MapLayer.layer!,
               circleWidthBorder: 2,
               circleWidthColor: colorScheme.primary,
@@ -2106,7 +2132,10 @@ class _MyMap extends State<MyMap> {
               }
             }
           }
-          setState(() => _itineraries.addAll(itL));
+          setState(() {
+            _itineraries.addAll(itL);
+            _lstItsVacia = _itineraries.isEmpty;
+          });
         }).onError((error, stackTrace) {
           setState(() => _itineraries = []);
           //print(error.toString());

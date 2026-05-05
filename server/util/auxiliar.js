@@ -555,6 +555,9 @@ function id2ShortId(id) {
         case 'http://moult.gsic.uva.es/ontology/':
             shortId = 'mo:'
             break;
+        case 'http://momoest.gsic.uva.es/ontology/':
+            shortId = 'momo:'
+            break;
         default:
             break;
     }

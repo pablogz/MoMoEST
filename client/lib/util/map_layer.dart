@@ -11,6 +11,9 @@ class MapLayer {
   static const double maxZoom = 22;
   static const double minZoom = 13;
   static bool onlyIconInfoMap = false;
+  static bool onlyMoMo = true;
+  static int startYear = 1925;
+  static int endYear = 1975;
 
   static Layers? _layer =
       ConfigXest.development ? Layers.openstreetmap : Layers.carto;
@@ -79,7 +82,7 @@ class MapLayer {
     AppLocalizations? appLoca = AppLocalizations.of(context);
     List<OutlinedButton> buttons = [
       OutlinedButton(
-        child: Text(appLoca!.atribucionMapaCHEST),
+        child: Text(appLoca!.atribucionMapaxest),
         onPressed: () async {
           if (!await launchUrl(
             Uri.parse(
@@ -88,6 +91,16 @@ class MapLayer {
           )) {
             if (ConfigXest.development)
               debugPrint('OSM copyright url problem!');
+          }
+        },
+      ),
+      OutlinedButton(
+        child: Text(appLoca.atribucionMapaDocomomo),
+        onPressed: () async {
+          if (!await launchUrl(
+              Uri.parse('https://docomomoiberico.com/quienes-somos/'))) {
+            if (ConfigXest.development)
+              debugPrint('Docomomo copyright url problem!');
           }
         },
       ),

@@ -1,0 +1,450 @@
+{
+    "lugares": [
+        {
+            "url": "https://docomomoiberico.com/edificios/casa-cuna/",
+            "titulo": "Casa Cuna",
+            "descripcion": "<p>El edificio refleja la atención institucional de una época hacia un programa de ayuda a la infancia, tanto en el diseño y planificación de sus espacios interiores como los exteriores.</p><p>Las distintas partes del programa se desarrollan en torno a un patio central de precisa geometría rectangular; el contorno exterior presenta un resultado más laberíntico que deriva de la adecuación tipológica diferenciada y la autonomía funcional de cada parte. Surge así una composición por módulos estructurales, con patios menores que iluminan e introducen la vegetación en cada una de las piezas menores que rodean el patio central, propiciando la escala más íntima de estas piezas de aulas y juegos. El sistema de organización evoca el Orfanato de Ámsterdam, del arquitecto Aldo van Eyck, clara referencias estructuralista para este tipo de edificios. El bloque de dormitorios se desarrolla en cuatro plantas, mientras que el resto del programa tiene una única planta.</p> <p>Es significativo el diálogo de las técnicas constructivas entre modernidad y tradición, que era propio de la década de 1960. En los volúmenes de una sola planta, conviven muros de carga de ladrillo visto con grandes cristaleras y soportes puntuales metálicos. Estos volúmenes se rematan con cubiertas planas, ajardinadas en origen, entre vigas de canto sobre los muros que posibilitan grandes vuelos para proteger las cristaleras orientadas al sur. En las cubiertas se explicita la dirección de los trazados norte-sur que sirven de guía geométrica de estos muros y de la ordenación y deslizamiento de estas partes del programa. El bloque alto de dormitorios subraya la idea de <em>fenêtre en longueur</em>. Lasala de actos, tanto en el trazado de la planta como en la articulación de pendientes contrapuestas entre el techo interior y la cubierta exterior, evoca mecanismos conocidos de la arquitectura de Alvar Aalto.</p><p>La estrategia estructural y material asume el debate de la época entre sistemas tradicionales y modernos, logrando un diálogo crítico que la buena conservación del edificio aún mantiene</p><br />Eusebio Alonso García</p>",
+            "fechas": {
+                "inicio": 1968,
+                "fin": 1973
+            },
+            "localizacion": {
+                "direccion": "Calle Ecuador nº 2, 47014 Valladolid, España",
+                "latitud": 41.631001,
+                "longitud": -4.747057
+            },
+            "arquitecto": [
+                {"nombre": "Ángel Ríos Gómez", "link": "https://docomomoiberico.com/autoria/angel-rios-gomez/"},
+                {"nombre": "Isaías Paredes Sanz", "link": "https://docomomoiberico.com/autoria/isaias-paredes-sanz/"}
+            ],
+            "aka": "Centro Cívico Casa Cuna",
+            "uso": ["Docente", "Parvulario"],
+            "bibliografía": [
+              "VILLALOBOS, Daniel, “Casa Cuna, el edificio social que albergó a trescientos niños huérfanos”, en El Norte de Castilla, 25 de marzo de 2023",
+              "ALONSO, Eusebio, “Casa Cuna, 1968”, en VILLALOBOS VILLALOBOS, Daniel, CIRPAC, eds., Docomomo Valladolid. Registro DOCOMOMO Ibérico, 1925-1975. Industria, vivienda y equipamientos, Fundación Municipal de Cultura del Ayuntamiento de Valladolid, Valladolid, 2019, págs. 286-289.",
+              "ARNUNCIO, Juan Carlos, “Casa Cuna”, en ARNUNCIO, J. C. et Altri, Guía de Arquitectura de Valladolid, Consorcio IV Centenario de la Ciudad de Valladolid, Valladolid, 1996, pág. 278."
+            ],
+            "enlaces": ["https://www.youtube.com/watch?v=pFCODCm5saI"],
+            "imagenes": [
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_03.jpg",
+                    "autor": "Daniel Villalobos Alonso / Fundación Docomomo Ibérico, 2014",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_03.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_02.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico, 2014",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_02.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_01.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico, 2014",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_01.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_04.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_04.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_14.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico",
+                    "nombre": "AMP_CAST_LEONESTE_A26_14.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_15.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico",
+                    "nombre": "AMP_CAST_LEONESTE_A26_15.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_16.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico",
+                    "nombre": "AMP_CAST_LEONESTE_A26_16.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_17.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico",
+                    "nombre": "AMP_CAST_LEONESTE_A26_17.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_18.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico",
+                    "nombre": "AMP_CAST_LEONESTE_A26_18.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_19.jpg",
+                    "autor": "Daniel Villalobos Alonso/Fundación Docomomo Ibérico",
+                    "nombre": "AMP_CAST_LEONESTE_A26_19.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_05.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_05.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_12.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_12.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_06.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_06.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_07.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_07.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_08.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_08.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_09.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_09.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_10.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_10.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CASTLEON_ESTE_A26_11.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CASTLEON_ESTE_A26_11.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_20.jpg",
+                    "autor": "Archivo Municipal Valladolid",
+                    "nombre": "AMP_CAST_LEONESTE_A26_20.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2018/05/AMP_CAST_LEONESTE_A26_21.jpg",
+                    "nombre": "AMP_CAST_LEONESTE_A26_21.jpg"
+                }
+            ]
+        },
+        {
+            "url": "https://docomomoiberico.com/edificios/iglesia-de-santo-domingo-de-guzman/",
+            "titulo": "Iglesia de Santo Domingo de Guzmán",
+            "fechas": {
+                "inicio": 1956,
+                "fin": 1963
+            },
+            "localizacion": {
+                "direccion": "Plaza de la División Azul / Calle Vives, 47006 Valladolid, España",
+                "latitud": 41.6339,
+                "longitud": -4.741234
+            },
+            "arquitecto": [
+                {"nombre": "Julio González Martín", "link": "https://docomomoiberico.com/autoria/julio-gonzalez-martin/"},
+                {"nombre": "Manuel López", "link": "https://docomomoiberico.com/autoria/manuel-lopez/"}
+            ],
+            "uso": ["Religioso", "Centro de culto"],
+            "bibliografía": ["VILLALOBOS, Daniel, <em>Docomomo Valladolid. Registro DOCOMOMO Ibérico, 1925-1975. Industria, vivienda y equipamientos</em>, Fundación Municipal de Cultura del Ayuntamiento de Valladolid, Valladolid, 2019, págs. 312-313."],
+            "enlaces": [],
+            "imagenes": [
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2021/10/1CASTLEONESTE_B12_01.jpg",
+                    "nombre": "1CASTLEONESTE_B12_01.jpg"
+                }, 
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2021/10/2CASTLEONESTE_B12_02.jpg",
+                    "nombre": "2CASTLEONESTE_B12_02.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2021/10/3CASTLEONESTE_B12_07.jpg",
+                    "nombre": "3CASTLEONESTE_B12_07.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2021/10/4CASTLEONESTE_B12_06.jpg",
+                    "nombre": "4CASTLEONESTE_B12_06.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_03.jpg",
+                    "nombre": "CASTLEONESTE_B12_03.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_04.jpg",
+                    "nombre": "CASTLEONESTE_B12_04.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2021/10/CASTLEONESTE_B12_05.jpg",
+                    "nombre": "CASTLEONESTE_B12_05.jpg"
+                }
+            ]
+        },
+        {
+            "url": "https://docomomoiberico.com/edificios/mercado-central-de-abastos-de-valladolid/",
+            "titulo": "Mercado Central de Abastos de Valladolid",
+            "descripcion": "<p>El antiguo Mercado Central de Abastos de Valladolid constituye un brillante ejemplo de equipamiento industrial que demuestra clara influencia brutalista. Inicialmente, el edificio consta de patio de maniobras, bloque de oficinas y dos naves-almacén que miran hacia la calle Cigüeña. La estructura empleada para cerrar el conjunto es una lámina de hormigón requebrada que define cubierta y paramentos, cuyo ritmo plástico pauta el crecimiento secuencial de la planta, semejando un apilamiento de contenedores de carga. El conjunto destaca por el marcado carácter modular de su estructura repetitiva, sensibilidad que comparte con ejemplos próximos como el Instituto Politécnico Cristo Rey, 1965, de Luis Mª M. Feduchi, ó el Instituto Núñez de Arce, 1961, de Miguel Fisac.</p> <p>La austeridad material del proyecto se cifra en el uso exclusivo del hormigón visto tanto in-situ, como prefabricado, afortunado recurso que intensifica la plasticidad mecánica de sus pliegues y celosías. La sabia combinación unitaria del hormigón demuestra una enorme coherencia formal y constructiva en todo el proyecto, potenciada por la intensa sensación táctil que provoca su tosca materialidad.</p> <p>Finalmente, el crecimiento de Valladolid agota las posibilidades de sus instalaciones que, en 1997, pasan a ser moderno Centro Integrado de Equipamientos, obra de Eduardo de la Peña y Antonio Lleyda. La rehabilitación devuelve al conjunto edificado el papel inicial de hito determinante en la trama urbana como centro neurálgico de la actividad social del Barrio de San Isidro.</p><br />Iván I. Rincón</p>",
+            "fechas": {
+                "inicio": 1965,
+                "fin": 1966
+            },
+            "localizacion": {
+                "direccion": "Calle Cigüeña / Calle Tórtola, 47012 Valladolid, España",
+                "latitud": 41.644721,
+                "longitud": -4.711021
+            },
+            "arquitecto": [
+                {"nombre": "Ángel Valdés Martínez", "link": "https://docomomoiberico.com/autoria/angel-valdes-martinez/"},
+                {"nombre": "Juan A. Aguiló Villahermosa", "link": "https://docomomoiberico.com/autoria/juan-a-aguilo-villahermosa/"}
+            ],
+            "aka": "Centro Integrado de Equipamientos",
+            "uso": ["Uso comercial", "Mercado"],
+            "bibliografía": [
+              "GARCÍA BRAÑA, Celestino, GÓMEZ AGUSTÍ, Carlos, LANDROVE, Susana, PÉREZ ESCOLANO, Víctor, eds., Arquitectura del movimiento moderno en España. Revisión del Registro DOCOMOMO Ibérico, 1925-1965. Catálogo inicial de edificios del Plan Nacional de Conservación del Patrimonio Cultural del Siglo XX, / Arquitectura do Movimento Moderno em Espanha, Revisão do Registro DOCOMOMO Ibérico, 1925-1965. Catálogo inicial de edifícios do Plan Nacional de Conservación del Patrimonio Cultural del Siglo XX, Fundación DOCOMOMO Ibérico/Fundación Arquia, Barcelona, 2019, pág. 332.",
+              "VILLALOBOS, Daniel, Docomomo Valladolid. Registro DOCOMOMO Ibérico, 1925-1975. Industria, vivienda y equipamientos, Fundación Municipal de Cultura del Ayuntamiento de Valladolid, Valladolid, 2019, págs. 244-259.",
+              "LANDROVE, Susana, ed., Ocio, comercio, transporte y turismo, Registro DOCOMOMO Ibérico, 1925-1965, Fundación DOCOMOMO Ibérico/Fundación Caja de Arquitectos, Barcelona, 2011, pág. 109.",
+              "RINCÓN BORREGO, Iván I. Rincón, “Mercado Central de abastos”, en VILLALOBOS ALONSO, Daniel, ed.,12 Edificios de Arquitectura Moderna en Valladolid, Escola Superior Artística do Porto, Valladolid, 2006, págs. 121 a",
+              "CABALLERO, Arturo, Arte contemporáneo. Castilla y León. Estudio sobre el arte contemporáneo en Castilla y León, Junta de Castilla y León, León, 2006, págs. 66 - 67.",
+              "GIGOSOS PÉREZ Pablo y SARAVIA MADRIGAL Manuel, Arquitectura y urbanismo de Valladolid en el siglo XX, vol. 2, Ateneo de Valladolid, Valladolid, 1997, pág",
+              "AA VV, Guía de Arquitectura de Valladolid, Consorcio IV Centenario de la Ciudad de Valladolid, Valladolid, 1996, pág. 270."
+            ],
+            "imagenes": [
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_59.jpg",
+                    "autor": "Antonio Vázquez Sotelo / Fundación Docomomo Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_59.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_65.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_65.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_63.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_63.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_78.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_78.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_79.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_79.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_70.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_70.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_66.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_66.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_71.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_71.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_67.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_67.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_82.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_82.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_68.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_68.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_69.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_69.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_72.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_72.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_74.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_74.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_77.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_77.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_76.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_76.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_80.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_80.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_81.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_81.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_64.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_64.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_60.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_60.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_61.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_61.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_62.jpg",
+                    "autor": "Antonio Vázquez Sotelo/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A23_62.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_12.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_12.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_11.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_11.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_13.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_13.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_08.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_08.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_18.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_18.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_14.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_14.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_15.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_15.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_16.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_16.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_17.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_17.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_19.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_19.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_20.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_20.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A23_22.jpg",
+                    "nombre": "E_CAST_LEONESTE_A23_22.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_105.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_105.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_085.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_085.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_102.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_102.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_087.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_087.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_106.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_106.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_089.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_089.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_086.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_086.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_098.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_098.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_090.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_090.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_088.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_088.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_094.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_094.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_103.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_103.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_093.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_093.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_111.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_111.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_112.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_112.jpg"
+                },
+                {
+                    "url": "https://docomomoiberico.com/wp-content/uploads/2011/01/E_CAST_LEONESTE_A_23_114.jpg",
+                    "autor": "Gabriel Gallegos Alonso/Fundación DOCOMOMO Ibérico",
+                    "nombre": "E_CAST_LEONESTE_A_23_114.jpg"
+                }
+            ]
+        }
+    ]
+}

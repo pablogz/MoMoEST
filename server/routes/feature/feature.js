@@ -28,6 +28,9 @@ const {
     queryBICJCyL,
     getInfoFeatureOSM,
     getInfoFeatureLocalRepository2,
+    getInfoFeatureDocomomo,
+    getInfoFeatureDocomomoMedia,
+    getInfoFeatureDocomomoArq,
 } = require('../../util/queries');
 const { getInfoUser } = require('../../util/bd');
 const winston = require('../../util/winston');
@@ -37,7 +40,7 @@ const { getFeatureCache, InfoFeatureCache, updateFeatureCache, FeatureCache } = 
 const { FeatureWikidata } = require('../../util/pojos/wikidata');
 const { FeatureJCyL } = require('../../util/pojos/jcyl');
 const { FeatureDBpedia } = require('../../util/pojos/dbpedia');
-const { FeatureLocalRepo } = require('../../util/pojos/localRepo');
+const { FeatureLocalRepo, FeatureDocomomoFull } = require('../../util/pojos/localRepo');
 
 /**
  * Retrieves a feature from cache or external providers based on the given feature ID.
@@ -119,8 +122,36 @@ async function getFeature(req, res) {
                     }
                     case 'md':
                         {
-                            // PROPIO DEL DOMINIO
                             const localSPARQL = new SPARQLQuery(endpoints.localSPARQL);
+                            if (idFeature.includes('docomomo')) {
+                                // DE DOCOMOMO EN NUESTRO REPOSITORIO LOCAL
+                                // 1. Recupero la información general del sitio
+                                const data = await localSPARQL.query(getInfoFeatureDocomomo(`<${idFeature}>`));
+                                if (data != null) {
+                                    const docomomo = mergeResults(sparqlResponse2Json(data)).pop();
+                                    if (docomomo != undefined) {
+                                        // 2 & 3. Recupero fotografías y arquitectos en paralelo
+                                        const mediaIds = Array.isArray(docomomo.media) ? docomomo.media : (docomomo.media != null ? [docomomo.media] : []);
+                                        const arqIds = Array.isArray(docomomo.architect) ? docomomo.architect : (docomomo.architect != null ? [docomomo.architect] : []);
+                                        const [mediaRaw, arqRaw] = await Promise.all([
+                                            mediaIds.length > 0
+                                                ? localSPARQL.query(getInfoFeatureDocomomoMedia(mediaIds.map(m => `<${m}>`).join(' ')))
+                                                : Promise.resolve(null),
+                                            arqIds.length > 0
+                                                ? localSPARQL.query(getInfoFeatureDocomomoArq(arqIds.map(a => `<${a}>`).join(' ')))
+                                                : Promise.resolve(null),
+                                        ]);
+                                        const mediaData = mediaRaw != null ? (sparqlResponse2Json(mediaRaw) || []) : [];
+                                        const arqData = arqRaw != null ? (sparqlResponse2Json(arqRaw) || []) : [];
+                                        // Genero objeto con los resultados
+                                        docomomo.feature = idFeature;
+                                        const ifc = new InfoFeatureCache('docomomo', idFeature, new FeatureDocomomoFull(docomomo, mediaData, arqData));
+                                        feature = new FeatureCache(idFeature);
+                                        feature.addInfoFeatureCache(ifc);
+                                    }
+                                }
+                            } else {
+                            // CREADO POR LOS PROFES
                             const query = getInfoFeatureLocalRepository2(idFeature);
                             const data = await localSPARQL.query(query);
                             if (data != null) {
@@ -132,6 +163,7 @@ async function getFeature(req, res) {
                                     feature.addInfoFeatureCache(ifc);
                                 }
                             }
+                        }
                             break;
                         }
                     default:

@@ -1,5 +1,5 @@
 {
-  "name": "es.uva.gsic.chest.server",
+  "name": "es.uva.gsic.momoest.server",
   "version": "0.0.0",
   "private": true,
   "author": {
@@ -8,14 +8,14 @@
     "url": "https://www.gsic.uva.es/personal/pablogz"
   },
   "scripts": {
-    "start": "node ./bin/chest"
+    "start": "node ./bin/momoest"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "email-validator": "^2.0.4",
     "express": "^4.18.2",
-    "firebase-admin": "^13.3.0",
+    "firebase-admin": "^10.3.0",
     "mongodb": "^5.1.0",
     "mustache": "^4.2.0",
     "node-fetch": "^2.6.9",

@@ -9,7 +9,7 @@ require('https').globalAgent.options.ca = require('ssl-root-cas').create();
 const winston = require('./util/winston');
 
 // const config = require('./util/config');
-const fileFirebaseAdmin = require('./util/chest-firebase.json');
+const fileFirebaseAdmin = require('./util/server-firebase.json');
 const { getArcStyle4Wikidata } = require('./util/auxiliar');
 
 const index = require('./routes/index');

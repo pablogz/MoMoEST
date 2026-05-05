@@ -1,13 +1,14 @@
-const urlClient = 'https://chest.gsic.uva.es';
-const urlServer = 'https://chest.gsic.uva.es/server';
+const urlClient = 'https://momoest.gsic.uva.es';
+const urlServer = 'https://momoest.gsic.uva.es/server';
 const addrSparql = '127.0.0.1';
-const serverPort = 11110;
+const serverPort = 11112;
 const portSparql = 8890;
 const localSPARQL = `http://${addrSparql}:${portSparql}/sparql`;
 const userSparql = 'pablo';
 const passSparql = 'pablo';
 const tokenCraft = '6d8097f8-9fff-40a2-9043-bd57fe89bcb3';
-const primaryGraph = '<http://chest.gsic.uva.es>';
+const primaryGraph = '<http://momoest.gsic.uva.es>';
+const docomomoGraph = '<http://momoest.gsic.uva.es/docomomo>';
 
 // const addrOPA = 'https://overpass-api.de/api/interpreter';
 // const portOPA = 443;
@@ -18,36 +19,31 @@ const portOPA = 443;
 // const addrOPA = 'http://10.0.104.91/api/interpreter';
 // const portOPA = 80;
 
-const mongoName = 'bdCHEST3';
+const mongoName = 'bdMOMOEST';
 const mongoAdd = 'mongodb://localhost:27017';
 
 // TODO depende del dominio
 const typeST = [
-    'artwork',
-    'attraction',
-    'cathedral',
-    'castle',
-    'church',
-    'fountain',
-    'museum',
-    'palace',
+    'cinema',
+    'education',
+    'factory',
+    'goverment',
+    'hotel',
     'place_of_worship',
-    'square',
-    'tower'
+    'residential',
+    'square'
 ];
 
 const classTypeST = {
-    'artwork': 'Artwork',
-    'attraction': 'Attraction',
-    'cathedral': 'Cathedral',
-    'castle': 'Castle',
-    'church': 'Church',
+    'cinema': 'Cinema',
+    'education': 'Education',
+    'factory': 'Factory',
+    'goverment': 'Goverment',
+    'hotel': 'Hotel',
     'fountain': 'Fountain',
-    'museum': 'Museum',
-    'palace': 'Palace',
     'place_of_worship': 'PlaceOfWorship',
-    'square': 'Square',
-    'tower': 'Tower'
+    'residential': 'Residential',
+    'square': 'Square'
 }; 
 
 module.exports = {
@@ -65,6 +61,7 @@ module.exports = {
     mongoName,
     mongoAdd,
     primaryGraph,
+    docomomoGraph,
     typeST,
     classTypeST,
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:momoest/util/helpers/providers/docomomo.dart';
 import 'package:momoest/util/map_layer.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -68,6 +69,8 @@ class _InfoFeature extends State<InfoFeature>
   late double distance;
   late String distanceString;
   final MapController _mapController = MapController();
+  final CarouselController _carouselController = CarouselController();
+  int _carouselIndex = 0;
   List<Task> tasks = [];
   late List<String> tabs;
   late TabController _tabController;
@@ -107,6 +110,7 @@ class _InfoFeature extends State<InfoFeature>
     });
     _tabController.dispose();
     _mapController.dispose();
+    _carouselController.dispose();
     super.dispose();
   }
 
@@ -1082,6 +1086,234 @@ class _InfoFeature extends State<InfoFeature>
     );
   }
 
+  Widget _buildInfoBody(Size size) {
+    Object? docObj = feature.getProvider('docomomo');
+    if (docObj != null) {
+      return _cuerpoDocomomo(size, (docObj as Provider).data as Docomomo);
+    }
+    return _cuerpo(size);
+  }
+
+  PairLang? _pickBestComment(List<PairLang> all) {
+    if (all.isEmpty) return null;
+    for (PairLang c in all) {
+      if (c.hasLang && c.lang == MyApp.currentLang) return c;
+    }
+    for (PairLang c in all) {
+      if (c.hasLang && c.lang == 'en') return c;
+    }
+    return all.first;
+  }
+
+  String _labelForUrl(String url) {
+    try {
+      Uri uri = Uri.parse(url);
+      return uri.host.replaceFirst('www.', '');
+    } catch (_) {
+      return url;
+    }
+  }
+
+  Widget _cuerpoDocomomo(Size size, Docomomo docomomo) {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    ThemeData td = Theme.of(context);
+    TextTheme textTheme = td.textTheme;
+    ColorScheme colorScheme = td.colorScheme;
+    PairLang? comment = _pickBestComment(docomomo.comments);
+
+    List<Widget> children = [];
+
+    if (docomomo.media.isNotEmpty) {
+      final int mediaCount = docomomo.media.length;
+      double galleryHeight = size.height * 0.28;
+      double itemWidth = size.width * 0.4;
+      children.add(Stack(
+        children: [
+          SizedBox(
+            height: galleryHeight,
+            child: CarouselView(
+              controller: _carouselController,
+              itemExtent: itemWidth,
+              shrinkExtent: 60.0,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              onTap: (int index) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) {
+                      String docomomoURL = docomomo.seeAlso.firstWhere(
+                        (element) => element.contains('docomomo'),
+                      );
+                      return FullScreenImage(
+                        PairImage(docomomo.media[index].link, docomomoURL),
+                        local: false,
+                        label: docomomo.media[index].label,
+                      );
+                    },
+                    fullscreenDialog: false,
+                  ),
+                );
+              },
+              children: docomomo.media.map((DocomomoMedia m) {
+                return ImageNetwork(
+                  image: m.link,
+                  imageCache: CachedNetworkImageProvider(m.link),
+                  height: galleryHeight,
+                  width: itemWidth,
+                  duration: 0,
+                  fitWeb: BoxFitWeb.cover,
+                  fitAndroidIos: BoxFit.cover,
+                  onError: const Icon(Icons.image_not_supported),
+                  onLoading: const CircularProgressIndicator.adaptive(),
+                );
+              }).toList(),
+            ),
+          ),
+          if (mediaCount > 1 && kIsWeb)
+            Positioned(
+              bottom: Auxiliar.compactMargin,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton.filled(
+                    icon: const Icon(Icons.chevron_left),
+                    onPressed: () {
+                      setState(() {
+                        _carouselIndex =
+                            (_carouselIndex - 1).clamp(0, mediaCount - 1);
+                      });
+                      _carouselController.animateToItem(_carouselIndex);
+                    },
+                  ),
+                  const SizedBox(width: Auxiliar.mediumMargin),
+                  IconButton.filled(
+                    icon: const Icon(Icons.chevron_right),
+                    onPressed: () {
+                      setState(() {
+                        _carouselIndex =
+                            (_carouselIndex + 1).clamp(0, mediaCount - 1);
+                      });
+                      _carouselController.animateToItem(_carouselIndex);
+                    },
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ));
+      children.add(const SizedBox(height: Auxiliar.compactMargin));
+    }
+
+    if (comment != null) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(bottom: Auxiliar.compactMargin),
+        child: HtmlWidget(
+          comment.value,
+          factoryBuilder: () => MyWidgetFactory(),
+        ),
+      ));
+      children.add(Padding(
+        padding: const EdgeInsetsGeometry.only(
+            left: Auxiliar.compactMargin,
+            right: Auxiliar.compactMargin,
+            bottom: Auxiliar.compactMargin),
+        child: Divider(),
+      ));
+    }
+
+    if (docomomo.startDate != null) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(children: [
+          Text('${appLoca.anioInicio}: ', style: textTheme.labelLarge),
+          Text(docomomo.startDate!),
+        ]),
+      ));
+    }
+
+    if (docomomo.endDate != null) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Row(children: [
+          Text('${appLoca.anioFin}: ', style: textTheme.labelLarge),
+          Text(docomomo.endDate!),
+        ]),
+      ));
+    }
+
+    if (docomomo.architects.isNotEmpty) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text(appLoca.architects, style: textTheme.labelLarge),
+      ));
+      children.add(Padding(
+        padding: const EdgeInsets.only(bottom: Auxiliar.compactMargin),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: docomomo.architects.map((DocomomoArchitect a) {
+            String label = a.name ?? _labelForUrl(a.id);
+            if (a.link != null) {
+              return ActionChip(
+                label: Text(label),
+                onPressed: () async {
+                  final uri = Uri.tryParse(a.link!);
+                  if (uri != null) await launchUrl(uri);
+                },
+              );
+            }
+            return Chip(label: Text(label));
+          }).toList(),
+        ),
+      ));
+    }
+
+    if (docomomo.seeAlso.isNotEmpty) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text(appLoca.enlacesExt, style: textTheme.labelLarge),
+      ));
+      children.add(Padding(
+        padding: const EdgeInsets.only(bottom: Auxiliar.compactMargin),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: docomomo.seeAlso.map((String url) {
+            return ActionChip(
+                label: Text(_labelForUrl(url)),
+                onPressed: () async {
+                  final uri = Uri.tryParse(url);
+                  if (uri != null) await launchUrl(uri);
+                });
+          }).toList(),
+        ),
+      ));
+    }
+
+    children.add(widgetMapa());
+    children.add(const SizedBox(height: 12));
+
+    children.add(Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Text('${appLoca.licenciaInfo}: ${docomomo.license}',
+          style: textTheme.bodySmall!.copyWith(color: colorScheme.outline)),
+    ));
+
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
+      ]),
+    );
+  }
+
   Widget widgetBody(Size size) {
     if (widget.locationUser != null && widget.locationUser is Position) {
       // checkUserLocation();
@@ -1093,7 +1325,7 @@ class _InfoFeature extends State<InfoFeature>
         bottom: 80,
       ),
       sliver: feature.ask4Resource
-          ? _cuerpo(size)
+          ? _buildInfoBody(size)
           : FutureBuilder<List>(
               future: _getInfoFeature(feature.shortId),
               builder: (context, snapshot) {
@@ -1149,12 +1381,22 @@ class _InfoFeature extends State<InfoFeature>
                         }
                         feature.addProvider(provider['provider'], dbpedia);
                         break;
+                      case 'docomomo':
+                        Docomomo docomomo = Docomomo(data);
+                        for (PairLang l in docomomo.labels) {
+                          feature.addLabelLang(l);
+                        }
+                        for (PairLang c in docomomo.comments) {
+                          feature.addCommentLang(c);
+                        }
+                        feature.addProvider(provider['provider'], docomomo);
+                        break;
                       default:
                     }
                   }
                   feature.ask4Resource = true;
                   feature.ask4Resource = MapData.updateFeatureCache(feature);
-                  return _cuerpo(size);
+                  return _buildInfoBody(size);
                 } else {
                   if (snapshot.hasError) {
                     return SliverList(delegate: SliverChildListDelegate([]));
@@ -1245,7 +1487,10 @@ class _InfoFeature extends State<InfoFeature>
         nameSource = 'es.DBpedia';
         break;
       case 'localRepo':
-        nameSource = AppLocalizations.of(context)!.chest;
+        nameSource = AppLocalizations.of(context)!.xest;
+        break;
+      case 'docomomo':
+        nameSource = 'Docomomo Ibérico';
         break;
       default:
     }
@@ -1304,6 +1549,33 @@ class _InfoFeature extends State<InfoFeature>
         lstSources.add(_fuentesInfoBt(ele.id, ele.data.toSourceInfo()));
       }
     }
+
+    if (feature.getProvider('docomomo') != null) {
+      List<Widget> lst = [
+        Text(AppLocalizations.of(context)!.fuentesInfo,
+            style: Theme.of(context).textTheme.titleLarge),
+        Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+            child: Wrap(
+              runAlignment: WrapAlignment.spaceEvenly,
+              alignment: WrapAlignment.center,
+              runSpacing: Auxiliar.compactMargin / 2,
+              spacing: Auxiliar.compactMargin,
+              children: lstSources,
+            ),
+          ),
+        ),
+      ];
+      return SliverPadding(
+        padding: const EdgeInsets.only(top: 10, bottom: 80),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) => lst[index],
+              childCount: lst.length),
+        ),
+      );
+    }
+
     String cLabel = feature.getALabel(lang: MyApp.currentLang);
     List<PairLang> allComments = feature.comments;
     List<PairLang> comments = [];
@@ -1322,14 +1594,14 @@ class _InfoFeature extends State<InfoFeature>
       }
     }
     // Si tampoco se tiene en inglés se le pasa el primer comentario disponible
-    if (comments.isEmpty) {
+    if (comments.isEmpty && allComments.isNotEmpty) {
       comments.add(allComments.first);
     }
     if (comments.length > 1) {
       comments.sort(
           (PairLang a, PairLang b) => b.value.length.compareTo(a.value.length));
     }
-    String cComment = comments.first.value;
+    String cComment = comments.isNotEmpty ? comments.first.value : '';
 
     bool mainProvOSM = true;
     bool imgWikidata = false;
@@ -1404,12 +1676,12 @@ class _InfoFeature extends State<InfoFeature>
           LocalRepo data = provider.data;
           for (PairLang pl in data.labels) {
             if (pl.value == cLabel) {
-              labelSource = appLoca!.usuariosCHEST;
+              labelSource = appLoca!.usuariosxest;
             }
           }
           for (PairLang pl in data.comments) {
             if (pl.value == cComment) {
-              commentSource = appLoca!.usuariosCHEST;
+              commentSource = appLoca!.usuariosxest;
             }
           }
           mainProvOSM = false;
@@ -1433,7 +1705,7 @@ class _InfoFeature extends State<InfoFeature>
       isBic ? Text('${appLoca.obtEnlBic} ${appLoca.gobcyl}.') : Container(),
       Text('${appLoca.obtCom} $commentSource.'),
       Text(
-          '${appLoca.obtCoor} ${mainProvOSM ? 'OpenStreetMap' : appLoca.usuariosCHEST}.'),
+          '${appLoca.obtCoor} ${mainProvOSM ? 'OpenStreetMap' : appLoca.usuariosxest}.'),
     ];
     if (feature.hasThumbnail) {
       // Wikidata or OSM?

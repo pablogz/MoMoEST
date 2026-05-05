@@ -446,18 +446,14 @@ class Auxiliar {
   static String? getSpatialThingTypeNameLoca(
       AppLocalizations appLoca, SpatialThingType type) {
     Map<SpatialThingType, String> t = {
-      SpatialThingType.artwork: appLoca.artwork,
-      SpatialThingType.attraction: appLoca.attraction,
-      SpatialThingType.castle: appLoca.castle,
-      SpatialThingType.cathedral: appLoca.cathedral,
-      SpatialThingType.church: appLoca.church,
-      SpatialThingType.culturalHeritage: appLoca.culturalHeritage,
-      SpatialThingType.fountain: appLoca.fountain,
-      SpatialThingType.museum: appLoca.museum,
-      SpatialThingType.palace: appLoca.palace,
+      SpatialThingType.cinema: appLoca.cinema,
+      SpatialThingType.education: appLoca.education,
+      SpatialThingType.factory: appLoca.factory,
+      SpatialThingType.goverment: appLoca.goverment,
+      SpatialThingType.hotel: appLoca.hotel,
       SpatialThingType.placeOfWorship: appLoca.placeOfWorship,
+      SpatialThingType.residential: appLoca.residential,
       SpatialThingType.square: appLoca.square,
-      SpatialThingType.tower: appLoca.tower,
     };
     return t[type];
   }
@@ -472,35 +468,43 @@ class Auxiliar {
 
   static SpatialThingType? getSpatialThing(String s) {
     Map<String, SpatialThingType> t = {
-      SpatialThingType.artwork.name: SpatialThingType.artwork,
-      capitalize(SpatialThingType.artwork.name): SpatialThingType.artwork,
-      SpatialThingType.attraction.name: SpatialThingType.attraction,
-      capitalize(SpatialThingType.attraction.name): SpatialThingType.attraction,
-      SpatialThingType.castle.name: SpatialThingType.castle,
-      capitalize(SpatialThingType.castle.name): SpatialThingType.castle,
-      SpatialThingType.cathedral.name: SpatialThingType.cathedral,
-      capitalize(SpatialThingType.cathedral.name): SpatialThingType.cathedral,
-      SpatialThingType.church.name: SpatialThingType.church,
-      capitalize(SpatialThingType.church.name): SpatialThingType.church,
-      SpatialThingType.culturalHeritage.name: SpatialThingType.culturalHeritage,
-      capitalize(SpatialThingType.culturalHeritage.name):
-          SpatialThingType.culturalHeritage,
-      SpatialThingType.fountain.name: SpatialThingType.fountain,
-      capitalize(SpatialThingType.fountain.name): SpatialThingType.fountain,
-      SpatialThingType.museum.name: SpatialThingType.museum,
-      capitalize(SpatialThingType.museum.name): SpatialThingType.museum,
-      SpatialThingType.palace.name: SpatialThingType.palace,
-      capitalize(SpatialThingType.palace.name): SpatialThingType.palace,
+      SpatialThingType.cinema.name: SpatialThingType.cinema,
+      capitalize(SpatialThingType.cinema.name): SpatialThingType.cinema,
+      SpatialThingType.education.name: SpatialThingType.education,
+      capitalize(SpatialThingType.education.name): SpatialThingType.education,
+      SpatialThingType.factory.name: SpatialThingType.factory,
+      capitalize(SpatialThingType.factory.name): SpatialThingType.factory,
+      SpatialThingType.goverment.name: SpatialThingType.goverment,
+      capitalize(SpatialThingType.goverment.name): SpatialThingType.goverment,
+      SpatialThingType.hotel.name: SpatialThingType.hotel,
+      capitalize(SpatialThingType.hotel.name): SpatialThingType.hotel,
       SpatialThingType.placeOfWorship.name: SpatialThingType.placeOfWorship,
       capitalize(SpatialThingType.placeOfWorship.name):
           SpatialThingType.placeOfWorship,
+      SpatialThingType.residential.name: SpatialThingType.residential,
+      capitalize(SpatialThingType.residential.name):
+          SpatialThingType.residential,
       SpatialThingType.square.name: SpatialThingType.square,
       capitalize(SpatialThingType.square.name): SpatialThingType.square,
-      SpatialThingType.tower.name: SpatialThingType.tower,
-      capitalize(SpatialThingType.tower.name): SpatialThingType.tower,
+      SpatialThingType.square.name: SpatialThingType.square,
+      capitalize(SpatialThingType.square.name): SpatialThingType.square,
+      SpatialThingType.feature.name: SpatialThingType.feature,
+      capitalize(SpatialThingType.feature.name): SpatialThingType.feature,
     };
     return t[s];
   }
+
+  static Map<SpatialThingType, IconData> sttIconData = {
+    SpatialThingType.cinema: Icons.movie,
+    SpatialThingType.feature: Icons.location_city_outlined,
+    SpatialThingType.education: Icons.school,
+    SpatialThingType.factory: Icons.factory,
+    SpatialThingType.goverment: Icons.account_balance,
+    SpatialThingType.hotel: Icons.hotel,
+    SpatialThingType.placeOfWorship: Icons.church,
+    SpatialThingType.residential: Icons.apartment,
+    SpatialThingType.square: Icons.square,
+  };
 
   static isUriResource(String s) {
     Uri? uri = Uri.tryParse(s);
@@ -509,7 +513,12 @@ class Auxiliar {
 
   // TODO agregar los tipos!
   static IconData getIcon(dynamic spatialThingTypes) {
-    return Icons.castle;
+    if (spatialThingTypes is Set) {
+      SpatialThingType stt = spatialThingTypes.first;
+      return sttIconData[stt] ?? Icons.location_city_outlined;
+    } else {
+      return Icons.location_city_outlined;
+    }
   }
 
   // static String stringDistance(double distance) {

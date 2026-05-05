@@ -1,0 +1,384 @@
+@prefix momo: <http://momoest.gsic.uva.es/ontology/> .
+@prefix mo: <http://moult.gsic.uva.es/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix geoSparql: <http://www.opengis.net/ont/geosparql#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix wd: <http://www.wikidata.org/entity/> .
+@prefix wdt: <http://www.wikidata.org/prop/direct/> .
+
+
+
+momo: a owl:Ontology ;
+  rdfs:comment "Ontology for describing ubiquitous learning situations related to architectural cultural heritage, focusing primarily on buildings constructed in the 20th century and specifically those related to the modern movement. It contains the basic classes of this type of educational situation. It is a customization of mo: ontology."@en ,
+  "Ontología para describir situaciones de aprendizaje relacionadas con el dominio del \"patrimonio cultural arquitectónico, centrado sobre todo en los edificios construidos en el s. XX y especificamente los relaccionados con el movimiento moderno\". Contiene las clases básicas para describir este tipo de situaciones educativas. Es una particularización de la ontología mo:."@es ;
+  rdfs:label "MoMoEST ontology"@en ,
+      "Ontología MoMoEST"@es ;
+  owl:versionInfo 0.1 ;
+  dc:creator [ a mo:Person ;
+      foaf:name "Pablo García-Zarza" ;
+      foaf:nick "pablogz" ;
+      rdfs:seeAlso <https://gsic.uva.es/members/pablogz> 
+    ] ,
+    [
+      a mo:Person ;
+      foaf:name "Guillermo Vega-Gorgojo" ;
+      foaf:nick "guiveg" ;
+      rdfs:seeAlso <https://gsic.uva.es/members/guiveg> 
+    ] ,
+    [
+      a mo:Person ;
+      foaf:name "Miguel L. Bote-Lorenzo" ;
+      foaf:nick "migbot" ;
+      rdfs:seeAlso <https://gsic.uva.es/members/mbotlor> 
+    ] ,
+    [
+      a mo:Person ;
+      foaf:name "Juan I. Asensio-Pérez" ;
+      foaf:nick "juaase" ;
+      rdfs:seeAlso <https://gsic.uva.es/members/juaase> 
+    ] ,
+    [
+      a mo:Person ;
+      foaf:name "Eduardo Gómez-Sánchez" ;
+      foaf:nick "edugom" ;
+      rdfs:seeAlso <https://gsic.uva.es/members/edugom> 
+    ] ;
+  dc:created "2026-02-01"^^xsd:date ;
+  dc:update "2026-03-26"^^xsd:date ;
+  vann:preferredNamespacePrefix "momo" .
+
+
+##############################################
+#    Object Properties
+##############################################
+
+momo:thumbnail a owl:DatetypeProperty ;
+  rdfs:subPropertyOf foaf:thumbnail ;
+  rdfs:domain momo:Feature ;
+  rdfs:range mo:MediaObject ;
+  rdfs:label "Thumbnail"@en, "Fotografía principal"@es ;
+  rdfs:comment "Representative photograph of the element"@en , "Imagen principal del elemento representado"@es ;
+  rdfs:isDefinedBy "momo" .
+
+momo:architect a owl:DatetypeProperty ;
+  rdfs:subPropertyOf wdt:P84 ;
+  rdfs:domain momo:Feature ;
+  rdfs:range mo:Person ;
+  rdfs:label "Architect"@en , "Arquitecto"@es ;
+  rdfs:isDefinedBy "momo" .
+
+### http://www.wikidata.org/prop/direct/P84
+wdt:P84 a owl:DatetypeProperty .
+
+### http://xmlns.com/foaf/0.1/thumbnail
+foaf:thumbnail a owl:DatetypeProperty .
+
+###  http://moult.gsic.uva.es/ontology/category
+mo:category a owl:ObjectProperty ;
+  rdfs:domain mo:Itinerary , mo:LearningTask , momo:Feature ;
+  rdfs:range mo:Category .
+
+###  http://moult.gsic.uva.es/ontology/context
+mo:context a owl:ObjectProperty ;
+  rdfs:domain mo:LearningTask ;
+  rdfs:range mo:LearningContext .
+
+###  http://moult.gsic.uva.es/ontology/hasGeometry
+mo:hasGeometry a owl:ObjectProperty ;
+  rdfs:domain momo:Feature ;
+  rdfs:range mo:Geometry .
+
+###  http://moult.gsic.uva.es/ontology/hasLearningTask
+mo:hasLearningTask a owl:ObjectProperty ;
+  rdfs:domain mo:Itinerary , momo:Feature , mo:LearningTask ;
+  rdfs:range mo:LearningTask .
+
+###  http://moult.gsic.uva.es/ontology/hasPoint
+mo:hasPoint a owl:ObjectProperty ;
+  rdfs:domain mo:Track ;
+  rdfs:range mo:PointTrack .
+
+###  http://moult.gsic.uva.es/ontology/hasSpatialThing
+mo:hasSpatialThing a owl:ObjectProperty ;
+  rdfs:domain mo:Itinerary , mo:LearningTask ;
+  rdfs:range momo:Feature .
+
+###  http://moult.gsic.uva.es/ontology/hasTrack
+mo:hasTrack a owl:ObjectProperty ;
+  rdfs:domain mo:Itinerary ;
+  rdfs:range mo:Track .
+
+###  http://moult.gsic.uva.es/ontology/inSpace
+mo:inSpace a owl:ObjectProperty ;
+  rdfs:domain mo:LearningTask ;
+  rdfs:range mo:LearningSpace .
+
+###  http://moult.gsic.uva.es/ontology/media
+mo:media a owl:ObjectProperty ;
+  rdfs:domain mo:Category , mo:Itinerary , mo:LearningTask , mo:PointTrack , momo:Feature, momo:UploadFile, momo:Draw ;
+  rdfs:range mo:MediaObject .
+
+###  http://moult.gsic.uva.es/ontology/next
+mo:next a owl:ObjectProperty ;
+  rdfs:domain momo:Feature, mo:LearningTask ;
+  rdfs:range momo:Feature, mo:LearningTask .
+
+###  http://moult.gsic.uva.es/ontology/point
+mo:point a owl:ObjectProperty ;
+  rdfs:domain mo:PointTrack ;
+  rdfs:range mo:Point .
+
+###  http://moult.gsic.uva.es/ontology/taskType
+mo:taskType a owl:ObjectProperty ;
+  rdfs:domain mo:LearningTask ;
+  rdfs:range mo:LearningTaskType .
+
+###  http://purl.org/dc/terms/creator
+dc:creator a owl:ObjectProperty ;
+  rdfs:domain mo:Category , mo:Itinerary , mo:LearningTask , momo:Feature ;
+  rdfs:range mo:Person  .
+
+### http://www.w3.org/1999/02/22-rdf-syntax-ns#first
+rdf:first a owl:ObjectProperty ;
+  rdfs:domain mo:Itinerary, momo:Feature ;
+  rdfs:range momo:Feature, mo:LearningTask .
+
+###  http://www.w3.org/2004/02/skos/core#broader
+skos:broader a owl:ObjectProperty ;
+  rdfs:domain mo:Category ;
+  rdfs:range mo:Category .
+
+###  http://www.w3.org/2004/02/skos/core#narrower
+skos:narrower a owl:ObjectProperty ;
+  rdfs:domain mo:Category ;
+  rdfs:range mo:Category .
+
+### http://www.opengis.net/ont/geosparql#sfContains
+geoSparql:sfContains a owl:ObjectProperty ;
+  rdfs:domain momo:Feature ;
+  rdfs:range momo:Feature .
+  
+### http://www.opengis.net/ont/geosparql#sfWithin
+geoSparql:sfWithin a owl:ObjectProperty ;
+  rdfs:domain momo:Feature ;
+  rdfs:range momo:Feature .
+
+###  http://purl.org/dc/terms/isReplacedBy
+dc:isReplacedBy a owl:ObjectProperty ;
+  rdfs:domain mo:Category , mo:Itinerary , mo:LearningTask , mo:PointTrack , momo:Feature , mo:Track .
+
+
+##############################################
+#    Data properties
+##############################################
+
+momo:startDate a owl:DatetypeProperty ;
+  rdfs:subPropertyOf schema:startDate ;
+  rdfs:domain momo:Feature ;
+  rdfs:range xsd:string , xsd:date ;
+  rdfs:label "Start date"@en , "Fecha de inicio"@es ;
+  rdfs:isDefinedBy "momo" .
+
+momo:endDate a owl:DatetypeProperty ;
+  rdfs:subPropertyOf schema:endDate ;
+  rdfs:domain momo:Feature ;
+  rdfs:range xsd:string , xsd:date ;
+  rdfs:label "End date"@en , "Fecha de finalización"@es ;
+  rdfs:isDefinedBy "momo" .
+
+### http://schema.org/startDate
+schema:startDate a owl:DatetypeProperty .
+
+### http://schema.org/endDate
+schema:endDate a owl:DatetypeProperty .
+
+###  http://moult.gsic.uva.es/ontology/correctAnswer
+mo:correctAnswer a owl:DatatypeProperty ;
+  rdfs:domain mo:YesNo, mo:MCQ ;
+  rdfs:range xsd:boolean , xsd:string .
+
+###  http://moult.gsic.uva.es/ontology/option
+mo:option a owl:DatatypeProperty ;
+  rdfs:domain mo:MCQ ;
+  rdfs:range xsd:string .
+
+###  http://moult.gsic.uva.es/ontology/position
+mo:position a owl:DatatypeProperty ;
+  rdfs:domain mo:PointTrack ;
+  rdfs:range xsd:nonNegativeInteger .
+
+###  http://moult.gsic.uva.es/ontology/singleSelection
+mo:singleSelection a owl:DatatypeProperty ;
+  rdfs:domain mo:MCQ ;
+  rdfs:range xsd:boolean .
+
+###  http://purl.org/dc/terms/created
+dc:created a owl:DatatypeProperty ;
+  rdfs:domain mo:Category , mo:Itinerary , mo:LearningTask , momo:Feature .
+
+###  http://purl.org/dc/terms/license
+dc:license a owl:DatatypeProperty ;
+  rdfs:domain mo:Itinerary , mo:LearningTask , momo:Feature , mo:Track .
+
+###  http://www.w3.org/2000/01/rdf-schema#comment
+rdfs:comment a owl:DatatypeProperty ;
+  rdfs:domain mo:Category , mo:Itinerary , mo:LearningContext , mo:LearningSpace , mo:LearningTask , mo:LearningTaskType , mo:PointTrack , momo:Feature , mo:Track .
+
+###  http://www.w3.org/2000/01/rdf-schema#label
+rdfs:label a owl:DatatypeProperty ;
+  rdfs:domain mo:Category , mo:Itinerary , mo:LearningContext , mo:LearningSpace , mo:LearningTask , mo:LearningTaskType , mo:PointTrack , momo:Feature , mo:Track .
+
+###  https://www.w3.org/2003/01/geo/wgs84_pos#lat
+geo:lat a owl:DatatypeProperty ;
+  rdfs:domain mo:Point .
+
+###  https://www.w3.org/2003/01/geo/wgs84_pos#long
+geo:long a owl:DatatypeProperty ;
+  rdfs:domain mo:Point .
+
+###  https://www.w3.org/2003/01/geo/wgs84_pos#alt
+geo:alt a owl:DatatypeProperty ;
+  rdfs:domain mo:Point .
+
+##############################################
+#    Classes
+##############################################
+
+momo:AdministrativeBuilding a owl:Class , rdfs:Class ;
+  rdfs:subClassOf momo:Feature .
+
+momo:PlaceOfWorship a owl:Class , rdfs:Class ;
+  rdfs:subClassOf momo:Feature .
+
+momo:School a owl:Class , rdfs:Class ;
+  rdfs:subClassOf momo:Feature .
+
+momo:ResidentialBuilding a owl:Class , rdfs:Class ;
+  rdfs:subClassOf momo:Feature .
+
+momo:Cinema a owl:Class , rdfs:Class ;
+  rdfs:subClassOf momo:Feature .
+
+momo:Hotel a owl:Class , rdfs:Class ;
+  rdfs:subClassOf momo:Feature .
+
+momo:FactoryBuilding a owl:Class , rdfs:Class ;
+  rdfs:subClassOf momo:Feature .
+
+momo:Square a owl:Class , rdfs:Class ;
+  rdfs:subClassOf momo:Feature .
+
+momo:UploadFile a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:LearningTaskType ,
+  [ a owl:Restriction ;
+      owl:onProperty mo:media ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] ;
+  rdfs:label "Upload a file"@en , "Almacena un fichero"@es ;
+  rdfs:comment "Task in which students have to upload a file."@en , "Tarea en la que los estudiantes tienen que almacenar un fichero."@es ;
+  rdfs:isDefinedBy "momo" .
+
+momo:Draw a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:LearningTaskType ,
+  [ a owl:Restriction ;
+      owl:onProperty mo:media ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger
+  ] ;
+  rdfs:label "Draw"@en , "Dibuja"@es ;
+  rdfs:comment "Task in which students have to draw in a file."@en , "Tarea en la que los estudiantes tienen que dibujar en un fichero."@es ;
+  rdfs:isDefinedBy "momo" .
+
+###  http://moult.gsic.uva.es/ontology/Category
+mo:Category a owl:Class , rdfs:Class .
+
+momo:Feature a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:Feature ,
+  [ a owl:Restriction ;
+      owl:onProperty momo:startDate , momo:endDate ;
+      owl:maxCardinality "1"^^xsd:nonNegativeInteger
+  ] ,
+  [ a owl:Restriction ;
+      owl:onProperty momo:architect ;
+      owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onClass mo:Person
+  ] ,
+  [ a owl:Restriction ;
+      owl:onProperty mo:media , momo:thumbnail ;
+      owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onClass momo:MediaObject
+  ] ;
+  rdfs:isDefinedBy "momo" .
+
+###  http://moult.gsic.uva.es/ontology/
+mo:Feature a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/Geometry
+mo:Geometry a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/Itinerary
+mo:Itinerary a owl:Class , rdfs:Class .
+  
+###  http://moult.gsic.uva.es/ontology/LearningContext
+mo:LearningContext a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/LearningSpace
+mo:LearningSpace a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/LearningTask
+mo:LearningTask a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/LearningTaskType
+mo:LearningTaskType a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/ListItinerary
+mo:ListItinerary a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:Itinerary .
+
+###  http://moult.gsic.uva.es/ontology/MCQ
+mo:MCQ a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:LearningTaskType .
+
+###  http://moult.gsic.uva.es/ontology/MediaObject
+mo:MediaObject a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/Person
+mo:Person a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/PhysicalSpace
+mo:PhysicalSpace a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:LearningSpace .
+
+###  http://moult.gsic.uva.es/ontology/Point
+mo:Point a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:Geometry .
+
+###  http://moult.gsic.uva.es/ontology/PointTrack
+mo:PointTrack a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/SetItinerary
+mo:SetItinerary a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:Itinerary .
+
+###  http://moult.gsic.uva.es/ontology/Text
+mo:Text a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:LearningTaskType .
+
+###  http://moult.gsic.uva.es/ontology/Track
+mo:Track a owl:Class , rdfs:Class .
+
+###  http://moult.gsic.uva.es/ontology/VirtualSpace
+mo:VirtualSpace a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:LearningSpace .
+
+###  http://moult.gsic.uva.es/ontology/YesNo
+mo:YesNo a owl:Class , rdfs:Class ;
+  rdfs:subClassOf mo:LearningTaskType .

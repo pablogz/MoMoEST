@@ -5,10 +5,8 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:momoest/util/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,13 +27,13 @@ import 'package:momoest/util/helpers/user_xest.dart';
 import 'package:momoest/main_screen.dart';
 import 'package:momoest/more_info.dart';
 import 'package:momoest/util/config_xest.dart';
-import 'package:momoest/util/color_schemes.g.dart';
 import 'package:momoest/util/auxiliar.dart';
 import 'package:momoest/landing_page.dart';
 import 'package:momoest/privacy.dart';
 import 'package:momoest/settings.dart';
 import 'package:momoest/bajas.dart';
 import 'package:momoest/users.dart';
+import 'package:momoest/util/theme.dart';
 import 'package:momoest/feed.dart';
 
 Future<void> main() async {
@@ -335,6 +333,8 @@ class MyApp extends StatelessWidget {
       routerConfig: router,
       theme: theme.light(),
       darkTheme: theme.dark(),
+      highContrastTheme: theme.lightHighContrast(),
+      highContrastDarkTheme: theme.darkHighContrast(),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
     );

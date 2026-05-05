@@ -1,0 +1,14 @@
+[
+    {
+      "relation": [
+        "delegate_permission/common.handle_all_urls"
+      ],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "es.uva.gsic.momoest",
+        "sha256_cert_fingerprints": [
+          "76:5A:C8:BA:25:C3:17:D3:A8:55:D4:CE:74:0E:34:2E:50:82:07:00:5B:A1:B4:FD:AE:FF:E8:B1:12:C4:8B:0A"
+        ]
+      }
+    }
+]

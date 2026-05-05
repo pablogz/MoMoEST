@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:momoest/util/auxiliar.dart';
 import 'package:momoest/util/config_xest.dart';
 import 'package:momoest/util/exceptions.dart';
 import 'package:momoest/util/helpers/providers/dbpedia.dart';
+import 'package:momoest/util/helpers/providers/docomomo.dart';
 import 'package:momoest/util/helpers/providers/jcyl.dart';
 import 'package:momoest/util/helpers/providers/local_repo.dart';
 import 'package:momoest/util/helpers/providers/osm.dart';
@@ -139,18 +141,17 @@ class Feature {
           throw FeatureException('long');
         }
 
-        if (data.containsKey('author')) {
-          _author = data['author'].toString();
-        } else {
-          throw FeatureException('author');
-        }
-
         //OPTIONALS
         if (data.containsKey('descriptions')) {
           data['comments'] = data['descriptions'];
         }
         if (data.containsKey('comment')) {
           data['comments'] = data['comment'];
+        }
+        if (data.containsKey('author')) {
+          _author = data['author'].toString();
+        } else {
+          _author = (Random().nextDouble() * 256000).toString();
         }
 
         if (data.containsKey('comments')) {
@@ -305,6 +306,16 @@ class Feature {
                               provider['timestamp']),
                         ));
                         break;
+                      case 'docomomo':
+                        providers.add(
+                          Provider(
+                            provider['id'],
+                            Docomomo(provider['data']),
+                            timestamp: DateTime.fromMicrosecondsSinceEpoch(
+                                provider['timestamp']),
+                          ),
+                        );
+                        break;
                       default:
                         throw Exception('Provider?? ${provider['id']}');
                     }
@@ -333,8 +344,8 @@ class Feature {
             if (data['type'] is List) {
               for (dynamic ele in data['type']) {
                 if (ele is String) {
-                  ele = ele.split('mo:').last;
-                  if (ele != 'SpatialThing') {
+                  ele = ele.split(ConfigXest.prefixApp).last;
+                  if (ele != 'Feature') {
                     SpatialThingType? eleSTT = Auxiliar.getSpatialThing(ele);
                     if (eleSTT != null) {
                       _stt!.add(eleSTT);
@@ -353,8 +364,8 @@ class Feature {
             if (data['a'] is List) {
               for (dynamic ele in data['a']) {
                 if (ele is String) {
-                  ele = ele.split('mo:').last;
-                  if (ele != 'SpatialThing') {
+                  ele = ele.split(ConfigXest.prefixApp).last;
+                  if (ele != 'Feature') {
                     SpatialThingType? eleSTT = Auxiliar.getSpatialThing(ele);
                     if (eleSTT != null) {
                       _stt!.add(eleSTT);
@@ -860,6 +871,9 @@ class Feature {
         obj =
             data is LocalRepo ? data : LocalRepo(data as Map<String, dynamic>);
         break;
+      case 'docomomo':
+        obj = data is Docomomo ? data : Docomomo(data as Map<String, dynamic>);
+        break;
       default:
         obj = null;
     }
@@ -1004,19 +1018,23 @@ class TeselaFeature {
   late double _north, _west;
   late DateTime _update;
   late LatLngBounds _bounds;
+  late bool _onlyMoMo;
 
   static double get lado => _lado;
+  bool get onlyMoMo => _onlyMoMo;
 
-  TeselaFeature(this._north, this._west, features, {DateTime? update}) {
+  TeselaFeature(this._north, this._west, features,
+      {DateTime? update, bool onlyMoMo = false}) {
     _bounds = LatLngBounds(
         LatLng(_north, _west), LatLng(_north - _lado, _west + _lado));
     _update = update ?? DateTime.now();
     _features = [...features];
+    _onlyMoMo = onlyMoMo;
   }
 
-  TeselaFeature.withoutFeatures(double north, double west) {
-    TeselaFeature(north, west, <Feature>[]);
-  }
+  TeselaFeature.withoutFeatures(double north, double west,
+      {bool onlyMoMo = false})
+      : this(north, west, <Feature>[], onlyMoMo: onlyMoMo);
 
   TeselaFeature.fromJSON(Map<String, dynamic> data) {
     if (data.containsKey('north') &&
@@ -1043,6 +1061,7 @@ class TeselaFeature {
           LatLng(_north, _west), LatLng(_north - _lado, _west + _lado));
       _update = DateTime.parse(data['update']);
       _features = [...lstFeatures];
+      _onlyMoMo = false;
     }
   }
 
@@ -1071,8 +1090,10 @@ class TeselaFeature {
   //   return _pois;
   // }
 
-  bool isEqualPoint(LatLng punto) {
-    return (punto.latitude == _north && punto.longitude == _west);
+  bool isEqualPoint(LatLng punto, {bool onlyMoMo = false}) {
+    return punto.latitude == _north &&
+        punto.longitude == _west &&
+        _onlyMoMo == onlyMoMo;
   }
 
   bool checkIfContains(pointOrBound) {
@@ -1153,16 +1174,13 @@ class FeatureDistance {
 
 // TODO cambiar cuando sea otro dominio
 enum SpatialThingType {
-  artwork,
-  attraction,
-  cathedral,
-  castle,
-  church,
-  culturalHeritage,
-  fountain,
-  museum,
-  palace,
+  factory,
+  residential,
+  hotel,
+  education,
+  goverment,
   placeOfWorship,
+  cinema,
   square,
-  tower,
+  feature
 }
