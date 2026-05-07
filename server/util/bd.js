@@ -451,6 +451,23 @@ async function deleteAnswerFeedDB(userCol, idFeed, idAnswer) {
     }
 }
 
+async function getAnswerByFile(userCol, fileName) {
+    try {
+        const db = await connectToDatabase();
+        const doc = await db.collection(userCol).findOne(
+            { _id: DOCUMENT_ANSWERS, "answers.answer.file": fileName },
+            { projection: { "answers.$": 1 } }
+        );
+        if (doc?.answers?.length === 1) {
+            return doc.answers[0];
+        }
+        return null;
+    } catch (error) {
+        winston.error(error);
+        return null;
+    }
+}
+
 async function updateFeedbackAnswer(userCol, dataAnswer) {
     try {
         const db = await connectToDatabase();
@@ -495,4 +512,5 @@ module.exports = {
     removeTeacherFromFeed,
     updateTeachingFeedBD,
     deleteTeachingFeedBD,
+    getAnswerByFile,
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:camera/camera.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -68,6 +69,7 @@ class _COTask extends State<COTask> {
   late int _startTime;
   List<String> valoresMCQ = [];
   bool showMessageGoBack = false;
+  PlatformFile? _selectedPdf;
 
   @override
   void initState() {
@@ -589,10 +591,13 @@ class _COTask extends State<COTask> {
       case AnswerType.videoText:
         // TODO Visor de vídeo
         break;
+      case AnswerType.uploadFile:
+        lista.add(_widgetPickPdf());
+        break;
       default:
     }
 
-    lista.add(cuadrotexto);
+    if (task!.aT != AnswerType.uploadFile) lista.add(cuadrotexto);
 
     return SliverPadding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -607,6 +612,161 @@ class _COTask extends State<COTask> {
           childCount: lista.length,
         ),
       ),
+    );
+  }
+
+  Future<void> _saveUploadFile(
+      ScaffoldMessengerState smState, AppLocalizations? appLoca) async {
+    if (_selectedPdf == null) {
+      smState.showSnackBar(
+          SnackBar(content: Text(appLoca!.sinFicheroSeleccionado)));
+      return;
+    }
+    try {
+      final int now = DateTime.now().millisecondsSinceEpoch;
+      answer.time2Complete = now - _startTime;
+      answer.timestamp = now;
+      answer.commentTask = task!.getAComment(lang: MyApp.currentLang);
+
+      final Feature feature =
+          Feature.providers(widget.shortIdContainer, await _getFeature());
+      answer.labelContainer = feature.getALabel(lang: MyApp.currentLang);
+
+      final token = await FirebaseAuth.instance.currentUser!.getIdToken();
+      final request =
+          http.MultipartRequest('POST', Queries.uploadAnswerFile());
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['idContainer'] = answer.idContainer;
+      request.fields['idTask'] = answer.idTask;
+      request.fields['answerMetadata'] = json.encode({
+        'hasOptionalText': false,
+        'finishClient': now,
+        'time2Complete': answer.time2Complete,
+      });
+      request.fields['labelContainer'] = answer.labelContainer;
+      request.fields['commentTask'] = answer.commentTask;
+
+      if (_selectedPdf!.bytes != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'file',
+          _selectedPdf!.bytes!,
+          filename: _selectedPdf!.name,
+        ));
+      } else if (_selectedPdf!.path != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'file',
+          _selectedPdf!.path!,
+          filename: _selectedPdf!.name,
+        ));
+      } else {
+        smState.showSnackBar(
+            SnackBar(content: Text(appLoca!.errorSubirFichero)));
+        return;
+      }
+
+      final streamed = await request.send();
+      final response = await http.Response.fromStream(streamed);
+
+      if (response.statusCode == 201) {
+        final shortId = response.headers['location']!.split('/').last;
+        answer.id = shortId;
+        answer.answer = {
+          'file': '$shortId.pdf',
+          'originalName': _selectedPdf!.name,
+          'timestamp': now,
+        };
+        UserXEST.userXEST.answers.add(answer);
+
+        if (UserXEST.userXEST.hasFeedEnable) {
+          final idAnswerFeed = shortId;
+          await http.put(
+            Queries.feedAnswer(
+              Auxiliar.id2shortId(UserXEST.userXEST.feed)!,
+              UserXEST.userXEST.id,
+              idAnswerFeed,
+            ),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: json.encode({}),
+          );
+        }
+
+        smState.clearSnackBars();
+        smState.showSnackBar(
+            SnackBar(content: Text(appLoca!.respuestaGuardada)));
+        if (!ConfigXest.development) {
+          await FirebaseAnalytics.instance.logEvent(
+            name: "taskCompleted",
+            parameters: {
+              "feature": widget.shortIdContainer,
+              "task": widget.shortIdTask,
+            },
+          );
+        }
+        if (mounted) setState(() => _guardado = true);
+        if (mounted) GoRouter.of(context).pop();
+      } else if (response.statusCode == 413) {
+        smState.showSnackBar(SnackBar(
+            content: Text(
+                appLoca!.ficheroDemasiadoGrande(ConfigXest.maxFileSizeMB))));
+      } else {
+        smState.showSnackBar(
+            SnackBar(content: Text(appLoca!.errorSubirFichero)));
+      }
+    } catch (error) {
+      smState.clearSnackBars();
+      smState.showSnackBar(
+          SnackBar(content: Text(appLoca!.errorSubirFichero)));
+      if (!ConfigXest.development) {
+        // ignore: use_rethrow_when_possible
+        await FirebaseCrashlytics.instance.recordError(error, null);
+      }
+    }
+  }
+
+  Widget _widgetPickPdf() {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OutlinedButton.icon(
+          onPressed: _guardado
+              ? null
+              : () async {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['pdf'],
+                    allowMultiple: false,
+                  );
+                  if (result != null && result.files.isNotEmpty) {
+                    final f = result.files.first;
+                    if (f.size > ConfigXest.maxFileSizeMB * 1024 * 1024) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(appLoca.ficheroDemasiadoGrande(
+                              ConfigXest.maxFileSizeMB)),
+                        ));
+                      }
+                      return;
+                    }
+                    setState(() => _selectedPdf = f);
+                  }
+                },
+          icon: const Icon(Icons.upload_file),
+          label: Text(appLoca.seleccionarPDF),
+        ),
+        if (_selectedPdf != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              _selectedPdf!.name,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+      ],
     );
   }
 
@@ -695,6 +855,10 @@ class _COTask extends State<COTask> {
                       }
                     }
                   : () async {
+                      if (answer.answerType == AnswerType.uploadFile) {
+                        await _saveUploadFile(smState, appLoca);
+                        return;
+                      }
                       if (_thisKey.currentState!.validate()) {
                         try {
                           int now = DateTime.now().millisecondsSinceEpoch;

@@ -518,5 +518,16 @@
     "architects": "Arquitectos",
     "enlacesExt": "Más información",
     "licenciaInfo": "Licencia",
-    "docomomoFuente": "La información de este lugar proviene de la Fundación Docomomo Ibérico."
+    "docomomoFuente": "La información de este lugar proviene de la Fundación Docomomo Ibérico.",
+    "seleccionarPDF": "Seleccionar PDF",
+    "sinFicheroSeleccionado": "Debes seleccionar un fichero PDF antes de guardar",
+    "ficheroDemasiadoGrande": "El fichero supera el tamaño máximo permitido ({tamanoMaximoFichero} MB)",
+    "@ficheroDemasiadoGrande": {
+        "placeholders": {
+            "tamanoMaximoFichero": { "type": "int" }
+        }
+    },
+    "soloFicherosPDF": "Solo se admiten ficheros en formato PDF",
+    "errorSubirFichero": "Error al subir el fichero. Inténtalo de nuevo.",
+    "descargarPDF": "Descargar PDF"
 }

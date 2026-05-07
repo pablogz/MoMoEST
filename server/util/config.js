@@ -10,6 +10,8 @@ const tokenCraft = '6d8097f8-9fff-40a2-9043-bd57fe89bcb3';
 const primaryGraph = '<http://momoest.gsic.uva.es>';
 const docomomoGraph = '<http://momoest.gsic.uva.es/docomomo>';
 
+const tamaMaxFile = 25;
+
 // const addrOPA = 'https://overpass-api.de/api/interpreter';
 // const portOPA = 443;
 
@@ -64,4 +66,5 @@ module.exports = {
     docomomoGraph,
     typeST,
     classTypeST,
+    tamaMaxFile,
 }

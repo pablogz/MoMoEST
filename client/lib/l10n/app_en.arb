@@ -579,5 +579,16 @@
     "architects": "Architects",
     "enlacesExt": "More information",
     "licenciaInfo": "License",
-    "docomomoFuente": "All information about this site comes from the Fundación Docomomo Ibérico."
+    "docomomoFuente": "All information about this site comes from the Fundación Docomomo Ibérico.",
+    "seleccionarPDF": "Select PDF",
+    "sinFicheroSeleccionado": "You must select a PDF file before saving",
+    "ficheroDemasiadoGrande": "The file exceeds the maximum allowed size ({tamanoMaximoFichero} MB)",
+    "@ficheroDemasiadoGrande": {
+        "placeholders": {
+            "tamanoMaximoFichero": { "type": "int" }
+        }
+    },
+    "soloFicherosPDF": "Only PDF files are accepted",
+    "errorSubirFichero": "Error uploading the file. Please try again.",
+    "descargarPDF": "Download PDF"
 }

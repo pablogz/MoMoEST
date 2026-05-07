@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:momoest/util/helpers/answers.dart';
+import 'package:momoest/util/helpers/download_pdf_helper.dart';
 import 'package:momoest/util/helpers/tasks.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -1165,8 +1166,16 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                               }
                               setState(() => _isEnableFeed = newValue);
                             },
-                      title: Text(appLoca.activarCanal),
-                      subtitle: Text(appLoca.activarCanalExplica),
+                      title: Text(
+                        appLoca.activarCanal,
+                        style: td.textTheme.bodyLarge!
+                            .copyWith(color: colorScheme.onTertiaryContainer),
+                      ),
+                      subtitle: Text(
+                        appLoca.activarCanalExplica,
+                        style: td.textTheme.bodyMedium!
+                            .copyWith(color: colorScheme.onTertiaryContainer),
+                      ),
                     )
                   ],
           ),
@@ -1233,7 +1242,8 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                                     },
                                   ).then((response) {
                                     if (response.statusCode == 200 && mounted) {
-                                      setState(() => _feed!.removeTeacher(t.uid));
+                                      setState(
+                                          () => _feed!.removeTeacher(t.uid));
                                     }
                                   });
                                 },
@@ -2157,6 +2167,36 @@ class _AnswerUserFeed extends State<AnswersUserFeed> {
             : []);
   }
 
+  Future<void> _downloadPdfTeacher(Answer answer) async {
+    final fileId = answer.answer['file']?.toString() ?? '';
+    if (fileId.isEmpty) return;
+    final originalName =
+        answer.answer['originalName']?.toString() ?? 'file.pdf';
+    try {
+      final token = await FirebaseAuth.instance.currentUser!.getIdToken();
+      final response = await http.get(
+        Queries.feedAnswerFile(_feed.shortId, _subscriber.id, fileId),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
+        await downloadPdf(response.bodyBytes, originalName);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error ${response.statusCode}')),
+          );
+        }
+      }
+    } catch (e) {
+      if (ConfigXest.development) debugPrint('_downloadPdfTeacher: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al descargar el fichero')),
+        );
+      }
+    }
+  }
+
   Widget _widgetAnswers() {
     double margenLateral =
         Auxiliar.getLateralMargin(MediaQuery.of(context).size.width);
@@ -2201,6 +2241,27 @@ class _AnswerUserFeed extends State<AnswersUserFeed> {
               ? Align(
                   alignment: Alignment.centerLeft,
                   child: Text(answer.answer['answer'].toString()),
+                )
+              : const SizedBox();
+          break;
+        case AnswerType.uploadFile:
+          respuesta = answer.hasAnswer
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        answer.answer['originalName']?.toString() ?? '',
+                        style: bodyMediumBold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.download),
+                      tooltip: appLoca.descargarPDF,
+                      onPressed: () => _downloadPdfTeacher(answer),
+                    ),
+                  ],
                 )
               : const SizedBox();
           break;

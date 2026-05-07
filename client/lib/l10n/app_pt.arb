@@ -325,5 +325,16 @@
     "borrarProfeCanal": "Remover do canal",
     "errorYaPropietarioCanal": "Já é o proprietário deste canal.",
     "idFeedErrorContra": "A palavra-passe está incorrecta ou já é co-professor deste canal.",
-    "canalNoEncontrado": "Canal não encontrado."
+    "canalNoEncontrado": "Canal não encontrado.",
+    "seleccionarPDF": "Selecionar PDF",
+    "sinFicheroSeleccionado": "Deve selecionar um ficheiro PDF antes de guardar",
+    "ficheroDemasiadoGrande": "O ficheiro excede o tamanho máximo permitido ({tamanoMaximoFichero} MB)",
+    "@ficheroDemasiadoGrande": {
+        "placeholders": {
+            "tamanoMaximoFichero": { "type": "int" }
+        }
+    },
+    "soloFicherosPDF": "Apenas são aceites ficheiros em formato PDF",
+    "errorSubirFichero": "Erro ao enviar o ficheiro. Tente novamente.",
+    "descargarPDF": "Descarregar PDF"
 }
