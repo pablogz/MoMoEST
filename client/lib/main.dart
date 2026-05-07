@@ -35,6 +35,7 @@ import 'package:momoest/bajas.dart';
 import 'package:momoest/users.dart';
 import 'package:momoest/util/theme.dart';
 import 'package:momoest/feed.dart';
+import 'package:momoest/study_info.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -252,6 +253,11 @@ class MyApp extends StatelessWidget {
           caseSensitive: false,
           path: '/bajas',
           builder: (context, state) => const InfoBajas(),
+        ),
+        GoRoute(
+          caseSensitive: false,
+          path: '/studyInfo',
+          builder: (context, state) => const StudyInfo(),
         ),
         GoRoute(
             caseSensitive: false,
