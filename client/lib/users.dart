@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -35,8 +36,10 @@ class _NewUser extends State<NewUser> {
       _boolTeacher,
       _polPri,
       _entiendoLOD,
-      _entiendoAliasPublico;
+      _entiendoAliasPublico,
+      _consentimientoInformado;
   late String _alias, _comment, _codeTeacher, _confTeacherLOD, _confAliasLOD;
+  late TapGestureRecognizer _studyInfoRecognizer;
 
   @override
   void initState() {
@@ -53,6 +56,18 @@ class _NewUser extends State<NewUser> {
     _polPri = true;
     _entiendoLOD = false;
     _entiendoAliasPublico = false;
+    _consentimientoInformado = false;
+    _studyInfoRecognizer = TapGestureRecognizer()..onTap = _openStudyInfo;
+  }
+
+  void _openStudyInfo() {
+    GoRouter.of(context).push('/studyInfo');
+  }
+
+  @override
+  void dispose() {
+    _studyInfoRecognizer.dispose();
+    super.dispose();
   }
 
   @override
@@ -123,7 +138,65 @@ class _NewUser extends State<NewUser> {
 
   List<Widget> _formNewUser() {
     AppLocalizations appLoca = AppLocalizations.of(context)!;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    TextStyle bodyStyle = Theme.of(context).textTheme.bodyMedium!;
+    TextStyle bulletStyle = bodyStyle.copyWith(height: 1.5);
+    TextStyle linkStyle = bulletStyle.copyWith(
+      color: colorScheme.primary,
+      decoration: TextDecoration.underline,
+      decorationColor: colorScheme.primary,
+    );
+
+    Widget bulletPoint(InlineSpan content) => Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('• ', style: bulletStyle),
+              Expanded(child: Text.rich(TextSpan(children: [content]))),
+            ],
+          ),
+        );
+
     return [
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: colorScheme.outlineVariant),
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            bulletPoint(
+                TextSpan(text: appLoca.consentimientoP1, style: bulletStyle)),
+            bulletPoint(TextSpan(children: [
+              TextSpan(text: appLoca.consentimientoP2a, style: bulletStyle),
+              TextSpan(
+                text: appLoca.consentimientoP2Link,
+                style: linkStyle,
+                recognizer: _studyInfoRecognizer,
+              ),
+              TextSpan(text: appLoca.consentimientoP2b, style: bulletStyle),
+            ])),
+            bulletPoint(
+                TextSpan(text: appLoca.consentimientoP3, style: bulletStyle)),
+            bulletPoint(
+                TextSpan(text: appLoca.consentimientoP5, style: bulletStyle)),
+            bulletPoint(
+                TextSpan(text: appLoca.consentimientoP6, style: bulletStyle)),
+          ],
+        ),
+      ),
+      CheckboxListTile.adaptive(
+        value: _consentimientoInformado,
+        onChanged: (value) {
+          if (value != null) setState(() => _consentimientoInformado = value);
+        },
+        title: Text(appLoca.consentimientoCheckbox),
+        controlAffinity: ListTileControlAffinity.leading,
+        contentPadding: EdgeInsets.zero,
+      ),
       TextFormField(
         onChanged: (String input) {
           // De esta forma si se destruye el widget ya lo tendría almacenado
@@ -274,11 +347,14 @@ class _NewUser extends State<NewUser> {
         visible: _alias.isNotEmpty || _boolTeacher,
         child: FilledButton(
           onPressed: _polPri &&
+                  _consentimientoInformado &&
                   (_alias.isNotEmpty ? _entiendoAliasPublico : true) &&
                   (_boolTeacher ? _entiendoLOD : true)
               ? () async {
                   if (_keyNewUser.currentState!.validate()) {
                     Map<String, dynamic> obj = {};
+                    obj['confConsentimientoInformado'] =
+                        DateTime.now().toUtc().toString();
                     if (_alias.trim().isNotEmpty && _entiendoAliasPublico) {
                       obj['alias'] = _alias.trim();
                       obj['confAliasLOD'] = _confAliasLOD;
@@ -675,8 +751,11 @@ class _EditUser extends State<EditUser> {
       _entiendoLOD,
       _entiendoAliasPublico,
       _bloqueaEntiendoLOD,
-      _bloqueaEntiendoAliasPublico;
+      _bloqueaEntiendoAliasPublico,
+      _consentimientoInformado,
+      _bloqueaConsentimientoInformado;
   late String _alias, _comment, _codeTeacher, _confTeacherLOD, _confAliasLOD;
+  late TapGestureRecognizer _studyInfoRecognizer;
 
   @override
   void initState() {
@@ -698,6 +777,19 @@ class _EditUser extends State<EditUser> {
     _bloqueaEntiendoLOD = _entiendoLOD;
     _entiendoAliasPublico = _alias.isNotEmpty;
     _bloqueaEntiendoAliasPublico = _entiendoAliasPublico;
+    _consentimientoInformado = UserXEST.userXEST.consentimientoInformado;
+    _bloqueaConsentimientoInformado = _consentimientoInformado;
+    _studyInfoRecognizer = TapGestureRecognizer()..onTap = _openStudyInfo;
+  }
+
+  void _openStudyInfo() {
+    GoRouter.of(context).push('/studyInfo');
+  }
+
+  @override
+  void dispose() {
+    _studyInfoRecognizer.dispose();
+    super.dispose();
   }
 
   @override
@@ -770,7 +862,69 @@ class _EditUser extends State<EditUser> {
 
   List<Widget> _formEditUser() {
     AppLocalizations appLoca = AppLocalizations.of(context)!;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    TextStyle bodyStyle = Theme.of(context).textTheme.bodyMedium!;
+    TextStyle bulletStyle = bodyStyle.copyWith(height: 1.5);
+    TextStyle linkStyle = bulletStyle.copyWith(
+      color: colorScheme.primary,
+      decoration: TextDecoration.underline,
+      decorationColor: colorScheme.primary,
+    );
+
+    Widget bulletPoint(InlineSpan content) => Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('• ', style: bulletStyle),
+              Expanded(child: Text.rich(TextSpan(children: [content]))),
+            ],
+          ),
+        );
+
     return [
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: colorScheme.outlineVariant),
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            bulletPoint(
+                TextSpan(text: appLoca.consentimientoP1, style: bulletStyle)),
+            bulletPoint(TextSpan(children: [
+              TextSpan(text: appLoca.consentimientoP2a, style: bulletStyle),
+              TextSpan(
+                text: appLoca.consentimientoP2Link,
+                style: linkStyle,
+                recognizer: _studyInfoRecognizer,
+              ),
+              TextSpan(text: appLoca.consentimientoP2b, style: bulletStyle),
+            ])),
+            bulletPoint(
+                TextSpan(text: appLoca.consentimientoP3, style: bulletStyle)),
+            bulletPoint(
+                TextSpan(text: appLoca.consentimientoP5, style: bulletStyle)),
+            bulletPoint(
+                TextSpan(text: appLoca.consentimientoP6, style: bulletStyle)),
+          ],
+        ),
+      ),
+      CheckboxListTile.adaptive(
+        value: _consentimientoInformado,
+        onChanged: _bloqueaConsentimientoInformado
+            ? null
+            : (value) {
+                if (value != null) {
+                  setState(() => _consentimientoInformado = value);
+                }
+              },
+        title: Text(appLoca.consentimientoCheckbox),
+        controlAffinity: ListTileControlAffinity.leading,
+        contentPadding: EdgeInsets.zero,
+      ),
       TextFormField(
         onChanged: (String input) {
           // De esta forma si se destruye el widget ya lo tendría almacenado
@@ -855,6 +1009,7 @@ class _EditUser extends State<EditUser> {
                   }
                 },
           title: Text(appLoca.entiendoLOD),
+          enabled: _boolTeacher || !_bloqueaEntiendoLOD,
         ),
       ),
       CheckboxListTile.adaptive(
@@ -910,11 +1065,17 @@ class _EditUser extends State<EditUser> {
         visible: _alias.isNotEmpty || _boolTeacher,
         child: FilledButton(
           onPressed: _polPri &&
+                  _consentimientoInformado &&
                   (_alias.isNotEmpty ? _entiendoAliasPublico : true) &&
                   (_boolTeacher ? _entiendoLOD : true)
               ? () async {
                   if (_keyEditUser.currentState!.validate()) {
                     Map<String, dynamic> obj = {};
+                    if (!_bloqueaConsentimientoInformado &&
+                        _consentimientoInformado) {
+                      obj['confConsentimientoInformado'] =
+                          DateTime.now().toUtc().toString();
+                    }
                     if (_alias.trim() != UserXEST.userXEST.alias &&
                         _entiendoAliasPublico) {
                       obj['alias'] = _alias.trim();

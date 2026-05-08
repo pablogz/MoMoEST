@@ -158,8 +158,36 @@ function removeFeatureCache(idFeature) {
 }
 
 function _checkCache() {
-    const limit = Date.now() - 60 * 60 * 24 * 1000;
+    const limit = Date.now() - TTL_BOUNDS;
     _cacheZones = _cacheZones.filter((element) => element.lastEdit >= limit);
+}
+
+// ── Bounding box cache ───────────────────────────────────────────────────────
+
+const _cacheBounds = new Map();
+const TTL_BOUNDS = 1000 * 60 * 60 * 24 * 7;
+
+function boundsKey(bounds, interval) {
+    const key = `${bounds.north.toFixed(4)}|${bounds.south.toFixed(4)}|${bounds.west.toFixed(4)}|${bounds.east.toFixed(4)}`;
+    return interval ? `${key}|${interval.start}-${interval.end}` : key;
+}
+
+function getBoundsCache(key) {
+    const entry = _cacheBounds.get(key);
+    if (!entry) return null;
+    if (Date.now() - entry.timestamp > TTL_BOUNDS) {
+        _cacheBounds.delete(key);
+        return null;
+    }
+    return entry.data;
+}
+
+function setBoundsCache(key, data) {
+    _cacheBounds.set(key, { data, timestamp: Date.now() });
+}
+
+function resetBoundsCache() {
+    _cacheBounds.clear();
 }
 
 module.exports = {
@@ -167,6 +195,10 @@ module.exports = {
     getFeatureCache,
     updateFeatureCache,
     removeFeatureCache,
+    boundsKey,
+    getBoundsCache,
+    setBoundsCache,
+    resetBoundsCache,
     FeatureCache,
     InfoFeatureCache,
     Zone,

@@ -810,7 +810,17 @@ class _InfoFeature extends State<InfoFeature>
                                 onPressed: () async {
                                   bool startTask = true;
                                   if (UserXEST.userXEST.isNotGuest) {
-                                    if (task.spaces.length == 1 &&
+                                    if (UserXEST.userXEST.alias == null ||
+                                        UserXEST.userXEST.alias!.isEmpty) {
+                                      startTask = false;
+                                      sMState.clearSnackBars();
+                                      sMState.showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              appLoca.aliasRequerido),
+                                        ),
+                                      );
+                                    } else if (task.spaces.length == 1 &&
                                         task.spaces.first == Space.physical) {
                                       if (pointUser != null) {
                                         // TODO 100

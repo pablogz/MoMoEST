@@ -23,6 +23,7 @@ const task = require('./routes/learningTasks/learningTask');
 const user = require('./routes/users/user');
 const userPreferences = require('./routes/users/userPreferences/userPreferences')
 const answers = require('./routes/users/answers/answers');
+const answerFiles = require('./routes/users/answers/files');
 // const answer = require('./routes/users/answers/answer');
 const itineraries = require('./routes/itineraries/itineraries');
 const itinerary = require('./routes/itineraries/itinerary');
@@ -63,6 +64,8 @@ const rutas = {
     user: '/users/user',
     userPreferences: '/users/user/preferences',
     answers: '/users/user/answers/',
+    answerFiles: '/users/user/answers/files',
+    answerFile: '/users/user/answers/files/:fileId',
     answer: '/users/user/answers/:answer',
     userItineraries: '/users/user/itineraries/',
     userStatusItinerary: '/users/user/itineraries/:itinerary/status',
@@ -82,6 +85,7 @@ const rutas = {
     feedSubscriber: '/feeds/:feed/subscribers/:subscriber',
     feedTeacher: '/feeds/:feed/teachers/:teacher',
     feedSubscriberAnswers: '/feeds/:feed/subscribers/:subscriber/answers',
+    feedSubscriberAnswerFile: '/feeds/:feed/subscribers/:subscriber/answers/files/:fileId',
     feedSubscriberAnswer: '/feeds/:feed/subscribers/:subscriber/answers/:answer',
     feedResources: '/feeds/:feed/learningResources/',
     feedResource: '/feeds/:feed/learningResources/:resource'
@@ -325,6 +329,27 @@ app
     .all(rutas.answers, cors({
         origin: '*'
     }), error405)
+    // ANSWER FILES
+    .post(rutas.answerFiles, cors({
+        origin: '*',
+        exposedHeaders: ['Location']
+    }), (req, res, next) => req.headers.authorization ? next() : res.sendStatus(401),
+        answerFiles.rateLimit,
+        answerFiles.multerMiddleware,
+        (req, res) => answerFiles.uploadFile(req, res))
+    .get(rutas.answerFile, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ? answerFiles.downloadFile(req, res) : res.sendStatus(401))
+    .options(rutas.answerFiles, cors({
+        origin: '*',
+        methods: ['POST', 'OPTIONS']
+    }), (req, res) => res.sendStatus(204))
+    .options(rutas.answerFile, cors({
+        origin: '*',
+        methods: ['GET', 'OPTIONS']
+    }), (req, res) => res.sendStatus(204))
+    .all(rutas.answerFiles, cors({ origin: '*' }), error405)
+    .all(rutas.answerFile, cors({ origin: '*' }), error405)
     // ANSWER
     // .get(rutas.answer, cors({
     //     origin: '*'
@@ -487,46 +512,46 @@ app
     .all(rutas.feed, cors({
         origin: '*'
     }), error405)
-    .get(rutas.feedResources, cors({
-        origin: '*'
-    }), (req, res) => feedResources.listFeedResources(req, res))
-    .post(rutas.feedResources, cors({
-        origin: '*',
-        exposedHeaders: ['Location']
-    }), (req, res) => req.headers.authorization ?
-        req.is('application/json') ?
-            feedResources.newResource(req, res) :
-            res.sendStatus(415)
-        : res.sendStatus(401))
-    .options(rutas.feedResources, cors({
-        origin: '*',
-        methods: ['GET', 'POST', 'OPTIONS']
-    }))
-    .all(rutas.feedResources, cors({
-        origin: '*'
-    }), error405)
-    .get(rutas.feedResource, cors({
-        origin: '*'
-    }), (req, res) => feedResource.objResource(req, res))
-    .put(rutas.feedResource, cors({
-        origin: '*'
-    }), (req, res) => req.headers.authorization ?
-        req.is('application/json') ?
-            feedResource.updateResouce(req, res) :
-            res.sendStatus(415)
-        : res.sendStatus(401))
-    .delete(rutas.feedResource, cors({
-        origin: '*'
-    }), (req, res) => req.headers.authorization ?
-        feedResource.byeResource(req, res) :
-        res.sendStatus(401))
-    .options(rutas.feedResource, cors({
-        origin: '*',
-        methods: ['GET', 'PUT', 'DELETE', 'OPTIONS']
-    }))
-    .all(rutas.feedResource, cors({
-        origin: '*'
-    }), error405)
+    // .get(rutas.feedResources, cors({
+    //     origin: '*'
+    // }), (req, res) => feedResources.listFeedResources(req, res))
+    // .post(rutas.feedResources, cors({
+    //     origin: '*',
+    //     exposedHeaders: ['Location']
+    // }), (req, res) => req.headers.authorization ?
+    //     req.is('application/json') ?
+    //         feedResources.newResource(req, res) :
+    //         res.sendStatus(415)
+    //     : res.sendStatus(401))
+    // .options(rutas.feedResources, cors({
+    //     origin: '*',
+    //     methods: ['GET', 'POST', 'OPTIONS']
+    // }))
+    // .all(rutas.feedResources, cors({
+    //     origin: '*'
+    // }), error405)
+    // .get(rutas.feedResource, cors({
+    //     origin: '*'
+    // }), (req, res) => feedResource.objResource(req, res))
+    // .put(rutas.feedResource, cors({
+    //     origin: '*'
+    // }), (req, res) => req.headers.authorization ?
+    //     req.is('application/json') ?
+    //         feedResource.updateResouce(req, res) :
+    //         res.sendStatus(415)
+    //     : res.sendStatus(401))
+    // .delete(rutas.feedResource, cors({
+    //     origin: '*'
+    // }), (req, res) => req.headers.authorization ?
+    //     feedResource.byeResource(req, res) :
+    //     res.sendStatus(401))
+    // .options(rutas.feedResource, cors({
+    //     origin: '*',
+    //     methods: ['GET', 'PUT', 'DELETE', 'OPTIONS']
+    // }))
+    // .all(rutas.feedResource, cors({
+    //     origin: '*'
+    // }), error405)
     .get(rutas.feedSubscribers, cors({
         origin: '*'
     }), (req, res) => req.headers.authorization ?
@@ -590,6 +615,18 @@ app
         methods: ['GET', 'OPTIONS']
     }))
     .all(rutas.feedSubscriberAnswers, cors({
+        origin: '*'
+    }), error405)
+    .get(rutas.feedSubscriberAnswerFile, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        answerFiles.downloadFileTeacher(req, res) :
+        res.sendStatus(401))
+    .options(rutas.feedSubscriberAnswerFile, cors({
+        origin: '*',
+        methods: ['GET', 'OPTIONS']
+    }))
+    .all(rutas.feedSubscriberAnswerFile, cors({
         origin: '*'
     }), error405)
     .get(rutas.feedSubscriberAnswer, cors({

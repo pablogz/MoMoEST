@@ -374,6 +374,7 @@
     "alPortapapeles": "Copied to clipboard",
     "alias": "Enter an alias for your account",
     "aliasError": "The alias is not valid",
+    "aliasRequerido": "To perform this action, you must configure an alias in your profile.",
     "quieroAnotar": "I want to be able to create new resources that are publicly visible",
     "codigoProporcionado": "The code provided to me is",
     "codigoProporcionadoError": "If you want to add new resources to MoMoEST (e.g., you are a teacher) and do not have a code, please contact us at \"momoest@gsic.uva.es\".",
@@ -579,5 +580,38 @@
     "architects": "Architects",
     "enlacesExt": "More information",
     "licenciaInfo": "License",
-    "docomomoFuente": "All information about this site comes from the Fundación Docomomo Ibérico."
+    "docomomoFuente": "All information about this site comes from the Fundación Docomomo Ibérico.",
+    "seleccionarPDF": "Select PDF",
+    "sinFicheroSeleccionado": "You must select a PDF file before saving",
+    "ficheroDemasiadoGrande": "The file exceeds the maximum allowed size ({tamanoMaximoFichero} MB)",
+    "@ficheroDemasiadoGrande": {
+        "placeholders": {
+            "tamanoMaximoFichero": { "type": "int" }
+        }
+    },
+    "soloFicherosPDF": "Only PDF files are accepted",
+    "errorSubirFichero": "Error uploading the file. Please try again.",
+    "descargarPDF": "Download PDF",
+    "consentimientoCheckbox": "I have read and understand the information provided and have received answers to all the questions I may have had about this study, and I give my consent to participate in this study.",
+    "consentimientoP1": "I understand that this application is part of the research «Use of MoMoEST to learn about modern style architecture». This research is being carried out in the GSIC-EMIC research group at the Universidad de Valladolid (Spain).",
+    "consentimientoP2a": "I have read all the information provided about this research study (",
+    "consentimientoP2Link": "full study information",
+    "consentimientoP2b": ").",
+    "consentimientoP3": "I agree that my participation in this study may be used for research purposes and I understand that I can withdraw from this research at any time.",
+    "consentimientoP5": "I understand that the use of the educational software applications mentioned below generates activity traces that will be studied for research purposes.",
+    "consentimientoP6": "The data collected during the session will be treated confidentially and stored securely in accordance with Regulation (EU) 2016/679 and Organic Law 3/2018 of 5 December on the Protection of Personal Data and Guarantee of Digital Rights.",
+    "studyInfoTitle": "Study information",
+    "studyInfoIntro": "We are contacting you to inform you about a research study in which you are invited to participate. Your participation is voluntary. Please take the time you need to read the following information and ask any questions you may have. If anything is unclear or if you would like more information, please ask the study's researcher.",
+    "studyInfoSectionA": "RESEACH OBJETIVE",
+    "studyInfoTextA": "This research focuses on the use of an application (MoMoEST) for the study of modern style architecture. MoMoEST will be used to link learning tasks to relevant places in the educational domain and itineraries formed as sequences of learning tasks and places, as well as the development and monitoring of these tasks and itineraries by the students who register in the application. The objective of this study is to promote the study of modern architecture throughout the world through the MoMoEST application.",
+    "studyInfoSectionB": "METHODOLOGY",
+    "studyInfoTextB": "If you agree to participate in this research study, the following will happen:\n• You will be asked to access MoMoEST to follow itineraries and complete learning tasks. You will be able to view the route to follow, basic information about the itinerary and the learning tasks.\n• User authentication is performed through a Google account. This is important for saving the answers you provide to the learning tasks.\n• The tasks you carry out with MoMoEST will be stored in the MoMoEST database. This database is on a private server running within the infrastructure of the UVa Foundation (Science Park).\n• The tasks you complete with MoMoEST will be used for two purposes:\n  (1) Those derived from the teaching activity for which we are not asking your consent.\n  (2) Those derived from the described research (for which we are asking your consent).",
+    "studyInfoSectionC": "DATA COLLECTION",
+    "studyInfoTextC": "All names and nicknames you use during the course, when used for research purposes, will be anonymised and replaced by labels such as «student1», «student2», etc. Any personal information that may appear in the data you generate will be anonymised and replaced (e.g., «Hello, I am Maria» will become «Hello, I am student1»). When using MoMoEST, try not to reveal personal information that is not necessary to carry out the learning task.\nData collected through questionnaires, observations and interviews will be analysed and may be used in scientific publications, as well as for tasks related to the dissemination of research.",
+    "studyInfoSectionD": "PRIVACY",
+    "studyInfoTextD": "The files obtained from this study will remain stored confidentially. No individual identity will be used in any reports or publications obtained from this study. All data will be coded and stored separately from names or any other direct identification of participants. Only research staff will have access to the data collected in the study.\nWe will maintain data security in accordance with Regulation (EU) 2016/679 and Organic Law 3/2018 of 5 December on the Protection of Personal Data and Guarantee of Digital Rights. After this study is completed, data that is not anonymous will be destroyed within a period of 5 years.",
+    "studyInfoSectionE": "BENEFITS OF PARTICIPATION",
+    "studyInfoTextE": "There is no financial benefit you can obtain from your participation in this research study. Some of the indirect benefits of your participation in this study relate to the possibility of improving your group work skills and learning about educational technologies developed in research projects.",
+    "studyInfoSectionG": "CONTACT",
+    "studyInfoTextG": "Name: Pablo García-Zarza (pablogz@uva.es).\n GSIC-EMIC research group, Universidad de Valladolid."
 }

@@ -36,7 +36,7 @@ const { getInfoUser } = require('../../util/bd');
 const winston = require('../../util/winston');
 const SPARQLQuery = require('../../util/sparqlQuery');
 const { ElementOSM } = require('../../util/pojos/osm');
-const { getFeatureCache, InfoFeatureCache, updateFeatureCache, FeatureCache } = require('../../util/cacheFeatures');
+const { getFeatureCache, InfoFeatureCache, updateFeatureCache, FeatureCache, removeFeatureCache, resetBoundsCache } = require('../../util/cacheFeatures');
 const { FeatureWikidata } = require('../../util/pojos/wikidata');
 const { FeatureJCyL } = require('../../util/pojos/jcyl');
 const { FeatureDBpedia } = require('../../util/pojos/dbpedia');
@@ -379,9 +379,7 @@ async function getFeature(req, res) {
                     }
                 }
                 // Envío la información al cliente
-                if (update) {
-                    updateFeatureCache(feature);
-                }
+                updateFeatureCache(feature);
                 const out = [];
                 feature.infoFeature.forEach(infoFeature => {
                     if (infoFeature.dataProvider != null) {
@@ -530,6 +528,8 @@ curl -X PUT -H "Authorization: Bearer adfasd" -H "Content-Type: application/json
                                                                     time: Date.now() - start
                                                                 }
                                                             ));
+                                                            resetBoundsCache();
+                                                            removeFeatureCache(idFeature);
                                                             logHttp(req, 202, 'editFeature', start);
                                                             res.sendStatus(202);
                                                         } else {
@@ -668,9 +668,13 @@ curl -X DELETE --user pablo:pablo "localhost:11110/features/Ttulo_punto"
                                                     //Elimino el feature
                                                     options = options4Request(deleteFeatureRepo(idFeature), true);
                                                     fetch(options.url, options.init)
-                                                        .then(r =>
-                                                            res.sendStatus(r.status)
-                                                        ).catch(error => res.status(500).send(error));
+                                                        .then(r => {
+                                                            if (r.status >= 200 && r.status < 300) {
+                                                                resetBoundsCache();
+                                                                removeFeatureCache(idFeature);
+                                                            }
+                                                            res.sendStatus(r.status);
+                                                        }).catch(error => res.status(500).send(error));
                                                 } else {
                                                     res.status(401).send('This feature has associated tasks or itineraries');
                                                 }

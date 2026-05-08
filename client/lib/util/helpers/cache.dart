@@ -358,9 +358,13 @@ class MapData {
         (await MyApp.preferencesWithCache).getStringList(MyApp.TILES_KEY);
     if (lst != null && lst.isNotEmpty) {
       for (String l in lst) {
-        Map<String, dynamic> tfJson2 = jsonDecode(l);
-        TeselaFeature tf = TeselaFeature.fromJSON(tfJson2);
-        _teselaFeature.add(tf);
+        try {
+          Map<String, dynamic> tfJson2 = jsonDecode(l);
+          TeselaFeature tf = TeselaFeature.fromJSON(tfJson2);
+          _teselaFeature.add(tf);
+        } catch (_) {
+          // Tesela corrupta en caché, se descarta
+        }
       }
       totalTiles = _teselaFeature.length;
     }

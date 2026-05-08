@@ -1117,10 +1117,8 @@ WITH {{{pg}}} DELETE WHERE {
 function borraAlias(uid, alias) {
     return Mustache.render(
         `WITH {{{pg}}} DELETE WHERE {
-DELETE DATA {
-GRAPH {{{pg}}} {
 <{{{id}}}> rdfs:label '''{{{alias}}}''' .
-}}`,
+}`,
         { pg: primaryGraph, id: `http://moult.gsic.uva.es/data/${uid}`, alias: alias }
     ).replace(/\s+/g, ' ');
 }

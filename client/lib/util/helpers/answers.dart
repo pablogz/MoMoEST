@@ -119,8 +119,7 @@ class Answer {
             _hasExtraText = false;
           } else {
             if (data['answer'] is Map) {
-              _answer['answer'] = data['answer']['answer'];
-              _answer['timestamp'] = data['answer']['timestamp'];
+              (data['answer'] as Map).forEach((k, v) => _answer[k] = v);
               if (data['extraText'] != null) {
                 _answer['extraText'] = data['extraText'];
                 _hasExtraText = true;
@@ -288,13 +287,10 @@ class Answer {
         _hasExtraText = false;
       } else {
         if (answerS is Map) {
-          _answer['answer'] = answerS['answer'];
-          _answer['timestamp'] = answerS['timestamp'];
+          _answer.clear();
+          answerS.forEach((k, v) => _answer[k] = v);
           _hasAnswer = true;
-          if (answerS['extraText'] != null) {
-            _answer['extraText'] = answerS['extraText'];
-            _hasExtraText = true;
-          }
+          _hasExtraText = _answer.containsKey('extraText');
         } else {
           throw AnswerException("Problem with answerS");
         }

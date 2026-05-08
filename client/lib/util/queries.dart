@@ -22,6 +22,11 @@ class Queries {
   static Uri newAnswer() =>
       Uri.parse('${ConfigXest.addServer}/users/user/answers');
   static Uri getAnswers() => newAnswer();
+  // POST uploadFile answer / GET download PDF
+  static Uri uploadAnswerFile() =>
+      Uri.parse('${ConfigXest.addServer}/users/user/answers/files');
+  static Uri downloadAnswerFile(String fileId) =>
+      Uri.parse('${ConfigXest.addServer}/users/user/answers/files/$fileId');
   // GET/PUT PREFERENCES
   static Uri preferences() =>
       Uri.parse('${ConfigXest.addServer}/users/user/preferences');
@@ -179,6 +184,10 @@ class Queries {
   static Uri feedAnswer(String idFeed, String idSubscriber, String idAnswer) =>
       Uri.parse(
           '${ConfigXest.addServer}/feeds/$idFeed/subscribers/$idSubscriber/answers/$idAnswer/');
+  // GET download PDF (teacher or student via feed context)
+  static Uri feedAnswerFile(String idFeed, String idSubscriber, String fileId) =>
+      Uri.parse(
+          '${ConfigXest.addServer}/feeds/$idFeed/subscribers/$idSubscriber/answers/files/$fileId');
   // PUT, DELETE
   static Uri feedTeacher(String idFeed, String idTeacher) =>
       Uri.parse('${ConfigXest.addServer}/feeds/$idFeed/teachers/$idTeacher');

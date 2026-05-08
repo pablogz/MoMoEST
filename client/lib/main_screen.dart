@@ -1978,6 +1978,13 @@ class _MyMap extends State<MyMap> {
             return FloatingActionButton.extended(
               heroTag: Auxiliar.mainFabHero,
               onPressed: () async {
+                if (UserXEST.userXEST.alias == null ||
+                    UserXEST.userXEST.alias!.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(appLoca.aliasRequerido)),
+                  );
+                  return;
+                }
                 Feed? feedSubscribed = await Navigator.push(
                   context,
                   MaterialPageRoute<Feed>(
