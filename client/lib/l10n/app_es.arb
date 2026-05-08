@@ -324,7 +324,7 @@
     "alias": "Introduce una alias para tu cuenta",
     "aliasError": "El alias no es válido",
     "aliasRequerido": "Para realizar esta acción debes configurar un alias en tu perfil.",
-    "quieroAnotar": "Quiero poder crear recursos que sean visibles de forma pública",
+    "quieroAnotar": "Quiero tener una cuenta de docente para que los recursos que agregue sean visibles de forma pública",
     "codigoProporcionado": "El código que me han proporcionado es",
     "codigoProporcionadoError": "Si quieres agregar nuevos recursos a MoMoEST (por ejemplo, eres un docente) y no tienes un código, contacta con nosotros a través de \"momoest@gsic.uva.es\".",
     "descripcion": "Introduce tu descripción",

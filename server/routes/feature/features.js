@@ -10,7 +10,7 @@ const { getInfoUser } = require('../../util/bd');
 const winston = require('../../util/winston');
 const { ElementOSM } = require('../../util/pojos/osm');
 const { FeatureLocalRepo, FeatureLocalDocomomo } = require('../../util/pojos/localRepo');
-const { updateFeatureCache, FeatureCache, InfoFeatureCache } = require('../../util/cacheFeatures');
+const { boundsKey, getBoundsCache, setBoundsCache, resetBoundsCache } = require('../../util/cacheFeatures');
 const Config = require('../../util/config');
 const SPARQLQuery = require('../../util/sparqlQuery');
 // const { log } = require('winston');
@@ -58,6 +58,12 @@ async function getFeatures(req, res) {
         if (bounds.north - bounds.south > 0.5 || Math.abs(bounds.east - bounds.west) > 0.5) {
             throw new Error('The distance between the ends of the bound has to be less than 0.5 degrees');
         } else {
+            const cacheKey = boundsKey(bounds, interval);
+            const cachedResult = getBoundsCache(cacheKey);
+            if (cachedResult !== null) {
+                logHttp(req, cachedResult.length > 0 ? 200 : 204, 'getFeatures', start);
+                return cachedResult.length > 0 ? res.send(cachedResult) : res.sendStatus(204);
+            }
             const interT = Date.now() - start;
             const listPromise = [];
             const options = options4RequestOSM(getInfoFeaturesOSM(bounds));
@@ -211,6 +217,9 @@ async function getFeatures(req, res) {
                         time: Date.now() - start
                     }
                 ));
+                if (dataOSM !== null) {
+                    setBoundsCache(cacheKey, out);
+                }
                 if (out.length > 0) {
                     logHttp(req, 200, 'getFeatures', start);
                     res.send(out);
@@ -238,25 +247,25 @@ async function getFeatures(req, res) {
     }
 }
 
-function widthTesela(difL) {
-    let widthLat = 0;
-    let prevWidth = 361;
-    for (let i = 1; i < 20; i++) {
-        let p = difL / i;
-        if (p == 1) {
-            widthLat = p;
-            break;
-        } else {
-            if (p > 1) {
-                prevWidth = p;
-            } else {
-                widthLat = prevWidth;
-                break;
-            }
-        }
-    }
-    return widthLat;
-}
+// function widthTesela(difL) {
+//     let widthLat = 0;
+//     let prevWidth = 361;
+//     for (let i = 1; i < 20; i++) {
+//         let p = difL / i;
+//         if (p == 1) {
+//             widthLat = p;
+//             break;
+//         } else {
+//             if (p > 1) {
+//                 prevWidth = p;
+//             } else {
+//                 widthLat = prevWidth;
+//                 break;
+//             }
+//         }
+//     }
+//     return widthLat;
+// }
 
 /**
  *
@@ -366,6 +375,7 @@ curl -X POST --user pablo:pablo -H "Content-Type: application/json" -d "{\"lat\"
                                                         time: Date.now() - start
                                                     }
                                                 ));
+                                                resetBoundsCache();
                                                 logHttp(req, 201, 'newFeature', start);
                                                 res.location(idFeature).sendStatus(201);
                                             } else {

@@ -353,6 +353,8 @@ class _NewUser extends State<NewUser> {
               ? () async {
                   if (_keyNewUser.currentState!.validate()) {
                     Map<String, dynamic> obj = {};
+                    obj['confConsentimientoInformado'] =
+                        DateTime.now().toUtc().toString();
                     if (_alias.trim().isNotEmpty && _entiendoAliasPublico) {
                       obj['alias'] = _alias.trim();
                       obj['confAliasLOD'] = _confAliasLOD;
@@ -750,7 +752,8 @@ class _EditUser extends State<EditUser> {
       _entiendoAliasPublico,
       _bloqueaEntiendoLOD,
       _bloqueaEntiendoAliasPublico,
-      _consentimientoInformado;
+      _consentimientoInformado,
+      _bloqueaConsentimientoInformado;
   late String _alias, _comment, _codeTeacher, _confTeacherLOD, _confAliasLOD;
   late TapGestureRecognizer _studyInfoRecognizer;
 
@@ -774,7 +777,8 @@ class _EditUser extends State<EditUser> {
     _bloqueaEntiendoLOD = _entiendoLOD;
     _entiendoAliasPublico = _alias.isNotEmpty;
     _bloqueaEntiendoAliasPublico = _entiendoAliasPublico;
-    _consentimientoInformado = false;
+    _consentimientoInformado = UserXEST.userXEST.consentimientoInformado;
+    _bloqueaConsentimientoInformado = _consentimientoInformado;
     _studyInfoRecognizer = TapGestureRecognizer()..onTap = _openStudyInfo;
   }
 
@@ -910,9 +914,13 @@ class _EditUser extends State<EditUser> {
       ),
       CheckboxListTile.adaptive(
         value: _consentimientoInformado,
-        onChanged: (value) {
-          if (value != null) setState(() => _consentimientoInformado = value);
-        },
+        onChanged: _bloqueaConsentimientoInformado
+            ? null
+            : (value) {
+                if (value != null) {
+                  setState(() => _consentimientoInformado = value);
+                }
+              },
         title: Text(appLoca.consentimientoCheckbox),
         controlAffinity: ListTileControlAffinity.leading,
         contentPadding: EdgeInsets.zero,
@@ -1001,6 +1009,7 @@ class _EditUser extends State<EditUser> {
                   }
                 },
           title: Text(appLoca.entiendoLOD),
+          enabled: _boolTeacher || !_bloqueaEntiendoLOD,
         ),
       ),
       CheckboxListTile.adaptive(
@@ -1062,6 +1071,11 @@ class _EditUser extends State<EditUser> {
               ? () async {
                   if (_keyEditUser.currentState!.validate()) {
                     Map<String, dynamic> obj = {};
+                    if (!_bloqueaConsentimientoInformado &&
+                        _consentimientoInformado) {
+                      obj['confConsentimientoInformado'] =
+                          DateTime.now().toUtc().toString();
+                    }
                     if (_alias.trim() != UserXEST.userXEST.alias &&
                         _entiendoAliasPublico) {
                       obj['alias'] = _alias.trim();

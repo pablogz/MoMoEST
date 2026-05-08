@@ -18,6 +18,7 @@ class UserXEST {
   late Set<Rol> _rol;
   late List<PairLang>? _comment;
   late Rol _cRol;
+  late bool _consentimientoInformado;
   List<Answer> answers = [];
   late LastPosition lastMapView;
   late Layers defaultMap;
@@ -31,6 +32,7 @@ class UserXEST {
     _feedId = null;
     _rol = {Rol.guest};
     _cRol = _rol.first;
+    _consentimientoInformado = false;
     lastMapView = LastPosition.empty();
     defaultMap = Layers.carto;
   }
@@ -82,6 +84,8 @@ class UserXEST {
         }
 
         // Opcionales
+        _consentimientoInformado = data.containsKey('consentimientoInformado') &&
+            data['consentimientoInformado'] == true;
         _alias = data.containsKey('alias') && data['alias'] is String
             ? trim(data['alias'])
             : null;
@@ -174,6 +178,8 @@ class UserXEST {
   }
 
   Set<Rol> get rol => _rol;
+
+  bool get consentimientoInformado => _consentimientoInformado;
 
   String? get alias => _alias;
   set alias(String? alias) {

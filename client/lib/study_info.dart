@@ -71,7 +71,7 @@ class StudyInfo extends StatelessWidget {
                   textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
             ),
           if (title.isNotEmpty) const SizedBox(height: 8),
-          SelectableText(content, style: textTheme.bodyMedium),
+          Text(content, style: textTheme.bodyMedium),
         ],
       ),
     );

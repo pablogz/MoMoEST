@@ -1013,7 +1013,7 @@ class NPOI {
 
 class TeselaFeature {
   static const double _lado = 0.1;
-  final int _unDia = 1000 * 60 * 60 * 24;
+  static const int _unDia = 1000 * 60 * 60 * 24;
   late List<Feature> _features;
   late double _north, _west;
   late DateTime _update;
@@ -1061,7 +1061,9 @@ class TeselaFeature {
           LatLng(_north, _west), LatLng(_north - _lado, _west + _lado));
       _update = DateTime.parse(data['update']);
       _features = [...lstFeatures];
-      _onlyMoMo = false;
+      _onlyMoMo = data['onlyMoMo'] as bool? ?? false;
+    } else {
+      throw FormatException('Invalid TeselaFeature JSON data');
     }
   }
 
@@ -1069,6 +1071,7 @@ class TeselaFeature {
         'north': north,
         'west': west,
         'update': update.toIso8601String(),
+        'onlyMoMo': _onlyMoMo,
         'features': features
       };
 

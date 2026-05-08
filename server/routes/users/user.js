@@ -20,6 +20,7 @@ async function getUser(req, res) {
                 id: uid,
                 rol: infoUser.rol,
                 alias: infoUser.alias == null ? undefined : infoUser.alias,
+                consentimientoInformado: !!infoUser.confConsentimientoInformado,
                 lastMapView: infoUser.lpv == null ? undefined : {
                     lat: infoUser.lpv.lat,
                     long: infoUser.lpv.long,
@@ -75,11 +76,12 @@ async function editUser(req, res) {
         const infoUser = await getInfoUser(uid);
         if (infoUser !== null) {
             // Usuario registrado
-            let { alias, code, comment, confAliasLOD, confTeacherLOD } = req.body;
+            let { alias, code, comment, confAliasLOD, confTeacherLOD, confConsentimientoInformado } = req.body;
             alias = _validaString(alias);
             code = _validaString(code);
             confAliasLOD = _validaString(confAliasLOD);
             confTeacherLOD = _validaString(confTeacherLOD);
+            confConsentimientoInformado = _validaString(confConsentimientoInformado);
             const commentV = _parseComment(comment);
             if (typeof code !== 'undefined' && typeof confTeacherLOD !== 'undefined') {
                 // El usuario quiere pasar a ser profesor
@@ -94,13 +96,13 @@ async function editUser(req, res) {
                         logHttp(req, 400, 'editUser', start);
                         return res.status(400).send('Use another alias!');
                     }
-                    const v = await _creaProfe(true, uid, alias, confAliasLOD, code, confTeacherLOD, commentV, infoUser.alias);
+                    const v = await _creaProfe(true, uid, alias, confAliasLOD, code, confTeacherLOD, commentV, infoUser.alias, confConsentimientoInformado);
                     logHttp(req, v === true ? 204 : 500, 'editUser', start);
                     return v === true ? res.sendStatus(204) : res.status(500).send('Internal error!');
                 } else {
                     // El profe ya tenía que tener un alias
                     if (infoUser.alias !== undefined && infoUser.alias !== null) {
-                        const v = await _creaProfe(true, uid, infoUser.alias, infoUser.confAliasLOD, code, confTeacherLOD, commentV);
+                        const v = await _creaProfe(true, uid, infoUser.alias, infoUser.confAliasLOD, code, confTeacherLOD, commentV, undefined, confConsentimientoInformado);
                         logHttp(req, v === true ? 204 : 500, 'editUser', start);
                         return v === true ? res.sendStatus(204) : res.status(500).send('Internal error!');
                     } else {
@@ -115,7 +117,7 @@ async function editUser(req, res) {
                         logHttp(req, 400, 'editUser', start);
                         return res.status(400).send('Use another alias!');
                     }
-                    const v = await _actualizaPersona(uid, alias, confAliasLOD, infoUser.alias);
+                    const v = await _actualizaPersona(uid, alias, confAliasLOD, infoUser.alias, confConsentimientoInformado);
                     if (v !== true) {
                         logHttp(req, 500, 'editUser', start);
                         return res.status(500).send('Internal error!');
@@ -128,13 +130,16 @@ async function editUser(req, res) {
                     logHttp(req, 204, 'editUser', start);
                     return res.sendStatus(204);
                 } else {
+                    if (confConsentimientoInformado !== undefined) {
+                        await updateDocument(uid, DOCUMENT_INFO, { confConsentimientoInformado });
+                    }
                     if (commentV !== null) {
                         const r = await _actualizaDescripcion(uid, commentV);
                         logHttp(req, r ? 204 : 200, 'editUser', start);
                         return res.sendStatus(r ? 204 : 200);
                     }
-                    logHttp(req, 200, 'editUser', start);
-                    return res.sendStatus(200);
+                    logHttp(req, confConsentimientoInformado !== undefined ? 204 : 200, 'editUser', start);
+                    return res.sendStatus(confConsentimientoInformado !== undefined ? 204 : 200);
                 }
             }
         } else {
@@ -253,10 +258,10 @@ async function _aliasUtilizado(alias) {
     }
 }
 
-async function _creaProfe(personaYaCreada, uid, alias, confAliasLOD, code, confTeacherLOD, commentV = undefined, prevAlias = undefined) {
+async function _creaProfe(personaYaCreada, uid, alias, confAliasLOD, code, confTeacherLOD, commentV = undefined, prevAlias = undefined, confConsentimientoInformado = undefined) {
     const personaCreada = personaYaCreada ?
-        await _actualizaPersona(uid, alias, confAliasLOD, prevAlias) :
-        await _creaPersona(uid, alias, confAliasLOD);
+        await _actualizaPersona(uid, alias, confAliasLOD, prevAlias, confConsentimientoInformado) :
+        await _creaPersona(uid, alias, confAliasLOD, confConsentimientoInformado);
     if (personaCreada) {
         const date = _getCurrentUTCString();
         const err = await updateDocument(
@@ -280,7 +285,7 @@ async function _creaProfe(personaYaCreada, uid, alias, confAliasLOD, code, confT
     }
 }
 
-async function _creaPersona(uid, alias = undefined, confAliasLOD = undefined) {
+async function _creaPersona(uid, alias = undefined, confAliasLOD = undefined, confConsentimientoInformado = undefined) {
     const creation = _getCurrentUTCString();
     const doc = {
         _id: DOCUMENT_INFO,
@@ -289,6 +294,7 @@ async function _creaPersona(uid, alias = undefined, confAliasLOD = undefined) {
         creation: creation,
         alias: alias,
         confAliasLOD: confAliasLOD,
+        ...(confConsentimientoInformado !== undefined && { confConsentimientoInformado }),
     };
     const v = await newDocument(uid, doc);
     if (v !== null) {
@@ -311,7 +317,7 @@ async function _creaPersona(uid, alias = undefined, confAliasLOD = undefined) {
     return false;
 }
 
-async function _actualizaPersona(uid, alias = undefined, confAliasLOD = undefined, prevAlias = undefined) {
+async function _actualizaPersona(uid, alias = undefined, confAliasLOD = undefined, prevAlias = undefined, confConsentimientoInformado = undefined) {
     let todoOk = true;
     const date = _getCurrentUTCString();
     const err = await updateDocument(
@@ -321,12 +327,13 @@ async function _actualizaPersona(uid, alias = undefined, confAliasLOD = undefine
             id: uid,
             lastUpdate: date,
             alias: alias,
-            confAliasLOD: confAliasLOD
+            confAliasLOD: confAliasLOD,
+            ...(confConsentimientoInformado !== undefined && { confConsentimientoInformado }),
         }
     );
     if (err !== null && typeof err.acknowledged !== 'undefined' && err.acknowledged) {
         try {
-            if (typeof prevAlias !== 'undefined') {
+            if (prevAlias != null) {
                 const request = borraAlias(uid, prevAlias);
                 const options = options4Request(request, true);
                 const response = await fetch(options.url, options.init);
