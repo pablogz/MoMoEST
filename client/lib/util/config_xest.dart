@@ -1,7 +1,7 @@
 class ConfigXest {
-  static const String version = "0.1.5";
+  static const String version = "0.1.7";
 
-  static const bool development = false;
+  static const bool development = true;
 
   static const String addClient = 'https://momoest.gsic.uva.es';
   static const String graphSpasql = 'http://momoest.gsic.uva.es';

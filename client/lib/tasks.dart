@@ -70,6 +70,7 @@ class _COTask extends State<COTask> {
   List<String> valoresMCQ = [];
   bool showMessageGoBack = false;
   PlatformFile? _selectedPdf;
+  bool _uploading = false;
 
   @override
   void initState() {
@@ -622,6 +623,7 @@ class _COTask extends State<COTask> {
           SnackBar(content: Text(appLoca!.sinFicheroSeleccionado)));
       return;
     }
+    if (mounted) setState(() => _uploading = true);
     try {
       final int now = DateTime.now().millisecondsSinceEpoch;
       answer.time2Complete = now - _startTime;
@@ -630,11 +632,13 @@ class _COTask extends State<COTask> {
 
       final Feature feature =
           Feature.providers(widget.shortIdContainer, await _getFeature());
-      answer.labelContainer = feature.getALabel(lang: MyApp.currentLang);
+      final String featureLabel = feature.getALabel(lang: MyApp.currentLang);
+      answer.labelContainer = featureLabel.isNotEmpty
+          ? featureLabel
+          : task!.getALabel(lang: MyApp.currentLang);
 
       final token = await FirebaseAuth.instance.currentUser!.getIdToken();
-      final request =
-          http.MultipartRequest('POST', Queries.uploadAnswerFile());
+      final request = http.MultipartRequest('POST', Queries.uploadAnswerFile());
       request.headers['Authorization'] = 'Bearer $token';
       request.fields['idContainer'] = answer.idContainer;
       request.fields['idTask'] = answer.idTask;
@@ -659,8 +663,8 @@ class _COTask extends State<COTask> {
           filename: _selectedPdf!.name,
         ));
       } else {
-        smState.showSnackBar(
-            SnackBar(content: Text(appLoca!.errorSubirFichero)));
+        smState
+            .showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));
         return;
       }
 
@@ -694,8 +698,8 @@ class _COTask extends State<COTask> {
         }
 
         smState.clearSnackBars();
-        smState.showSnackBar(
-            SnackBar(content: Text(appLoca!.respuestaGuardada)));
+        smState
+            .showSnackBar(SnackBar(content: Text(appLoca!.respuestaGuardada)));
         if (!ConfigXest.development) {
           await FirebaseAnalytics.instance.logEvent(
             name: "taskCompleted",
@@ -712,17 +716,18 @@ class _COTask extends State<COTask> {
             content: Text(
                 appLoca!.ficheroDemasiadoGrande(ConfigXest.maxFileSizeMB))));
       } else {
-        smState.showSnackBar(
-            SnackBar(content: Text(appLoca!.errorSubirFichero)));
+        smState
+            .showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));
       }
     } catch (error) {
       smState.clearSnackBars();
-      smState.showSnackBar(
-          SnackBar(content: Text(appLoca!.errorSubirFichero)));
+      smState.showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));
       if (!ConfigXest.development) {
         // ignore: use_rethrow_when_possible
         await FirebaseCrashlytics.instance.recordError(error, null);
       }
+    } finally {
+      if (mounted) setState(() => _uploading = false);
     }
   }
 
@@ -732,7 +737,7 @@ class _COTask extends State<COTask> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         OutlinedButton.icon(
-          onPressed: _guardado
+          onPressed: _guardado || _uploading
               ? null
               : () async {
                   FilePickerResult? result =
@@ -844,131 +849,179 @@ class _COTask extends State<COTask> {
           ? null
           : showMessageGoBack
               ? null
-              : _guardado
-                  ? () {
-                      switch (answer.answerType) {
-                        case AnswerType.mcq:
-                        case AnswerType.tf:
-                          Navigator.pop(context);
-                          break;
-                        default:
-                      }
-                    }
-                  : () async {
-                      if (answer.answerType == AnswerType.uploadFile) {
-                        await _saveUploadFile(smState, appLoca);
-                        return;
-                      }
-                      if (_thisKey.currentState!.validate()) {
-                        try {
-                          int now = DateTime.now().millisecondsSinceEpoch;
-                          answer.time2Complete = now - _startTime;
-                          answer.timestamp = now;
+              : _uploading
+                  ? null
+                  : _guardado
+                      ? () {
                           switch (answer.answerType) {
                             case AnswerType.mcq:
-                              String answ = "";
-                              if (task!.singleSelection) {
-                                answ = _selectMCQR;
-                              } else {
-                                List<String> a = [];
-                                for (int i = 0, tama = _selectMCQ.length;
-                                    i < tama;
-                                    i++) {
-                                  if (_selectMCQ[i]) {
-                                    a.add(valoresMCQ[i]);
-                                  }
-                                }
-                                answ = a.toString();
-                              }
-                              if (texto.trim().isNotEmpty) {
-                                answer.answer = {
-                                  'answer': answ,
-                                  'timestamp':
-                                      DateTime.now().millisecondsSinceEpoch,
-                                  'extraText': texto.trim()
-                                };
-                              } else {
-                                answer.answer = answ;
-                              }
-                              UserXEST.userXEST.answers.add(answer);
-                              setState(() => _guardado = true);
-                              break;
-                            case AnswerType.multiplePhotos:
-                              break;
-                            case AnswerType.multiplePhotosText:
-                              break;
-                            case AnswerType.noAnswer:
-                              break;
-                            case AnswerType.photo:
-                              break;
-                            case AnswerType.photoText:
-                              break;
-                            case AnswerType.text:
-                              answer.answer = {
-                                'answer': texto.trim(),
-                                'timestamp':
-                                    DateTime.now().millisecondsSinceEpoch,
-                              };
-                              break;
                             case AnswerType.tf:
-                              if (texto.trim().isNotEmpty) {
-                                answer.answer = {
-                                  'answer': _selectTF,
-                                  'timestamp':
-                                      DateTime.now().millisecondsSinceEpoch,
-                                  'extraText': texto.trim()
-                                };
-                              } else {
-                                answer.answer = _selectTF;
-                              }
-                              UserXEST.userXEST.answers.add(answer);
-                              setState(() => _guardado = true);
-                              break;
-                            case AnswerType.video:
-                              break;
-                            case AnswerType.videoText:
+                              Navigator.pop(context);
                               break;
                             default:
                           }
-                          answer.commentTask =
-                              task!.getAComment(lang: MyApp.currentLang);
+                        }
+                      : () async {
+                          if (answer.answerType == AnswerType.uploadFile) {
+                            await _saveUploadFile(smState, appLoca);
+                            return;
+                          }
+                          if (_thisKey.currentState!.validate()) {
+                            try {
+                              int now = DateTime.now().millisecondsSinceEpoch;
+                              answer.time2Complete = now - _startTime;
+                              answer.timestamp = now;
+                              switch (answer.answerType) {
+                                case AnswerType.mcq:
+                                  String answ = "";
+                                  if (task!.singleSelection) {
+                                    answ = _selectMCQR;
+                                  } else {
+                                    List<String> a = [];
+                                    for (int i = 0, tama = _selectMCQ.length;
+                                        i < tama;
+                                        i++) {
+                                      if (_selectMCQ[i]) {
+                                        a.add(valoresMCQ[i]);
+                                      }
+                                    }
+                                    answ = a.toString();
+                                  }
+                                  if (texto.trim().isNotEmpty) {
+                                    answer.answer = {
+                                      'answer': answ,
+                                      'timestamp':
+                                          DateTime.now().millisecondsSinceEpoch,
+                                      'extraText': texto.trim()
+                                    };
+                                  } else {
+                                    answer.answer = answ;
+                                  }
+                                  UserXEST.userXEST.answers.add(answer);
+                                  setState(() => _guardado = true);
+                                  break;
+                                case AnswerType.multiplePhotos:
+                                  break;
+                                case AnswerType.multiplePhotosText:
+                                  break;
+                                case AnswerType.noAnswer:
+                                  break;
+                                case AnswerType.photo:
+                                  break;
+                                case AnswerType.photoText:
+                                  break;
+                                case AnswerType.text:
+                                  answer.answer = {
+                                    'answer': texto.trim(),
+                                    'timestamp':
+                                        DateTime.now().millisecondsSinceEpoch,
+                                  };
+                                  break;
+                                case AnswerType.tf:
+                                  if (texto.trim().isNotEmpty) {
+                                    answer.answer = {
+                                      'answer': _selectTF,
+                                      'timestamp':
+                                          DateTime.now().millisecondsSinceEpoch,
+                                      'extraText': texto.trim()
+                                    };
+                                  } else {
+                                    answer.answer = _selectTF;
+                                  }
+                                  UserXEST.userXEST.answers.add(answer);
+                                  setState(() => _guardado = true);
+                                  break;
+                                case AnswerType.video:
+                                  break;
+                                case AnswerType.videoText:
+                                  break;
+                                default:
+                              }
+                              answer.commentTask =
+                                  task!.getAComment(lang: MyApp.currentLang);
 
-                          Feature feature = Feature.providers(
-                              widget.shortIdContainer, await _getFeature());
+                              Feature feature = Feature.providers(
+                                  widget.shortIdContainer, await _getFeature());
 
-                          answer.labelContainer =
-                              feature.getALabel(lang: MyApp.currentLang);
-                          http
-                              .post(Queries.newAnswer(),
-                                  headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization':
-                                        'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
-                                  },
-                                  body: json.encode(answer.toMap()))
-                              .then((response) async {
-                            switch (response.statusCode) {
-                              case 201:
-                                String idAnswer = response.headers['location']!;
-                                answer.id = idAnswer;
-                                if (UserXEST.userXEST.hasFeedEnable) {
-                                  String idAnswerFeed =
-                                      idAnswer.split('/').last;
-                                  http
-                                      .put(
-                                          Queries.feedAnswer(
-                                              Auxiliar.id2shortId(
-                                                  UserXEST.userXEST.feed)!,
-                                              UserXEST.userXEST.id,
-                                              idAnswerFeed),
-                                          headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization':
-                                                'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
-                                          },
-                                          body: json.encode({}))
-                                      .then(
-                                    (value) async {
+                              answer.labelContainer =
+                                  feature.getALabel(lang: MyApp.currentLang);
+                              http
+                                  .post(Queries.newAnswer(),
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization':
+                                            'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
+                                      },
+                                      body: json.encode(answer.toMap()))
+                                  .then((response) async {
+                                switch (response.statusCode) {
+                                  case 201:
+                                    String idAnswer =
+                                        response.headers['location']!;
+                                    answer.id = idAnswer;
+                                    if (UserXEST.userXEST.hasFeedEnable) {
+                                      String idAnswerFeed =
+                                          idAnswer.split('/').last;
+                                      http
+                                          .put(
+                                              Queries.feedAnswer(
+                                                  Auxiliar.id2shortId(
+                                                      UserXEST.userXEST.feed)!,
+                                                  UserXEST.userXEST.id,
+                                                  idAnswerFeed),
+                                              headers: {
+                                                'Content-Type':
+                                                    'application/json',
+                                                'Authorization':
+                                                    'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
+                                              },
+                                              body: json.encode({}))
+                                          .then(
+                                        (value) async {
+                                          smState.clearSnackBars();
+                                          smState.showSnackBar(SnackBar(
+                                            content: Text(
+                                                appLoca!.respuestaGuardada),
+                                          ));
+                                          setState(() {
+                                            _guardado = true;
+                                          });
+                                          if (!ConfigXest.development) {
+                                            await FirebaseAnalytics.instance
+                                                .logEvent(
+                                              name: "taskCompleted",
+                                              parameters: {
+                                                "feature":
+                                                    widget.shortIdContainer,
+                                                "task": widget.shortIdTask
+                                              },
+                                            ).then((__) {
+                                              FirebaseAnalytics.instance
+                                                  .logEvent(
+                                                name: "answerAddedFeed",
+                                                parameters: {
+                                                  "idFeed": Auxiliar.id2shortId(
+                                                      UserXEST.userXEST.feed)!,
+                                                  "idStudent":
+                                                      UserXEST.userXEST.id,
+                                                  "idAnswer": idAnswerFeed
+                                                },
+                                              ).then((_) {
+                                                if (task!.aT !=
+                                                        AnswerType.mcq &&
+                                                    mounted) {
+                                                  GoRouter.of(context).pop();
+                                                }
+                                              });
+                                            });
+                                          } else {
+                                            if (task!.aT != AnswerType.mcq) {
+                                              GoRouter.of(context).pop();
+                                            }
+                                          }
+                                        },
+                                      );
+                                    } else {
                                       smState.clearSnackBars();
                                       smState.showSnackBar(SnackBar(
                                         content:
@@ -985,78 +1038,50 @@ class _COTask extends State<COTask> {
                                             "feature": widget.shortIdContainer,
                                             "task": widget.shortIdTask
                                           },
-                                        ).then((__) {
-                                          FirebaseAnalytics.instance.logEvent(
-                                            name: "answerAddedFeed",
-                                            parameters: {
-                                              "idFeed": Auxiliar.id2shortId(
-                                                  UserXEST.userXEST.feed)!,
-                                              "idStudent": UserXEST.userXEST.id,
-                                              "idAnswer": idAnswerFeed
-                                            },
-                                          ).then((_) {
-                                            if (task!.aT != AnswerType.mcq &&
-                                                mounted) {
-                                              GoRouter.of(context).pop();
-                                            }
-                                          });
+                                        ).then((_) {
+                                          if (task!.aT != AnswerType.mcq &&
+                                              mounted) {
+                                            GoRouter.of(context).pop();
+                                          }
                                         });
                                       } else {
                                         if (task!.aT != AnswerType.mcq) {
                                           GoRouter.of(context).pop();
                                         }
                                       }
-                                    },
-                                  );
-                                } else {
-                                  smState.clearSnackBars();
-                                  smState.showSnackBar(SnackBar(
-                                    content: Text(appLoca!.respuestaGuardada),
-                                  ));
-                                  setState(() {
-                                    _guardado = true;
-                                  });
-                                  if (!ConfigXest.development) {
-                                    await FirebaseAnalytics.instance.logEvent(
-                                      name: "taskCompleted",
-                                      parameters: {
-                                        "feature": widget.shortIdContainer,
-                                        "task": widget.shortIdTask
-                                      },
-                                    ).then((_) {
-                                      if (task!.aT != AnswerType.mcq &&
-                                          mounted) {
-                                        GoRouter.of(context).pop();
-                                      }
-                                    });
-                                  } else {
-                                    if (task!.aT != AnswerType.mcq) {
-                                      GoRouter.of(context).pop();
                                     }
-                                  }
+                                    break;
+                                  default:
                                 }
-                                break;
-                              default:
+                              }).onError((error, stackTrace) async {
+                                if (ConfigXest.development) {
+                                  debugPrint(error.toString());
+                                } else {
+                                  await FirebaseCrashlytics.instance
+                                      .recordError(error, stackTrace);
+                                }
+                              });
+                            } catch (error) {
+                              smState.clearSnackBars();
+                              smState.showSnackBar(SnackBar(
+                                content: Text(error.toString()),
+                              ));
                             }
-                          }).onError((error, stackTrace) async {
-                            if (ConfigXest.development) {
-                              debugPrint(error.toString());
-                            } else {
-                              await FirebaseCrashlytics.instance
-                                  .recordError(error, stackTrace);
-                            }
-                          });
-                        } catch (error) {
-                          smState.clearSnackBars();
-                          smState.showSnackBar(SnackBar(
-                            content: Text(error.toString()),
-                          ));
-                        }
-                      }
-                    },
-      label: _guardado ? Text(appLoca!.finRevision) : Text(appLoca!.guardar),
-      icon:
-          _guardado ? const Icon(Icons.navigate_next) : const Icon(Icons.save),
+                          }
+                        },
+      label: _uploading
+          ? const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2))
+          : _guardado
+              ? Text(appLoca!.finRevision)
+              : Text(appLoca!.guardar),
+      icon: _uploading
+          ? const SizedBox.shrink()
+          : _guardado
+              ? const Icon(Icons.navigate_next)
+              : const Icon(Icons.save),
     ));
     // TODO REMOVE
     switch (task!.aT) {
@@ -1072,7 +1097,7 @@ class _COTask extends State<COTask> {
             child: OutlinedButton.icon(
               onPressed: null,
               icon: const Icon(Icons.camera_alt),
-              label: Text(appLoca.abrirCamara),
+              label: Text(appLoca!.abrirCamara),
             ),
           ),
           FilledButton.icon(
@@ -1107,622 +1132,6 @@ class _COTask extends State<COTask> {
     );
   }
 }
-
-// class _COTask extends State<COTask> {
-//   late bool _selectTF, _guardado;
-//   late List<bool> _selectMCQ;
-//   late String _selectMCQR;
-//   late GlobalKey<FormState> _thisKey, _thisKeyMCQ;
-//   late Answer answer;
-//   late bool textoObligatorio;
-//   late String texto;
-//   late int _startTime;
-//   List<String> valoresMCQ = [];
-
-//   @override
-//   void initState() {
-//     _thisKey = GlobalKey<FormState>();
-//     _thisKeyMCQ = GlobalKey<FormState>();
-//     _guardado = false;
-//     _startTime = DateTime.now().millisecondsSinceEpoch;
-//     switch (widget.task.aT) {
-//       case AnswerType.mcq:
-//       case AnswerType.multiplePhotos:
-//       case AnswerType.photo:
-//       case AnswerType.noAnswer:
-//       case AnswerType.tf:
-//       case AnswerType.video:
-//         textoObligatorio = false;
-//         break;
-//       case AnswerType.multiplePhotosText:
-//       case AnswerType.photoText:
-//       case AnswerType.text:
-//       case AnswerType.videoText:
-//         textoObligatorio = true;
-//         break;
-//       default:
-//         break;
-//     }
-//     if (widget.answer == null) {
-//       answer =
-//           Answer.withoutAnswer(widget.poi.id, widget.task.id, widget.task.aT);
-//       answer.poi = widget.poi;
-//       answer.task = widget.task;
-//       if (widget.task.aT == AnswerType.tf) {
-//         _selectTF = Random.secure().nextBool();
-//       }
-//       if (widget.task.aT == AnswerType.mcq) {
-//         int tama =
-//             widget.task.distractors.length + widget.task.correctMCQ.length;
-//         _selectMCQ = widget.task.singleSelection
-//             ? List<bool>.generate(tama, (index) => index == 0)
-//             : List<bool>.filled(tama, false);
-//         for (PairLang ele in widget.task.distractors) {
-//           valoresMCQ.add(ele.value);
-//         }
-//         for (PairLang ele in widget.task.correctMCQ) {
-//           valoresMCQ.add(ele.value);
-//         }
-//         valoresMCQ.shuffle();
-//         _selectMCQR = valoresMCQ.first;
-//       }
-//       texto = '';
-//       answer.labelPoi = widget.poi.labelLang(MyApp.currentLang) ??
-//           widget.poi.labelLang('es') ??
-//           widget.poi.labels.first.value;
-//       answer.commentTask = widget.task.commentLang(MyApp.currentLang) ??
-//           widget.task.commentLang('es') ??
-//           widget.task.comments.first.value;
-//     } else {
-//       answer = widget.answer!;
-//       answer.poi = widget.poi;
-//       answer.task = widget.task;
-//       switch (answer.answerType) {
-//         case AnswerType.mcq:
-//         case AnswerType.multiplePhotos:
-//         case AnswerType.noAnswer:
-//         case AnswerType.photo:
-//         case AnswerType.tf:
-//         case AnswerType.video:
-//           if (answer.hasAnswer && answer.hasExtraText) {
-//             texto = answer.answer['extraText'];
-//           } else {
-//             texto = '';
-//           }
-//           break;
-//         case AnswerType.multiplePhotosText:
-//         case AnswerType.photoText:
-//         case AnswerType.text:
-//         case AnswerType.videoText:
-//           if (answer.hasAnswer) {
-//             texto = answer.answer['answer'];
-//           } else {
-//             texto = '';
-//           }
-//           break;
-//         default:
-//           texto = '';
-//       }
-//     }
-//     super.initState();
-//   }
-
-//   @override
-//   void dispose() {
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: CustomScrollView(
-//         slivers: [
-//           SliverAppBar(
-//             title: Text(
-//               widget.vistaPrevia
-//                   ? AppLocalizations.of(context)!.vistaPrevia
-//                   : widget.task.hasLabel
-//                       ? widget.task.labelLang(MyApp.currentLang) ??
-//                           widget.task.labelLang('es') ??
-//                           widget.task.labels.first.value
-//                       : AppLocalizations.of(context)!.realizaTarea,
-//               overflow: TextOverflow.ellipsis,
-//               maxLines: 2,
-//             ),
-//           ),
-//           widgetInfoTask(),
-//           widgetSolveTask(),
-//           widgetButtons(),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget widgetInfoTask() {
-//     List<Widget> lista = [
-//       HtmlWidget(
-//         widget.task.commentLang(MyApp.currentLang) ??
-//             widget.task.commentLang('es') ??
-//             widget.task.comments.first.value,
-//         factoryBuilder: () => MyWidgetFactory(),
-//         textStyle: Theme.of(context).textTheme.titleMedium,
-//       )
-//     ];
-//     return SliverPadding(
-//       padding: const EdgeInsets.only(top: 40, bottom: 20, left: 10, right: 10),
-//       sliver: SliverList(
-//         delegate: SliverChildBuilderDelegate(
-//           (context, index) => Center(
-//             child: Container(
-//               constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-//               child: lista.elementAt(index),
-//             ),
-//           ),
-//           childCount: lista.length,
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget widgetSolveTask() {
-//     List<Widget> lista = [];
-//     AppLocalizations? appLoca = AppLocalizations.of(context);
-//     ThemeData td = Theme.of(context);
-//     Widget cuadrotexto = Form(
-//       key: _thisKey,
-//       child: TextFormField(
-//         maxLines: textoObligatorio ? 5 : 2,
-//         initialValue: texto,
-//         decoration: InputDecoration(
-//             border: const OutlineInputBorder(),
-//             labelText: textoObligatorio
-//                 ? appLoca!.respondePreguntaTextualLabel
-//                 : appLoca!.notasOpcionalesLabel,
-//             hintText: textoObligatorio
-//                 ? appLoca.respondePreguntaTextual
-//                 : appLoca.notasOpcionales,
-//             hintMaxLines: 2,
-//             hintStyle: const TextStyle(overflow: TextOverflow.ellipsis)),
-//         textCapitalization: TextCapitalization.sentences,
-//         keyboardType: TextInputType.text,
-//         validator: (value) {
-//           if (value != null) {
-//             if (textoObligatorio) {
-//               if (value.trim().isNotEmpty) {
-//                 texto = value.trim();
-//                 return null;
-//               } else {
-//                 return appLoca.respondePreguntaTextual;
-//               }
-//             } else {
-//               texto = value.trim();
-//               return null;
-//             }
-//           } else {
-//             return appLoca.respondePreguntaTextual;
-//           }
-//         },
-//       ),
-//     );
-
-//     switch (widget.task.aT) {
-//       case AnswerType.mcq:
-//         List<Widget> widgetsMCQ = [];
-//         if (widget.task.singleSelection) {
-//           for (int i = 0, tama = valoresMCQ.length; i < tama; i++) {
-//             String valor = valoresMCQ[i];
-//             bool falsa = widget.task.correctMCQ
-//                     .indexWhere((PairLang element) => element.value == valor) ==
-//                 -1;
-//             widgetsMCQ.add(
-//               Container(
-//                 constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-//                 child: Padding(
-//                   padding: const EdgeInsets.only(bottom: 2),
-//                   child: RadioListTile<String>(
-//                     tileColor: _guardado
-//                         ? falsa
-//                             ? td.colorScheme.error
-//                             : td.colorScheme.primary
-//                         : null,
-//                     title: Text(
-//                       valor,
-//                       style: _guardado
-//                           ? td.textTheme.bodyLarge!.copyWith(
-//                               color: falsa
-//                                   ? td.colorScheme.onError
-//                                   : td.colorScheme.onPrimary,
-//                             )
-//                           : td.textTheme.bodyLarge,
-//                     ),
-//                     value: valor,
-//                     groupValue: _selectMCQR,
-//                     onChanged: !_guardado
-//                         ? (String? v) {
-//                             setState(() {
-//                               _selectMCQR = v!;
-//                             });
-//                           }
-//                         : null,
-//                   ),
-//                 ),
-//               ),
-//             );
-//           }
-//         } else {
-//           for (int i = 0, tama = valoresMCQ.length; i < tama; i++) {
-//             String valor = valoresMCQ[i];
-//             bool falsa = widget.task.correctMCQ
-//                     .indexWhere((PairLang element) => element.value == valor) ==
-//                 -1;
-//             widgetsMCQ.add(
-//               Container(
-//                 constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-//                 child: Padding(
-//                   padding: const EdgeInsets.only(bottom: 2),
-//                   child: CheckboxListTile(
-//                     tileColor: _guardado
-//                         ? falsa
-//                             ? td.colorScheme.error
-//                             : td.colorScheme.primary
-//                         : null,
-//                     value: _selectMCQ[i],
-//                     title: Text(
-//                       valor,
-//                       style: _guardado
-//                           ? td.textTheme.bodyLarge!.copyWith(
-//                               color: falsa
-//                                   ? td.colorScheme.onError
-//                                   : td.colorScheme.onPrimary,
-//                             )
-//                           : td.textTheme.bodyLarge,
-//                     ),
-//                     onChanged: (value) => setState(() {
-//                       _selectMCQ[i] = !_selectMCQ[i];
-//                     }),
-//                     enabled: !_guardado,
-//                   ),
-//                 ),
-//               ),
-//             );
-//           }
-//         }
-//         lista.add(
-//           Form(
-//             key: _thisKeyMCQ,
-//             child: Column(mainAxisSize: MainAxisSize.min, children: widgetsMCQ),
-//           ),
-//         );
-//         break;
-//       case AnswerType.multiplePhotos:
-//       case AnswerType.photo:
-//       case AnswerType.multiplePhotosText:
-//       case AnswerType.photoText:
-//         //Visor de fotos
-//         break;
-//       case AnswerType.tf:
-//         bool? rC = widget.task.hasCorrectTF ? widget.task.correctTF : null;
-//         Widget extra = Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Container(
-//               constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-//               child: Padding(
-//                 padding: const EdgeInsets.only(bottom: 2),
-//                 child: RadioListTile<bool>(
-//                     tileColor: _guardado
-//                         ? widget.task.hasCorrectTF
-//                             ? !rC!
-//                                 ? td.colorScheme.error
-//                                 : td.colorScheme.primary
-//                             : null
-//                         : null,
-//                     title: Text(
-//                       appLoca.rbVFVNTVLabel,
-//                       style: _guardado
-//                           ? widget.task.hasCorrectTF
-//                               ? td.textTheme.bodyLarge!.copyWith(
-//                                   color: !rC!
-//                                       ? td.colorScheme.onError
-//                                       : td.colorScheme.onPrimary,
-//                                 )
-//                               : td.textTheme.bodyLarge
-//                           : td.textTheme.bodyLarge,
-//                     ),
-//                     value: true,
-//                     groupValue: _selectTF,
-//                     onChanged: (bool? v) {
-//                       setState(() => _selectTF = v!);
-//                     }),
-//               ),
-//             ),
-//             Container(
-//               constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-//               child: RadioListTile<bool>(
-//                   tileColor: _guardado
-//                       ? widget.task.hasCorrectTF
-//                           ? rC!
-//                               ? td.colorScheme.error
-//                               : td.colorScheme.primary
-//                           : null
-//                       : null,
-//                   title: Text(
-//                     appLoca.rbVFFNTLabel,
-//                     style: _guardado
-//                         ? widget.task.hasCorrectTF
-//                             ? td.textTheme.bodyLarge!.copyWith(
-//                                 color: rC!
-//                                     ? td.colorScheme.onError
-//                                     : td.colorScheme.onPrimary,
-//                               )
-//                             : td.textTheme.bodyLarge
-//                         : td.textTheme.bodyLarge,
-//                   ),
-//                   value: false,
-//                   groupValue: _selectTF,
-//                   onChanged: (bool? v) {
-//                     setState(() => _selectTF = v!);
-//                   }),
-//             ),
-//             const SizedBox(
-//               height: 10,
-//             )
-//           ],
-//         );
-//         lista.add(extra);
-//         break;
-//       case AnswerType.video:
-//       case AnswerType.videoText:
-//         //Visor de vídeo
-//         break;
-//       default:
-//     }
-
-//     lista.add(cuadrotexto);
-
-//     return SliverPadding(
-//       padding: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-//       sliver: SliverList(
-//         delegate: SliverChildBuilderDelegate(
-//           (context, index) => Center(
-//             child: Container(
-//               constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-//               child: lista.elementAt(index),
-//             ),
-//           ),
-//           childCount: lista.length,
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget widgetButtons() {
-//     ScaffoldMessengerState smState = ScaffoldMessenger.of(context);
-//     AppLocalizations? appLoca = AppLocalizations.of(context);
-//     List<Widget> botones = [];
-//     switch (widget.task.aT) {
-//       case AnswerType.multiplePhotos:
-//       case AnswerType.photo:
-//       case AnswerType.multiplePhotosText:
-//       case AnswerType.photoText:
-//       case AnswerType.video:
-//       case AnswerType.videoText:
-//         botones.add(Padding(
-//           padding: const EdgeInsets.only(right: 10),
-//           child: OutlinedButton.icon(
-//             onPressed: null,
-//             //  () async {
-//             //   // List<CameraDescription> cameras = await availableCameras();
-//             //   // await Navigator.push(
-//             //   //     context,
-//             //   //     MaterialPageRoute<Task>(
-//             //   //         builder: (BuildContext context) {
-//             //   //           return TakePhoto(cameras.first);
-//             //   //         },
-//             //   //         fullscreenDialog: true));
-//             //   await availableCameras()
-//             //       .then((cameras) async => await Navigator.push(
-//             //           context,
-//             //           MaterialPageRoute<Task>(
-//             //               builder: (BuildContext context) {
-//             //                 return TakePhoto(cameras.first);
-//             //               },
-//             //               fullscreenDialog: true)));
-//             // },
-//             icon: const Icon(Icons.camera_alt),
-//             label: Text(appLoca!.abrirCamara),
-//           ),
-//         ));
-//         break;
-//       default:
-//     }
-//     botones.add(FilledButton.icon(
-//       onPressed: widget.vistaPrevia
-//           ? null
-//           : _guardado
-//               ? () {
-//                   switch (answer.answerType) {
-//                     case AnswerType.mcq:
-//                     case AnswerType.tf:
-//                       Navigator.pop(context);
-//                       break;
-//                     default:
-//                   }
-//                 }
-//               : () async {
-//                   if (_thisKey.currentState!.validate()) {
-//                     try {
-//                       int now = DateTime.now().millisecondsSinceEpoch;
-//                       answer.time2Complete = now - _startTime;
-//                       answer.timestamp = now;
-//                       switch (answer.answerType) {
-//                         case AnswerType.mcq:
-//                           String answ = "";
-//                           if (widget.task.singleSelection) {
-//                             answ = _selectMCQR;
-//                           } else {
-//                             List<String> a = [];
-//                             for (int i = 0, tama = _selectMCQ.length;
-//                                 i < tama;
-//                                 i++) {
-//                               if (_selectMCQ[i]) {
-//                                 a.add(valoresMCQ[i]);
-//                               }
-//                             }
-//                             answ = a.toString();
-//                           }
-//                           if (texto.trim().isNotEmpty) {
-//                             answer.answer = {
-//                               'answer': answ,
-//                               'timestamp':
-//                                   DateTime.now().millisecondsSinceEpoch,
-//                               'extraText': texto.trim()
-//                             };
-//                           } else {
-//                             answer.answer = answ;
-//                           }
-//                           UserXEST.userXEST.answers.add(answer);
-//                           setState(() => _guardado = true);
-//                           break;
-//                         case AnswerType.multiplePhotos:
-//                           break;
-//                         case AnswerType.multiplePhotosText:
-//                           break;
-//                         case AnswerType.noAnswer:
-//                           break;
-//                         case AnswerType.photo:
-//                           break;
-//                         case AnswerType.photoText:
-//                           break;
-//                         case AnswerType.text:
-//                           answer.answer = texto;
-//                           break;
-//                         case AnswerType.tf:
-//                           if (texto.trim().isNotEmpty) {
-//                             answer.answer = {
-//                               'answer': _selectTF,
-//                               'timestamp':
-//                                   DateTime.now().millisecondsSinceEpoch,
-//                               'extraText': texto.trim()
-//                             };
-//                           } else {
-//                             answer.answer = _selectTF;
-//                           }
-//                           UserXEST.userXEST.answers.add(answer);
-//                           setState(() => _guardado = true);
-//                           break;
-//                         case AnswerType.video:
-//                           break;
-//                         case AnswerType.videoText:
-//                           break;
-//                         default:
-//                       }
-//                       http
-//                           .post(Queries.newAnswer(),
-//                               headers: {
-//                                 'Content-Type': 'application/json',
-//                                 // 'Authorization': Template('Bearer {{{token}}}')
-//                                 //     .renderString({
-//                                 //   'token': await FirebaseAuth.instance.currentUser!
-//                                 //       .getIdToken()
-//                                 // })
-//                               },
-//                               body: json.encode(answer.answer2CHESTServer()))
-//                           .then((response) {
-//                         switch (response.statusCode) {
-//                           case 201:
-//                             String idAnswer = response.headers['location']!;
-//                             answer.id = idAnswer;
-//                             break;
-//                           default:
-//                         }
-//                       }).onError((error, stackTrace) {
-//                         debugPrint(error.toString());
-//                       });
-//                     } catch (error) {
-//                       smState.clearSnackBars();
-//                       smState.showSnackBar(SnackBar(
-//                         content: Text(error.toString()),
-//                       ));
-//                     }
-//                     smState.clearSnackBars();
-//                     smState.showSnackBar(SnackBar(
-//                       content: Text(appLoca!.respuestaGuardada),
-//                       action: kIsWeb
-//                           ? SnackBarAction(
-//                               label: appLoca.descargar,
-//                               onPressed: () {
-//                                 AuxiliarFunctions.downloadAnswerWeb(
-//                                   answer,
-//                                   titlePage: appLoca.tareaCompletadaCHEST,
-//                                 );
-//                               })
-//                           : null,
-//                     ));
-//                     if (!ConfigXest.development) {
-//                       await FirebaseAnalytics.instance.logEvent(
-//                         name: "taskCompleted",
-//                         parameters: {
-//                           "poi": widget.poi.shortId,
-//                           "iri": widget.task.id.split('/').last
-//                         },
-//                       );
-//                     }
-//                   }
-//                 },
-//       label: _guardado ? Text(appLoca!.finRevision) : Text(appLoca!.guardar),
-//       icon:
-//           _guardado ? const Icon(Icons.navigate_next) : const Icon(Icons.save),
-//     ));
-//     // TODO REMOVE
-//     switch (widget.task.aT) {
-//       case AnswerType.multiplePhotos:
-//       case AnswerType.multiplePhotosText:
-//       case AnswerType.photo:
-//       case AnswerType.photoText:
-//       case AnswerType.video:
-//       case AnswerType.videoText:
-//         botones = [
-//           Padding(
-//             padding: const EdgeInsets.only(right: 10),
-//             child: OutlinedButton.icon(
-//               onPressed: null,
-//               icon: const Icon(Icons.camera_alt),
-//               label: Text(appLoca.abrirCamara),
-//             ),
-//           ),
-//           FilledButton.icon(
-//             onPressed: null,
-//             label: Text(appLoca.guardar),
-//             icon: const Icon(Icons.save),
-//           ),
-//         ];
-//         break;
-//       default:
-//     }
-//     List<Widget> lista = [
-//       Row(
-//         mainAxisSize: MainAxisSize.min,
-//         mainAxisAlignment: MainAxisAlignment.end,
-//         children: botones,
-//       )
-//     ];
-//     return SliverPadding(
-//       padding: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
-//       sliver: SliverList(
-//         delegate: SliverChildBuilderDelegate(
-//           (context, index) => Center(
-//             child: Container(
-//               constraints: const BoxConstraints(maxWidth: Auxiliar.maxWidth),
-//               child: lista.elementAt(index),
-//             ),
-//           ),
-//           childCount: lista.length,
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class TakePhoto extends StatefulWidget {
   final CameraDescription cameraDescription;

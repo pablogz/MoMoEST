@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { Buffer } = require('buffer');
 const multer = require('multer');
 const short = require('short-uuid');
 const FirebaseAdmin = require('firebase-admin');
@@ -56,7 +57,9 @@ const _upload = multer({
 });
 
 function multerMiddleware(req, res, next) {
+    winston.info(`multer-in || content-type: ${req.headers['content-type']} || content-length: ${req.headers['content-length']}`);
     _upload.single('file')(req, res, (err) => {
+        winston.info(`multer-out || file=${!!req.file} || err=${err ? String(err) : 'none'}`);
         if (err instanceof multer.MulterError) {
             if (err.code === 'LIMIT_FILE_SIZE') return res.sendStatus(413);
             return res.sendStatus(400);
@@ -96,18 +99,27 @@ async function uploadFile(req, res) {
                     return res.sendStatus(403);
                 }
 
-                // Validate magic bytes (%PDF)
+                // Validate magic bytes (%PDF) and EOF marker (%%EOF)
+                const fileSize = fs.statSync(req.file.path).size;
                 const fd = fs.openSync(req.file.path, 'r');
                 const magic = Buffer.alloc(4);
                 fs.readSync(fd, magic, 0, 4, 0);
+                const eofBuf = Buffer.alloc(Math.min(64, fileSize));
+                fs.readSync(fd, eofBuf, 0, eofBuf.length, fileSize - eofBuf.length);
                 fs.closeSync(fd);
                 if (magic.toString('ascii') !== '%PDF') {
                     _cleanFile(req);
                     logHttp(req, 415, 'uploadFile', start);
                     return res.sendStatus(415);
                 }
+                if (!eofBuf.toString('latin1').includes('%%EOF')) {
+                    _cleanFile(req);
+                    logHttp(req, 422, 'uploadFile', start);
+                    return res.sendStatus(422);
+                }
 
                 const { idContainer, idTask, answerMetadata, labelContainer, commentTask } = req.body;
+                winston.info(`uploadFile-fields || idContainer=${!!idContainer} idTask=${!!idTask} answerMetadata=${!!answerMetadata} labelContainer=${!!labelContainer} commentTask=${!!commentTask}`);
                 if (!idContainer || !idTask || !answerMetadata || !labelContainer || !commentTask) {
                     _cleanFile(req);
                     logHttp(req, 400, 'uploadFile', start);
@@ -163,7 +175,7 @@ async function uploadFile(req, res) {
             .catch(error => {
                 _cleanFile(req);
                 winston.info(Mustache.render(
-                    'uploadFile || {{{error}}} || {{{time}}}',
+                    'uploadFile-catch || {{{error}}} || {{{time}}}',
                     { error: String(error), time: Date.now() - start }
                 ));
                 logHttp(req, 400, 'uploadFile', start);

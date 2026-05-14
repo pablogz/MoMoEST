@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:universal_io/io.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,6 +26,7 @@ import 'package:momoest/util/helpers/user_xest.dart';
 import 'package:momoest/main_screen.dart';
 import 'package:momoest/more_info.dart';
 import 'package:momoest/util/config_xest.dart';
+import 'package:momoest/util/locale_manager.dart';
 import 'package:momoest/util/auxiliar.dart';
 import 'package:momoest/landing_page.dart';
 import 'package:momoest/privacy.dart';
@@ -113,39 +113,32 @@ Future<void> main() async {
   runApp(const MyApp(conectado: true));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key, this.conectado});
 
-  //Idioma app
-  static String currentLang = UserXEST.userXEST.lang;
-  static final List<String> langs = ["es", "en"];
-  static Locale locale = const Locale('en', 'US');
   static LocationUser locationUser = LocationUser(defaultTargetPlatform);
+  static String get currentLang => LocaleManager.currentLang;
   final bool? conectado;
   static final Future<SharedPreferencesWithCache> preferencesWithCache =
       SharedPreferencesWithCache.create(
           cacheOptions:
               const SharedPreferencesWithCacheOptions(allowList: {'tiles'}));
   static const String TILES_KEY = 'tiles';
-  @override
-  Widget build(BuildContext context) {
-    //Idioma de la aplicación
-    String aux = Platform.localeName;
-    if (aux.contains("_")) {
-      aux = aux.split("_")[0];
-    } else {
-      if (aux.contains("-")) {
-        aux = aux.split("-")[0];
-      }
-    }
-    if (langs.contains(aux)) {
-      currentLang = aux;
-    }
 
-    locale = currentLang == 'es'
-        ? const Locale('es', 'ES')
-        : const Locale('en', 'US');
-    final GoRouter router = GoRouter(
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale? _locale;
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    LocaleManager.registerCallback(_setLocale);
+    _initLocale();
+    _router = GoRouter(
       initialLocation: '/',
       // TODO RECUERDA QUE LAS RUTAS COMPARTEN EXTRA!!!
       // PUEDE QUE SEA MEJOR IDEA EN EL 0 METER UN MAPA Y BUSCAR POR CLAVE
@@ -322,12 +315,31 @@ class MyApp extends StatelessWidget {
       ],
     );
 
+  }
+
+  Future<void> _initLocale() async {
+    final saved = await LocaleManager.getSavedLang();
+    if (!mounted) return;
+    LocaleManager.setCurrentLang(saved);
+    setState(() => _locale = LocaleManager.localeFromLang(saved));
+  }
+
+  void _setLocale(String? lang) async {
+    await LocaleManager.saveLang(lang);
+    if (!mounted) return;
+    LocaleManager.setCurrentLang(lang);
+    setState(() => _locale = LocaleManager.localeFromLang(lang));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     TextTheme textTheme =
         Auxiliar.createTextTheme(context, "Manrope", "Manrope");
     MaterialTheme theme = MaterialTheme(textTheme);
 
     return MaterialApp.router(
       title: ConfigXest.nameApp,
+      locale: _locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -336,7 +348,7 @@ class MyApp extends StatelessWidget {
         FlutterQuillLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      routerConfig: router,
+      routerConfig: _router,
       theme: theme.light(),
       darkTheme: theme.dark(),
       highContrastTheme: theme.lightHighContrast(),

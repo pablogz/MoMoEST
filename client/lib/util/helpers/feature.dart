@@ -447,6 +447,18 @@ class Feature {
           }
           addProvider(provider['provider'], dbpedia);
           break;
+        case 'docomomo':
+          Docomomo docomomo = Docomomo(data);
+          lat = docomomo.lat;
+          long = docomomo.long;
+          for (PairLang l in docomomo.labels) {
+            addLabelLang(l);
+          }
+          for (PairLang l in docomomo.comments) {
+            addCommentLang(l);
+          }
+          addProvider(provider['provider'], docomomo);
+          break;
         case 'localRepo':
           LocalRepo localRepo = LocalRepo(data);
           lat = localRepo.lat;
