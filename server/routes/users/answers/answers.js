@@ -4,7 +4,7 @@ const Mustache = require('mustache');
 
 const winston = require('../../../util/winston');
 const { getTokenAuth, logHttp } = require('../../../util/auxiliar');
-const { saveAnswer, getAnswersDB } = require('../../../util/bd');
+const { saveAnswer, getAnswersDB, hideAnswerDB } = require('../../../util/bd');
 const { urlServer } = require('../../../util/config');
 
 async function getAnswers(req, res) {
@@ -19,7 +19,7 @@ async function getAnswers(req, res) {
                     if (answers != null) {
                         if (answers.length > 0) {
                             const response = [];
-                            answers.forEach((answer) => {
+                            answers.filter(a => !a.hidden).forEach((answer) => {
                                 const index = response.findIndex((responseAnswer) =>
                                     responseAnswer.idFeature == answer.idFeature
                                     && responseAnswer.idTask == answer.idTask);
@@ -246,7 +246,56 @@ async function newAnswer(req, res) {
     }
 }
 
+async function hideAnswer(req, res) {
+    const start = Date.now();
+    try {
+        FirebaseAdmin.auth().verifyIdToken(getTokenAuth(req.headers.authorization))
+            .then(async dToken => {
+                const { uid } = dToken;
+                if (uid !== '') {
+                    const { answer } = req.params;
+                    const answers = await getAnswersDB(uid);
+                    if (Array.isArray(answers) && answers.some(a => a.id === answer && !a.hidden)) {
+                        const ok = await hideAnswerDB(uid, answer);
+                        if (ok) {
+                            winston.info(Mustache.render(
+                                'hideAnswer || {{{id}}} || {{{time}}}',
+                                { id: answer, time: Date.now() - start }
+                            ));
+                            logHttp(req, 204, 'hideAnswer', start);
+                            res.sendStatus(204);
+                        } else {
+                            logHttp(req, 409, 'hideAnswer', start);
+                            res.sendStatus(409);
+                        }
+                    } else {
+                        logHttp(req, 404, 'hideAnswer', start);
+                        res.sendStatus(404);
+                    }
+                } else {
+                    logHttp(req, 401, 'hideAnswer', start);
+                    res.sendStatus(401);
+                }
+            }).catch(error => {
+                winston.info(Mustache.render(
+                    'hideAnswer || {{{error}}} || {{{time}}}',
+                    { error: error, time: Date.now() - start }
+                ));
+                logHttp(req, 400, 'hideAnswer', start);
+                res.sendStatus(400);
+            });
+    } catch (error) {
+        winston.error(Mustache.render(
+            'hideAnswer || {{{error}}} || {{{time}}}',
+            { error: error, time: Date.now() - start }
+        ));
+        logHttp(req, 500, 'hideAnswer', start);
+        res.sendStatus(500);
+    }
+}
+
 module.exports = {
     getAnswers,
     newAnswer,
+    hideAnswer,
 }

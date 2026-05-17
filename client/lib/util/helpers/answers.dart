@@ -50,6 +50,7 @@ class Answer {
             data['idFeature'] is String &&
             data['idFeature'].trim().isNotEmpty) {
           _idContainer = data['idFeature'].trim();
+          _hasContainer = true;
         } else {
           throw AnswerException('idContainer');
         }

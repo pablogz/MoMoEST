@@ -24,10 +24,13 @@ class InfoAnswers extends StatefulWidget {
 
 class _InfoAnswers extends State<InfoAnswers> {
   late List<Answer> _answers;
+  late Future<List> _futureAnswers;
+  bool _loaded = false;
 
   @override
   void initState() {
     _answers = [];
+    _futureAnswers = _getAnswers();
     super.initState();
   }
 
@@ -51,21 +54,25 @@ class _InfoAnswers extends State<InfoAnswers> {
           centerTitle: false,
         ),
         FutureBuilder(
-            future: _getAnswers(),
+            future: _futureAnswers,
             builder: (context, snapshop) {
               if (!snapshop.hasError && snapshop.hasData) {
                 Object? dataServer = snapshop.data;
                 if (dataServer != null && dataServer is List) {
-                  _answers = [];
-                  for (var ele in dataServer) {
-                    try {
-                      Answer answer = Answer(ele);
-                      _answers.add(answer);
-                    } catch (error) {
-                      if (ConfigXest.development) debugPrint(error.toString());
+                  if (!_loaded) {
+                    _answers = [];
+                    for (var ele in dataServer) {
+                      try {
+                        Answer answer = Answer(ele);
+                        _answers.add(answer);
+                      } catch (error) {
+                        if (ConfigXest.development)
+                          debugPrint(error.toString());
+                      }
                     }
+                    UserXEST.userXEST.answers = _answers;
+                    _loaded = true;
                   }
-                  UserXEST.userXEST.answers = _answers;
                   return _widgetAnswers();
                 } else {
                   return SliverToBoxAdapter(
@@ -125,7 +132,7 @@ class _InfoAnswers extends State<InfoAnswers> {
 
     List<Widget> lista = [];
     ThemeData td = Theme.of(context);
-    for (Answer answer in UserXEST.userXEST.answers) {
+    for (Answer answer in _answers) {
       String? date;
       if (answer.hasAnswer) {
         date = DateFormat('H:mm d/M/y').format(
@@ -247,6 +254,53 @@ class _InfoAnswers extends State<InfoAnswers> {
                   )
                 : Container(),
             respuesta,
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: Icon(Icons.delete_outline,
+                    color: colorScheme.onTertiaryContainer),
+                tooltip: appLoca.borrarRespuesta,
+                onPressed: () async {
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text(appLoca.borrarRespuesta),
+                      content: Text(appLoca.confirmarBorrarRespuesta),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, false),
+                          child: Text(appLoca.cancelar),
+                        ),
+                        FilledButton(
+                          onPressed: () => Navigator.pop(ctx, true),
+                          child: Text(appLoca.borrar),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirmed == true && mounted) {
+                    final token =
+                        await FirebaseAuth.instance.currentUser!.getIdToken();
+                    final response = await http.delete(
+                      Queries.deleteAnswer(answer.id),
+                      headers: {'Authorization': 'Bearer $token'},
+                    );
+                    if (response.statusCode == 204 && mounted) {
+                      setState(() {
+                        _answers.removeWhere((a) => a.id == answer.id);
+                        UserXEST.userXEST.answers = _answers;
+                      });
+                    } else if (mounted && response.statusCode != 204) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error ${response.statusCode}'),
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ));

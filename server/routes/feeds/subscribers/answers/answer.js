@@ -6,9 +6,8 @@ const { logHttp, shortId2Id, getTokenAuth } = require('../../../../util/auxiliar
 const { InfoUser, FeedsUser } = require('../../../../util/pojos/user');
 const {
     getInfoUser, getFeedsUser, getInfoSubscriber, getAnswersDB, deleteAnswerFeedDB,
-    updateFeedbackAnswer,
-    addAnswerFeedDB } = require('../../../../util/bd');
-const { FeedSubscriber } = require('../../../../util/pojos/feed');
+    updateFeedbackAnswer, addAnswerFeedDB, findCollectionAndFeed } = require('../../../../util/bd');
+const { Feed, FeedSubscriber } = require('../../../../util/pojos/feed');
 
 async function objAnswer(req, res) {
     const start = Date.now();
@@ -65,52 +64,56 @@ async function objAnswer(req, res) {
                                 res.sendStatus(404);
                             }
                         } else {
-                            // También puede pasar que su profesor esté solicitando la respuesta
+                            // También puede pasar que su profesor o co-profesor esté solicitando la respuesta
                             const teacher = new InfoUser(await getInfoUser(uid));
                             if (teacher.isTeacher) {
                                 const feedsUser = new FeedsUser(await getFeedsUser(uid));
-                                const indexFeed = feedsUser.owner.findIndex(f => {
-                                    return f.id === feed;
-                                });
+                                const indexFeed = feedsUser.owner.findIndex(f => f.id === feed);
+                                let subscriberList = null;
                                 if (indexFeed > -1) {
-                                    if (feedsUser.owner.at(indexFeed).subscribers.includes(subscriber)) {
-                                        const promesas = [];
-                                        promesas.push(getAnswersDB(subscriber));
-                                        promesas.push(getInfoSubscriber(subscriber, feed, false));
-                                        const arrayDatos = await Promise.all(promesas);
-                                        if (arrayDatos.at(0) !== null && arrayDatos.at(0) !== undefined && Array.isArray(arrayDatos.at(0)) && arrayDatos.at(0).length > 0) {
-                                            let out = null;
-                                            arrayDatos.at(0).forEach(a => {
-                                                if (arrayDatos.at(1).answers.includes(a.id) && a.id === answer) {
-                                                    out = a;
-                                                }
-                                            });
-                                            if (out !== null) {
-                                                winston.info(Mustache.render('objAnswer || uid: {{{uid}}} subscriber: {{{subscriber}}} feedId: {{{feedId}}} - answer: {{{answer}}} || {{{time}}}',
-                                                    {
-                                                        uid: uid,
-                                                        subscriber: subscriber,
-                                                        feedId: feed,
-                                                        answer: answer,
-                                                        time: Date.now() - start
-                                                    }));
-                                                logHttp(req, 200, 'objAnswer', start);
-                                                res.send(JSON.stringify(out));
-                                            } else {
-                                                logHttp(req, 404, 'objAnswer', start);
-                                                res.sendStatus(404);
-                                            }
-                                        } else {
-                                            logHttp(req, 404, 'objAnswer', start);
-                                            res.sendStatus(404);
+                                    // Es propietario
+                                    subscriberList = feedsUser.owner.at(indexFeed).subscribers;
+                                } else {
+                                    // No es propietario: comprobar si es co-profesor
+                                    const objCollFeed = await findCollectionAndFeed(feed);
+                                    if (objCollFeed !== null) {
+                                        const feedData = new Feed(objCollFeed.dataFeed);
+                                        if (feedData.teachers.some(t => t.uid === uid)) {
+                                            subscriberList = objCollFeed.dataFeed.subscribers;
                                         }
+                                    }
+                                }
+                                if (subscriberList === null) {
+                                    logHttp(req, 401, 'objAnswer', start);
+                                    return res.sendStatus(401);
+                                }
+                                if (!subscriberList.includes(subscriber)) {
+                                    logHttp(req, 400, 'objAnswer', start);
+                                    return res.sendStatus(400);
+                                }
+                                const promesas = [];
+                                promesas.push(getAnswersDB(subscriber));
+                                promesas.push(getInfoSubscriber(subscriber, feed, false));
+                                const arrayDatos = await Promise.all(promesas);
+                                if (arrayDatos.at(0) !== null && arrayDatos.at(0) !== undefined && Array.isArray(arrayDatos.at(0)) && arrayDatos.at(0).length > 0) {
+                                    let out = null;
+                                    arrayDatos.at(0).forEach(a => {
+                                        if (arrayDatos.at(1).answers.includes(a.id) && a.id === answer) {
+                                            out = a;
+                                        }
+                                    });
+                                    if (out !== null) {
+                                        winston.info(Mustache.render('objAnswer || uid: {{{uid}}} subscriber: {{{subscriber}}} feedId: {{{feedId}}} - answer: {{{answer}}} || {{{time}}}',
+                                            { uid, subscriber, feedId: feed, answer, time: Date.now() - start }));
+                                        logHttp(req, 200, 'objAnswer', start);
+                                        res.send(JSON.stringify(out));
                                     } else {
-                                        logHttp(req, 400, 'objAnswer', start);
-                                        res.sendStatus(400);
+                                        logHttp(req, 404, 'objAnswer', start);
+                                        res.sendStatus(404);
                                     }
                                 } else {
-                                    logHttp(req, 401, 'objAnswer', start);
-                                    res.sendStatus(401);
+                                    logHttp(req, 404, 'objAnswer', start);
+                                    res.sendStatus(404);
                                 }
                             } else {
                                 logHttp(req, 401, 'objAnswer', start);

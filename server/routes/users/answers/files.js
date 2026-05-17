@@ -8,9 +8,9 @@ const Mustache = require('mustache');
 
 const winston = require('../../../util/winston');
 const { getTokenAuth, logHttp, shortId2Id } = require('../../../util/auxiliar');
-const { saveAnswer, getAnswerByFile, getInfoUser, getFeedsUser, getInfoSubscriber } = require('../../../util/bd');
+const { saveAnswer, getAnswerByFile, getInfoUser, getFeedsUser, getInfoSubscriber, findCollectionAndFeed } = require('../../../util/bd');
 const { InfoUser, FeedsUser } = require('../../../util/pojos/user');
-const { FeedSubscriber } = require('../../../util/pojos/feed');
+const { Feed, FeedSubscriber } = require('../../../util/pojos/feed');
 const { urlServer, tamaMaxFile } = require('../../../util/config');
 
 const UPLOAD_DIR = path.join(__dirname, '../../../uploads/pdfs');
@@ -302,7 +302,7 @@ async function downloadFileTeacher(req, res) {
                         return res.sendStatus(403);
                     }
                 } else {
-                    // Profesor propietario del canal accediendo al fichero de un estudiante
+                    // Profesor (propietario o co-profesor) accediendo al fichero de un estudiante
                     const teacher = new InfoUser(await getInfoUser(uid));
                     if (!teacher.isTeacher) {
                         logHttp(req, 401, 'downloadFileTeacher', start);
@@ -310,7 +310,18 @@ async function downloadFileTeacher(req, res) {
                     }
                     const feedsUser = new FeedsUser(await getFeedsUser(uid));
                     const feedEntry = feedsUser.owner.find(f => f.id === feed);
-                    if (!feedEntry || !feedEntry.subscribers.includes(subscriber)) {
+                    let subscriberList = feedEntry ? feedEntry.subscribers : null;
+                    if (subscriberList === null) {
+                        // No es propietario: comprobar si es co-profesor
+                        const objCollFeed = await findCollectionAndFeed(feed);
+                        if (objCollFeed !== null) {
+                            const feedData = new Feed(objCollFeed.dataFeed);
+                            if (feedData.teachers.some(t => t.uid === uid)) {
+                                subscriberList = objCollFeed.dataFeed.subscribers;
+                            }
+                        }
+                    }
+                    if (subscriberList === null || !subscriberList.includes(subscriber)) {
                         logHttp(req, 401, 'downloadFileTeacher', start);
                         return res.sendStatus(401);
                     }

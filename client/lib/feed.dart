@@ -675,7 +675,7 @@ class _FormFeedSubscriber extends State<FormFeedSubscriber> {
                                                   ),
                                                 );
                                               }
-                                              Navigator.pop(context);
+                                              Navigator.pop(context, _id);
                                             });
                                           } else {
                                             if (sMState != null) {
@@ -690,7 +690,7 @@ class _FormFeedSubscriber extends State<FormFeedSubscriber> {
                                                 ),
                                               );
                                             }
-                                            Navigator.pop(context);
+                                            Navigator.pop(context, _id);
                                           }
                                           break;
                                         default:
@@ -1709,7 +1709,6 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                       text: subscriber.nAnswers.toString(),
                       style: td.textTheme.bodyLarge!.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: colorScheme.onTertiaryContainer,
                       ),
                     )
                   ]),
@@ -2197,6 +2196,46 @@ class _AnswerUserFeed extends State<AnswersUserFeed> {
     }
   }
 
+  Widget _buildAnswerContent(
+      Answer answer, AppLocalizations appLoca, TextStyle bodyMediumBold) {
+    switch (answer.answerType) {
+      case AnswerType.text:
+        return answer.hasAnswer
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Text(answer.answer['answer'], style: bodyMediumBold))
+            : const SizedBox();
+      case AnswerType.tf:
+        return answer.hasAnswer
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                    '${answer.answer['answer'] ? appLoca.rbVFVNTVLabel : appLoca.rbVFFNTLabel}${answer.hasExtraText ? "\n${answer.answer['extraText']}" : ""}'))
+            : const SizedBox();
+      case AnswerType.mcq:
+        return answer.hasAnswer
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Text(answer.answer['answer'].toString()))
+            : const SizedBox();
+      case AnswerType.uploadFile:
+        return answer.hasAnswer
+            ? Row(mainAxisSize: MainAxisSize.min, children: [
+                Flexible(
+                    child: Text(answer.answer['originalName']?.toString() ?? '',
+                        style: bodyMediumBold,
+                        overflow: TextOverflow.ellipsis)),
+                IconButton(
+                    icon: const Icon(Icons.download),
+                    tooltip: appLoca.descargarPDF,
+                    onPressed: () => _downloadPdfTeacher(answer)),
+              ])
+            : const SizedBox();
+      default:
+        return const SizedBox();
+    }
+  }
+
   Widget _widgetAnswers() {
     double margenLateral =
         Auxiliar.getLateralMargin(MediaQuery.of(context).size.width);
@@ -2209,65 +2248,35 @@ class _AnswerUserFeed extends State<AnswersUserFeed> {
         td.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold);
     ScaffoldMessengerState smState = ScaffoldMessenger.of(context);
 
+    // Agrupar respuestas por tarea (mismo container + tarea = misma pregunta)
+    final Map<String, List<Answer>> grouped = {};
+    for (final a in _subscriber.answers) {
+      grouped.putIfAbsent('${a.idContainer}__${a.idTask}', () => []).add(a);
+    }
+    for (final g in grouped.values) {
+      g.sort((a, b) {
+        final tA = a.hasAnswer ? (a.answer['timestamp'] as int? ?? 0) : 0;
+        final tB = b.hasAnswer ? (b.answer['timestamp'] as int? ?? 0) : 0;
+        return tB.compareTo(tA);
+      });
+    }
+    final sortedGroups = grouped.values.toList()
+      ..sort((gA, gB) {
+        final tA = gA.first.hasAnswer
+            ? (gA.first.answer['timestamp'] as int? ?? 0)
+            : 0;
+        final tB = gB.first.hasAnswer
+            ? (gB.first.answer['timestamp'] as int? ?? 0)
+            : 0;
+        return tB.compareTo(tA);
+      });
+
     List<Widget> respuestas = [];
-    for (Answer answer in _subscriber.answers) {
-      Widget respuesta;
+    for (final group in sortedGroups) {
+      final answer = group.first;
+      final older = group.skip(1).toList();
       String? labelPlace =
           answer.hasLabelContainer ? answer.labelContainer : null;
-      switch (answer.answerType) {
-        case AnswerType.text:
-          respuesta = answer.hasAnswer
-              ? Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    answer.answer['answer'],
-                    style: bodyMediumBold,
-                  ),
-                )
-              : const SizedBox();
-          break;
-        case AnswerType.tf:
-          respuesta = answer.hasAnswer
-              ? Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '${answer.answer['answer'] ? appLoca.rbVFVNTVLabel : appLoca.rbVFFNTLabel}${answer.hasExtraText ? "\n${answer.answer['extraText']}" : ""}',
-                  ),
-                )
-              : const SizedBox();
-          break;
-        case AnswerType.mcq:
-          respuesta = answer.hasAnswer
-              ? Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(answer.answer['answer'].toString()),
-                )
-              : const SizedBox();
-          break;
-        case AnswerType.uploadFile:
-          respuesta = answer.hasAnswer
-              ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        answer.answer['originalName']?.toString() ?? '',
-                        style: bodyMediumBold,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.download),
-                      tooltip: appLoca.descargarPDF,
-                      onPressed: () => _downloadPdfTeacher(answer),
-                    ),
-                  ],
-                )
-              : const SizedBox();
-          break;
-        default:
-          respuesta = const SizedBox();
-      }
       String? date;
       if (answer.hasAnswer) {
         date = DateFormat('H:mm d/M/y').format(
@@ -2290,12 +2299,8 @@ class _AnswerUserFeed extends State<AnswersUserFeed> {
                   ? Padding(
                       padding: EdgeInsets.only(bottom: margenLateral / 2),
                       child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          date,
-                          style: labelMedium,
-                        ),
-                      ),
+                          alignment: Alignment.centerRight,
+                          child: Text(date, style: labelMedium)),
                     )
                   : Container(),
               labelPlace != null
@@ -2307,23 +2312,48 @@ class _AnswerUserFeed extends State<AnswersUserFeed> {
               answer.hasCommentTask
                   ? Padding(
                       padding: EdgeInsets.only(bottom: margenLateral / 2),
-                      child: HtmlWidget(
-                        answer.commentTask,
-                        textStyle: bodyMedium,
-                      ),
+                      child:
+                          HtmlWidget(answer.commentTask, textStyle: bodyMedium),
                     )
                   : Container(),
-              respuesta,
+              _buildAnswerContent(answer, appLoca, bodyMediumBold),
               answer.hasFeedback
                   ? Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: margenLateral / 4),
                       child: HtmlWidget(
-                        '${appLoca.feedback}: ${answer.feedback}',
-                        textStyle: bodyMediumBold,
-                      ),
+                          '${appLoca.feedback}: ${answer.feedback}',
+                          textStyle: bodyMediumBold),
                     )
                   : Container(),
+              if (older.isNotEmpty)
+                ExpansionTile(
+                  tilePadding: EdgeInsets.zero,
+                  title: Text(appLoca.respuestasAnteriores(older.length),
+                      style: labelMedium),
+                  children: older.map((prev) {
+                    final prevDate = prev.hasAnswer
+                        ? DateFormat('H:mm d/M/y').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                prev.answer['timestamp']))
+                        : null;
+                    return Padding(
+                      padding: EdgeInsets.only(
+                          top: margenLateral / 2, bottom: margenLateral / 2),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (prevDate != null)
+                            Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(prevDate, style: labelMedium)),
+                          _buildAnswerContent(prev, appLoca, bodyMediumBold),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
               _feed.owner == UserXEST.userXEST.id
                   ? TextButton.icon(
                       onPressed: () async {

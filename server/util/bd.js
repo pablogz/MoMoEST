@@ -353,7 +353,11 @@ async function getInfoSubscriber(userCol, feedId, nAnswers = true) {
             out.date = subscribed.date;
             if (subscribed.answers !== undefined && Array.isArray(subscribed.answers)) {
                 if (nAnswers) {
-                    out.nAnswers = subscribed.answers.length;
+                    const answersDB = await getAnswersDB(userCol);
+                    const visible = Array.isArray(answersDB)
+                        ? answersDB.filter(a => !a.hidden && subscribed.answers.includes(a.id))
+                        : [];
+                    out.nAnswers = visible.length;
                 } else {
                     out.answers = subscribed.answers;
                 }
@@ -468,6 +472,20 @@ async function getAnswerByFile(userCol, fileName) {
     }
 }
 
+async function hideAnswerDB(userCol, answerId) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(userCol).updateOne(
+            { _id: DOCUMENT_ANSWERS, "answers.id": answerId },
+            { $set: { "answers.$.hidden": true } }
+        );
+        return resultado.modifiedCount === 1;
+    } catch (error) {
+        winston.error('hideAnswerDB:', error);
+        return false;
+    }
+}
+
 async function updateFeedbackAnswer(userCol, dataAnswer) {
     try {
         const db = await connectToDatabase();
@@ -508,6 +526,7 @@ module.exports = {
     addAnswerFeedDB,
     deleteAnswerFeedDB,
     updateFeedbackAnswer,
+    hideAnswerDB,
     addTeacherToFeed,
     removeTeacherFromFeed,
     updateTeachingFeedBD,

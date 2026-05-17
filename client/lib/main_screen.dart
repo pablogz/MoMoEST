@@ -1112,6 +1112,33 @@ class _MyMap extends State<MyMap> {
         response.statusCode == 200 ? json.decode(response.body) : {});
   }
 
+  Future<void> _loadFeedsFromServer() async {
+    if (UserXEST.userXEST.isGuest) return;
+    FeedCache.resetCache();
+    if (mounted) setState(() {});
+    await _getFeedsUser().then((data) {
+      List<Feed> feedL = [];
+      if (data is Map<String, dynamic>) {
+        if (data.containsKey('owner') && data['owner'] is List) {
+          for (Map<String, dynamic> f in data['owner']) {
+            feedL.add(Feed.json(f));
+          }
+        }
+        if (data.containsKey('subscribed') && data['subscribed'] is List) {
+          for (Map<String, dynamic> f in data['subscribed']) {
+            feedL.add(Feed.json(f));
+          }
+        }
+        if (data.containsKey('teaching') && data['teaching'] is List) {
+          for (Map<String, dynamic> f in data['teaching']) {
+            feedL.add(Feed.json(f));
+          }
+        }
+      }
+      if (mounted) setState(() => FeedCache.addAll(feedL));
+    });
+  }
+
   Widget widgetFeeds() {
     ThemeData td = Theme.of(context);
     ColorScheme colorScheme = td.colorScheme;
@@ -1985,15 +2012,17 @@ class _MyMap extends State<MyMap> {
                   );
                   return;
                 }
-                Feed? feedSubscribed = await Navigator.push(
+                String? feedId = await Navigator.push<String>(
                   context,
-                  MaterialPageRoute<Feed>(
+                  MaterialPageRoute<String>(
                       builder: (BuildContext context) => FormFeedSubscriber(),
                       fullscreenDialog: true),
                 );
-                if (feedSubscribed is Feed && mounted) {
-                  GoRouter.of(context)
-                      .push('/home/feeds/${feedSubscribed.shortId}');
+                if (feedId != null && mounted) {
+                  await _loadFeedsFromServer();
+                  if (mounted) {
+                    GoRouter.of(context).push('/home/feeds/$feedId');
+                  }
                 }
               },
               label: Text(appLoca.apuntarmeFeed),
@@ -2189,37 +2218,7 @@ class _MyMap extends State<MyMap> {
         });
         break;
       case 2:
-        // Obtengo los feeds del usuario
-        FeedCache.resetCache();
-        if (UserXEST.userXEST.isNotGuest) {
-          await _getFeedsUser().then((data) {
-            List<Feed> feedL = [];
-            if (data is Map<String, dynamic>) {
-              if (data.containsKey('owner') && data['owner'] is List) {
-                for (Map<String, dynamic> f in data['owner']) {
-                  Feed feed = Feed.json(f);
-                  feedL.add(feed);
-                }
-              }
-              if (data.containsKey('subscribed') &&
-                  data['subscribed'] is List) {
-                for (Map<String, dynamic> f in data['subscribed']) {
-                  Feed feed = Feed.json(f);
-                  feedL.add(feed);
-                }
-              }
-              if (data.containsKey('teaching') && data['teaching'] is List) {
-                for (Map<String, dynamic> f in data['teaching']) {
-                  Feed feed = Feed.json(f);
-                  feedL.add(feed);
-                }
-              }
-            }
-            setState(() {
-              FeedCache.addAll(feedL);
-            });
-          });
-        }
+        await _loadFeedsFromServer();
         break;
       default:
     }

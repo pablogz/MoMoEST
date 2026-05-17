@@ -219,6 +219,14 @@
     "explicaDistancia": "Calculada como la suma de las distancias en línea recta entre los lugares.",
     "explicaRutaSugerida": "La ruta sugerida en el mapa minimiza la distancia entre los extremos.",
     "borrar": "Borrar",
+    "borrarRespuesta": "Borrar respuesta",
+    "confirmarBorrarRespuesta": "¿Estás seguro de que quieres borrar esta respuesta?",
+    "respuestasAnteriores": "{count} respuestas anteriores",
+    "@respuestasAnteriores": {
+        "placeholders": {
+            "count": {"type": "int"}
+        }
+    },
     "cancelar": "Cancelar",
     "preguntaBorrarTarea": "¿De verdad quieres borrar la tarea?",
     "preguntaBorrarPOI": "¿De verdad quieres borrar este lugar?",
