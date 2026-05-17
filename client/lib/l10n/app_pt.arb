@@ -212,6 +212,14 @@
     "explicaDistancia": "Calculado como a soma das distâncias em linha recta entre features.",
     "explicaRutaSugerida": "A rota sugerida no mapa minimiza a distância entre os extremos.",
     "borrar": "Eliminar",
+    "borrarRespuesta": "Apagar resposta",
+    "confirmarBorrarRespuesta": "Tem a certeza de que quer apagar esta resposta?",
+    "respuestasAnteriores": "{count} respostas anteriores",
+    "@respuestasAnteriores": {
+        "placeholders": {
+            "count": {"type": "int"}
+        }
+    },
     "cancelar": "Cancelar",
     "preguntaBorrarTarea": "Tem a certeza de que quer apagar esta tarefa?",
     "preguntaBorrarPOI": "Tem a certeza de que quer apagar a informação deste feature?",

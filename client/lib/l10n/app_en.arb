@@ -269,6 +269,14 @@
     "explicaDistancia": "Calculated as the sum of the straight-line distances between sites.",
     "explicaRutaSugerida": "The suggested route on the map minimizes the distance between the extremes.",
     "borrar": "Delete",
+    "borrarRespuesta": "Delete answer",
+    "confirmarBorrarRespuesta": "Are you sure you want to delete this answer?",
+    "respuestasAnteriores": "{count} previous answers",
+    "@respuestasAnteriores": {
+        "placeholders": {
+            "count": {"type": "int"}
+        }
+    },
     "cancelar": "Cancel",
     "preguntaBorrarTarea": "Are you sure that you want to delete this task?",
     "preguntaBorrarPOI": "Are you sure that you want to delete the information from this site?",

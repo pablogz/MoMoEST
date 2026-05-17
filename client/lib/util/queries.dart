@@ -27,6 +27,8 @@ class Queries {
       Uri.parse('${ConfigXest.addServer}/users/user/answers/files');
   static Uri downloadAnswerFile(String fileId) =>
       Uri.parse('${ConfigXest.addServer}/users/user/answers/files/$fileId');
+  static Uri deleteAnswer(String answerId) =>
+      Uri.parse('${ConfigXest.addServer}/users/user/answers/$answerId');
   // GET/PUT PREFERENCES
   static Uri preferences() =>
       Uri.parse('${ConfigXest.addServer}/users/user/preferences');

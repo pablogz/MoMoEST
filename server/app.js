@@ -351,28 +351,14 @@ app
     .all(rutas.answerFiles, cors({ origin: '*' }), error405)
     .all(rutas.answerFile, cors({ origin: '*' }), error405)
     // ANSWER
-    // .get(rutas.answer, cors({
-    //     origin: '*'
-    // }), (req, res) => req.headers.authorization ?
-    //     answer.getAnswer(req, res) :
-    //     res.sendStatus(401))
-    // .put(rutas.answer, cors({
-    //     origin: '*'
-    // }), (req, res) => req.headers.authorization ?
-    //     req.is('application/json') ?
-    //         answer.putAnswer(req, res) :
-    //         res.sendStatus(415) :
-    //     res.sendStatus(401))
-    // .delete(rutas.answer, cors({
-    //     origin: '*'
-    // }), (req, res) => req.headers.authorization ?
-    //     answer.deleteAnswer(req, res) : res.sendStatus(401))
-    // .options(rutas.answer, cors({
-    //     origin: '*',
-    //     methods: ['GET', 'PUT', 'DELETE', 'OPTIONS']
-    // }), (req, res) => {
-    //     res.sendStatus(204);
-    // })
+    .delete(rutas.answer, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        answers.hideAnswer(req, res) : res.sendStatus(401))
+    .options(rutas.answer, cors({
+        origin: '*',
+        methods: ['DELETE', 'OPTIONS']
+    }), (req, res) => res.sendStatus(204))
     .all(rutas.answer, cors({
         origin: '*'
     }), error405)
