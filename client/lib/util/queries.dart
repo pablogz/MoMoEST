@@ -103,9 +103,15 @@ class Queries {
   /*+++++++++++++++++++++++++++++++++++
   + Fotografías con votación pública
   +++++++++++++++++++++++++++++++++++*/
-  // GET listado de entradas (anónimo) / POST subir foto
-  static Uri photoVoteEntries(String shortIdFeature) => Uri.parse(
-      '${ConfigXest.addServer}/features/$shortIdFeature/photoVote');
+  // GET listado de entradas (anónimo) / POST subir foto. Con [idTask] se
+  // recuperan solo las fotografías de esa tarea, ya que un mismo lugar puede
+  // tener varias votaciones independientes
+  static Uri photoVoteEntries(String shortIdFeature, {String? idTask}) =>
+      Uri.parse('${ConfigXest.addServer}/features/$shortIdFeature/photoVote'
+          '${idTask != null ? '?task=${Uri.encodeQueryComponent(idTask)}' : ''}');
+  // DELETE retirar la propia fotografía de la votación
+  static Uri photoVoteEntry(String shortIdFeature, String entryId) => Uri.parse(
+      '${ConfigXest.addServer}/features/$shortIdFeature/photoVote/$entryId');
   // PUT votar/cambiar voto
   static Uri photoVoteVote(String shortIdFeature, String entryId) => Uri.parse(
       '${ConfigXest.addServer}/features/$shortIdFeature/photoVote/$entryId/vote');

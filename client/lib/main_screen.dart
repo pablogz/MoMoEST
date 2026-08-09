@@ -40,6 +40,7 @@ import 'package:momoest/util/helpers/chest_marker.dart';
 import 'package:momoest/util/config_xest.dart';
 import 'package:momoest/answers.dart';
 import 'package:momoest/notes.dart';
+import 'package:momoest/opinion.dart';
 import 'package:momoest/util/map_layer.dart';
 
 class MyMap extends StatefulWidget {
@@ -903,13 +904,14 @@ class _MyMap extends State<MyMap> {
                     Itinerary it = _itineraries[index];
                     String title = it.getALabel(lang: MyApp.currentLang);
                     String comment = it.getAComment(lang: MyApp.currentLang);
-                    if (_filtroIt.isNotEmpty &&
-                        !(title
-                                .toLowerCase()
-                                .contains(_filtroIt.toLowerCase()) ||
-                            comment
-                                .toLowerCase()
-                                .contains(_filtroIt.toLowerCase()))) {
+                    // La búsqueda también encuentra por el alias de quien
+                    // propuso el itinerario
+                    String filtro = _filtroIt.toLowerCase();
+                    if (filtro.isNotEmpty &&
+                        !(title.toLowerCase().contains(filtro) ||
+                            comment.toLowerCase().contains(filtro) ||
+                            (it.authorLbl != null &&
+                                it.authorLbl!.toLowerCase().contains(filtro)))) {
                       return Container();
                     }
                     return _cardIt(it);
@@ -1565,7 +1567,6 @@ class _MyMap extends State<MyMap> {
   }
 
   Widget widgetCurrentUser() {
-    ScaffoldMessengerState sMState = ScaffoldMessenger.of(context);
     ThemeData td = Theme.of(context);
     TextStyle bodyMedium = td.textTheme.bodyMedium!;
     AppLocalizations? appLoca = AppLocalizations.of(context);
@@ -1709,21 +1710,12 @@ class _MyMap extends State<MyMap> {
 
     widgets.add(TextButton.icon(
       onPressed: _userIded
-          ? () {
-              //TODO
-              sMState.clearSnackBars();
-              sMState.showSnackBar(
-                SnackBar(
-                  backgroundColor: Theme.of(context).colorScheme.errorContainer,
-                  content: Text(
-                    appLoca.enDesarrollo,
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onErrorContainer,
-                        ),
-                  ),
+          ? () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => const Opinion(),
                 ),
-              );
-            }
+              )
           : null,
       label: Text(appLoca.ayudaOpinando, semanticsLabel: appLoca.ayudaOpinando),
       icon: const Icon(Icons.feedback),

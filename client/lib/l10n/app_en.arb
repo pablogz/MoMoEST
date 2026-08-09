@@ -125,6 +125,38 @@
     "perfil": "My profile",
     "infoGestion": "Account information and management",
     "ajustesxest": "MoMoEST settings",
+    "opinionTitulo": "Your feedback",
+    "opinionIntro": "Tell us what you think of MoMoEST and what you are missing. Your message will open in your mail app and be sent to our team, so you can review it before sending.",
+    "opinionValoracion": "How would you rate the app?",
+    "opinionEstrellas": "{estrellas, plural, =1{1 star} other{{estrellas} stars}}",
+    "@opinionEstrellas": {
+        "placeholders": {
+            "estrellas": {
+                "type": "num"
+            }
+        }
+    },
+    "opinionTema": "What are you writing about?",
+    "opinionTemaGeneral": "The app in general",
+    "opinionTemaLugares": "Sites and the map",
+    "opinionTemaItinerarios": "Itineraries",
+    "opinionTemaTareas": "Learning tasks",
+    "opinionTemaNotas": "Notes and drawings",
+    "opinionTemaCanales": "Channels",
+    "opinionTemaOtro": "Something else",
+    "opinionComentario": "Tell us your feedback",
+    "opinionEnviar": "Send feedback",
+    "opinionDatosTecnicos": "We will add the app version, the platform and the language to better understand your comment. We do not send any of your data.",
+    "errorOpinion": "We could not open your mail app. Write to us at {correo}",
+    "@errorOpinion": {
+        "placeholders": {
+            "correo": {
+                "type": "String"
+            }
+        }
+    },
+    "copiarCorreo": "Copy the address",
+    "correoCopiado": "Address copied",
     "ayudaOpinando": "Help us by giving your opinion about MoMoEST",
     "politica": "Privacy policy",
     "compartexest": "Share the application",
@@ -362,6 +394,17 @@
     "mapaSatelite": "Satellite",
     "tasks": "Tasks",
     "learningTasks": "Learning tasks",
+    "autorTarea": "Proposed by {alias}",
+    "@autorTarea": {
+        "placeholders": {
+            "alias": {
+                "type": "String"
+            }
+        }
+    },
+    "filtrarTareas": "Filter tasks",
+    "quitarFiltros": "Clear filters",
+    "sinTareasFiltro": "No task matches the filter",
     "sinTareas": "At the moment this sites does not have any tasks for you, please try again later!",
     "vistaPrevia": "Preview",
     "obtCoor": "The coordinates have been obtained from",
@@ -633,6 +676,8 @@
     "errorActivarCanal": "The change could not be saved. Check your connection and try again.",
     "tareaCompletada": "Completed task",
     "verRespuesta": "See answer",
+    "confirmarBorrarRespuestaFoto": "Your answer will be deleted and the photo will be withdrawn from the voting along with every vote it received. This cannot be undone.",
+    "canalNoDisponible": "Channel not available",
     "respuestaEnCanal": "Channel: {canal}",
     "@respuestaEnCanal": {
         "placeholders": {
@@ -709,8 +754,13 @@
     "realizaFoto": "Take a photo before saving",
     "errorCamara": "The camera could not be accessed",
     "repetirFoto": "Retake photo",
+    "verVotacion": "See voting",
+    "borrarFoto": "Withdraw my photo",
+    "confirmarBorrarFoto": "Your photo will be withdrawn from the voting along with every vote it received, and your answer to the task will be deleted. This cannot be undone.",
+    "fotoBorrada": "Your photo is no longer in the voting",
+    "errorBorrarFoto": "The photo could not be withdrawn",
     "votarFotos": "Vote photos",
-    "votarFotosExplica": "Browse the photos submitted anonymously by other people and vote for your favourite. You can change your vote at any time.",
+    "votarFotosExplica": "Browse the photos submitted anonymously for this task and vote for your favourite, which can be your own. You can only vote for one photo per task, and you can change your vote whenever you want.",
     "sinFotosVotacion": "There are no photos to vote yet",
     "votar": "Vote",
     "quitarVoto": "Remove vote",

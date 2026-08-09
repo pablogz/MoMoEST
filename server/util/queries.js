@@ -1313,15 +1313,16 @@ function getTasksFeature(idFeature) {
     return Mustache.render(
         `PREFIX mo: <http://moult.gsic.uva.es/ontology/>
 WITH {{{pg}}}
-SELECT DISTINCT ?task ?at ?space ?author ?label ?comment ?distractor ?correct ?singleSelection WHERE {
-?task 
-a mo:LearningTask ; 
-mo:hasSpatialThing <{{{feature}}}> ; 
-mo:inSpace ?space ; 
-mo:answerType ?at ; 
-rdfs:comment ?comment ; 
-dc:creator ?author . 
-OPTIONAL {?task rdfs:label ?label .} 
+SELECT DISTINCT ?task ?at ?space ?author ?authorLbl ?label ?comment ?distractor ?correct ?singleSelection WHERE {
+?task
+a mo:LearningTask ;
+mo:hasSpatialThing <{{{feature}}}> ;
+mo:inSpace ?space ;
+mo:answerType ?at ;
+rdfs:comment ?comment ;
+dc:creator ?author .
+OPTIONAL {?author rdfs:label ?authorLbl .}
+OPTIONAL {?task rdfs:label ?label .}
 OPTIONAL {?task mo:distractor ?distractor .} 
 OPTIONAL {?task mo:correct ?correct .} 
 OPTIONAL {?task mo:singleSelection ?singleSelection .} 
@@ -1340,15 +1341,16 @@ OPTIONAL {?task mo:singleSelection ?singleSelection .}
 function getItineraryTasks(idIt) {
     return `PREFIX mo: <http://moult.gsic.uva.es/ontology/>
 WITH <${idIt}>
-SELECT DISTINCT ?task ?at ?space ?author ?label ?comment ?distractor ?correct ?singleSelection WHERE {
+SELECT DISTINCT ?task ?at ?space ?author ?authorLbl ?label ?comment ?distractor ?correct ?singleSelection WHERE {
 <${idIt}> mo:hasLearningTask ?task .
 ?task
-a mo:LearningTask ; 
-mo:inSpace ?space ; 
-mo:answerType ?at ; 
-rdfs:comment ?comment ; 
-dc:creator ?author . 
-OPTIONAL {?task rdfs:label ?label .} 
+a mo:LearningTask ;
+mo:inSpace ?space ;
+mo:answerType ?at ;
+rdfs:comment ?comment ;
+dc:creator ?author .
+OPTIONAL {?author rdfs:label ?authorLbl .}
+OPTIONAL {?task rdfs:label ?label .}
 OPTIONAL {?task mo:distractor ?distractor .} 
 OPTIONAL {?task mo:correct ?correct .} 
 OPTIONAL {?task mo:singleSelection ?singleSelection .} 
@@ -1371,15 +1373,16 @@ function getInfoTask(idTask) {
     return Mustache.render(
         `PREFIX mo: <http://moult.gsic.uva.es/ontology/>
 WITH {{{pg}}}
-SELECT DISTINCT ?feature ?at ?space ?author ?label ?comment ?distractor ?correct ?singleSelection ?image WHERE {
-<{{{task}}}> 
-a mo:LearningTask ; 
-mo:hasSpatialThing ?feature ; 
-mo:inSpace ?space ; 
-mo:answerType ?at ; 
-rdfs:comment ?comment ; 
-dc:creator ?author . 
-OPTIONAL {<{{{task}}}> rdfs:label ?label .} 
+SELECT DISTINCT ?feature ?at ?space ?author ?authorLbl ?label ?comment ?distractor ?correct ?singleSelection ?image WHERE {
+<{{{task}}}>
+a mo:LearningTask ;
+mo:hasSpatialThing ?feature ;
+mo:inSpace ?space ;
+mo:answerType ?at ;
+rdfs:comment ?comment ;
+dc:creator ?author .
+OPTIONAL {?author rdfs:label ?authorLbl .}
+OPTIONAL {<{{{task}}}> rdfs:label ?label .}
 OPTIONAL {<{{{task}}}> mo:distractor ?distractor .} 
 OPTIONAL {<{{{task}}}> mo:correct ?correct .} 
 OPTIONAL {<{{{task}}}> mo:singleSelection ?singleSelection .}
@@ -1780,20 +1783,21 @@ GRAPH <${idItinerary}> {
 function getTasksFeatureIt(it, feature) {
     return Mustache.render(
         `PREFIX mo: <http://moult.gsic.uva.es/ontology/>
-SELECT DISTINCT ?task ?at ?author ?space ?label ?comment ?first ?next WHERE { 
-GRAPH <{{{it}}}> { 
-<{{{feature}}}> mo:hasLearningTask ?task . 
-OPTIONAL { <{{{feature}}}> rdf:first ?first . } 
-OPTIONAL {?task rdf:next ?next . } 
+SELECT DISTINCT ?task ?at ?author ?authorLbl ?space ?label ?comment ?first ?next WHERE {
+GRAPH <{{{it}}}> {
+<{{{feature}}}> mo:hasLearningTask ?task .
+OPTIONAL { <{{{feature}}}> rdf:first ?first . }
+OPTIONAL {?task rdf:next ?next . }
 }
 GRAPH {{{pg}}} {
-?task 
-mo:answerType ?at ; 
+?task
+mo:answerType ?at ;
 dc:creator ?author ;
 mo:inSpace ?space ;
-rdfs:comment ?comment . 
+rdfs:comment ?comment .
+OPTIONAL { ?author rdfs:label ?authorLbl . }
 OPTIONAL { ?task rdfs:label ?label . }
-} 
+}
 }`,
         {
             pg: primaryGraph,

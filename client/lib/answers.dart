@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import 'package:momoest/full_screen.dart';
+import 'package:momoest/main.dart';
 import 'package:momoest/util/auxiliar.dart';
 import 'package:momoest/util/config_xest.dart';
 import 'package:momoest/util/helpers/answers.dart';
@@ -39,6 +40,9 @@ class _InfoAnswers extends State<InfoAnswers> {
   }
 
   Future<List> _getAnswers() async {
+    // Las respuestas indican el canal en el que se realizaron, así que hacen
+    // falta los canales del usuario para poder mostrar su nombre
+    await FeedCache.ensureLoaded();
     return http.get(Queries.getAnswers(), headers: {
       'Authorization':
           'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}'
@@ -114,7 +118,10 @@ class _InfoAnswers extends State<InfoAnswers> {
             context: context,
             builder: (ctx) => AlertDialog(
               title: Text(appLoca.borrarRespuesta),
-              content: Text(appLoca.confirmarBorrarRespuesta),
+              // Borrar una foto de una votación retira también la foto pública
+              content: Text(answer.answerType == AnswerType.photoVote
+                  ? appLoca.confirmarBorrarRespuestaFoto
+                  : appLoca.confirmarBorrarRespuesta),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx, false),
@@ -217,20 +224,21 @@ class AnswerCard extends StatelessWidget {
 
   const AnswerCard(this.answer, {this.onDelete, super.key});
 
-  /// Recupera la etiqueta del canal al que se asoció la respuesta. Si el canal
-  /// no está en la caché local se devuelve su identificador corto.
-  String _labelFeed() {
+  /// Recupera el nombre del canal al que se asoció la respuesta. Devuelve nulo
+  /// si el canal ya no está entre los del usuario (baja, canal borrado), ya que
+  /// su identificador no le dice nada a quien lo lee.
+  String? _labelFeed() {
     if (FeedCache.feedsIsNotNull) {
       for (Feed feed in FeedCache.feeds) {
         if (feed.id == answer.idFeed) {
-          String label = feed.getALabel();
+          String label = feed.getALabel(lang: MyApp.currentLang);
           if (label.isNotEmpty) {
             return label;
           }
         }
       }
     }
-    return Auxiliar.id2shortId(answer.idFeed) ?? answer.idFeed;
+    return null;
   }
 
   @override
@@ -284,6 +292,7 @@ class AnswerCard extends StatelessWidget {
     ];
 
     if (answer.hasIdFeed) {
+      String? labelFeed = _labelFeed();
       children.add(Padding(
         padding: const EdgeInsets.only(top: 10),
         child: Align(
@@ -291,12 +300,15 @@ class AnswerCard extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.podcasts,
+              // El mismo icono que identifica los canales en el menú
+              Icon(Icons.dynamic_feed,
                   size: 18, color: colorScheme.onTertiaryContainer),
               const SizedBox(width: 5),
               Flexible(
                 child: Text(
-                  appLoca.respuestaEnCanal(_labelFeed()),
+                  labelFeed != null
+                      ? appLoca.respuestaEnCanal(labelFeed)
+                      : appLoca.canalNoDisponible,
                   style: bodyMedium,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -520,6 +532,7 @@ class _AnswerContent extends State<AnswerContent> {
               child: PhotoVoteCount(
                 shortIdFeature: Auxiliar.id2shortId(answer.idContainer) ??
                     answer.idContainer,
+                idTask: answer.idTask,
                 entryId: answer.answer['entryId']?.toString() ?? '',
               ),
             ),
@@ -625,9 +638,13 @@ class _AuthImage extends State<AuthImage> {
 /// un lugar. Consulta el listado público y localiza la entrada por su id.
 class PhotoVoteCount extends StatefulWidget {
   final String shortIdFeature;
+  final String idTask;
   final String entryId;
   const PhotoVoteCount(
-      {required this.shortIdFeature, required this.entryId, super.key});
+      {required this.shortIdFeature,
+      required this.idTask,
+      required this.entryId,
+      super.key});
 
   @override
   State<StatefulWidget> createState() => _PhotoVoteCount();
@@ -647,7 +664,7 @@ class _PhotoVoteCount extends State<PhotoVoteCount> {
     try {
       final token = await FirebaseAuth.instance.currentUser!.getIdToken();
       final response = await http.get(
-        Queries.photoVoteEntries(widget.shortIdFeature),
+        Queries.photoVoteEntries(widget.shortIdFeature, idTask: widget.idTask),
         headers: {'Authorization': 'Bearer $token'},
       );
       if (response.statusCode == 200) {

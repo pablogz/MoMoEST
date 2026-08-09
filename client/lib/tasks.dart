@@ -18,6 +18,7 @@ import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
 
 import 'package:momoest/draw_editor.dart';
 import 'package:momoest/full_screen.dart';
+import 'package:momoest/photo_vote.dart';
 import 'package:momoest/util/helpers/feature.dart';
 import 'package:momoest/l10n/generated/app_localizations.dart';
 import 'package:momoest/util/config_xest.dart';
@@ -1151,6 +1152,27 @@ class _COTask extends State<COTask> {
           icon: const Icon(Icons.camera_alt),
           label: Text(
               _photoBytes == null ? appLoca.abrirCamara : appLoca.repetirFoto),
+        ),
+        // La votación es la de esta tarea: cada tarea tiene su propia galería
+        // aunque varias compartan lugar
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: TextButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => PhotoVoteView(
+                  widget.shortIdContainer,
+                  idTask: widget.shortIdTask,
+                  labelTask: task!.hasLabel
+                      ? task!.getALabel(lang: MyApp.currentLang)
+                      : null,
+                ),
+              ),
+            ),
+            icon: const Icon(Icons.how_to_vote, size: 18),
+            label: Text(appLoca.verVotacion),
+          ),
         ),
         // Declaración de responsabilidad obligatoria antes de enviar
         CheckboxListTile.adaptive(

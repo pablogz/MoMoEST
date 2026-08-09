@@ -3,8 +3,9 @@ const FirebaseAdmin = require('firebase-admin');
 const Mustache = require('mustache');
 
 const winston = require('../../../util/winston');
-const { getTokenAuth, logHttp } = require('../../../util/auxiliar');
+const { getTokenAuth, logHttp, shortId2Id } = require('../../../util/auxiliar');
 const { saveAnswer, getAnswersDB, hideAnswerDB, getFeedsUser } = require('../../../util/bd');
+const { removeEntry } = require('../../feature/photoVote');
 const { urlServer } = require('../../../util/config');
 
 /**
@@ -311,9 +312,26 @@ async function hideAnswer(req, res) {
                 if (uid !== '') {
                     const { answer } = req.params;
                     const answers = await getAnswersDB(uid);
-                    if (Array.isArray(answers) && answers.some(a => a.id === answer && !a.hidden)) {
+                    const target = Array.isArray(answers)
+                        ? answers.find(a => a.id === answer && !a.hidden)
+                        : undefined;
+                    if (target !== undefined) {
                         const ok = await hideAnswerDB(uid, answer);
                         if (ok) {
+                            // Borrado simétrico: si la respuesta era una foto de
+                            // una votación pública, la foto y sus votos también
+                            // desaparecen, para no dejar recursos sueltos
+                            if (target.answerType === 'photoVote'
+                                && typeof target.answer?.entryId === 'string') {
+                                const idFeature = shortId2Id(target.idFeature) ?? target.idFeature;
+                                const result = await removeEntry(idFeature, target.answer.entryId, uid);
+                                if (result !== 'ok') {
+                                    winston.info(Mustache.render(
+                                        'hideAnswer || photoVote {{{result}}} || {{{entry}}}',
+                                        { result: result, entry: target.answer.entryId }
+                                    ));
+                                }
+                            }
                             winston.info(Mustache.render(
                                 'hideAnswer || {{{id}}} || {{{time}}}',
                                 { id: answer, time: Date.now() - start }

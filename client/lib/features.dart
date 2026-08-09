@@ -76,6 +76,9 @@ class _InfoFeature extends State<InfoFeature>
   final CarouselController _carouselController = CarouselController();
   int _carouselIndex = 0;
   List<Task> tasks = [];
+  // Filtros de la lista de tareas: tipos de tarea y alias de autores elegidos
+  final Set<AnswerType> _filterTypes = {};
+  final Set<String> _filterAuthors = {};
   // Respuesta guardada del usuario por identificador de tarea
   final Map<String, Answer> _answersTasks = {};
   late List<String> tabs;
@@ -714,13 +717,111 @@ class _InfoFeature extends State<InfoFeature>
     }
   }
 
+  /// Abre la votación de una tarea de fotografía con votación. Cada tarea tiene
+  /// su propia votación, aunque varias compartan lugar.
+  void _openPhotoVote(Task task) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => PhotoVoteView(
+          feature.shortId,
+          idTask: task.id,
+          labelFeature: feature.getALabel(lang: MyApp.currentLang),
+          labelTask: task.hasLabel ? task.getALabel(lang: MyApp.currentLang) : null,
+        ),
+      ),
+    );
+  }
+
+  /// Tareas que quedan tras aplicar los filtros de tipo y de autor
+  List<Task> get _tasksFiltered => tasks
+      .where((Task t) =>
+          (_filterTypes.isEmpty || _filterTypes.contains(t.aT)) &&
+          (_filterAuthors.isEmpty ||
+              (t.authorLbl != null && _filterAuthors.contains(t.authorLbl))))
+      .toList();
+
+  /// Filtros de la lista de tareas del lugar: por tipo de tarea y por alias de
+  /// quien la propuso. Solo se ofrecen los valores presentes en el lugar.
+  Widget _widgetTaskFilters() {
+    ThemeData td = Theme.of(context);
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    final List<AnswerType> types = tasks.map((Task t) => t.aT).toSet().toList();
+    final List<String> authors = tasks
+        .map((Task t) => t.authorLbl)
+        .whereType<String>()
+        .toSet()
+        .toList()
+      ..sort();
+    if (types.length < 2 && authors.length < 2) {
+      return const SizedBox.shrink();
+    }
+    final bool filtering = _filterTypes.isNotEmpty || _filterAuthors.isNotEmpty;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.filter_list, size: 18, color: td.colorScheme.outline),
+              const SizedBox(width: 5),
+              Text(appLoca.filtrarTareas,
+                  style: td.textTheme.titleSmall!
+                      .copyWith(color: td.colorScheme.outline)),
+              const Spacer(),
+              if (filtering)
+                TextButton(
+                  onPressed: () => setState(() {
+                    _filterTypes.clear();
+                    _filterAuthors.clear();
+                  }),
+                  child: Text(appLoca.quitarFiltros),
+                ),
+            ],
+          ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              if (types.length > 1)
+                for (AnswerType type in types)
+                  FilterChip(
+                    label: Text(Auxiliar.getLabelAnswerType(appLoca, type)),
+                    selected: _filterTypes.contains(type),
+                    onSelected: (bool selected) => setState(() => selected
+                        ? _filterTypes.add(type)
+                        : _filterTypes.remove(type)),
+                  ),
+              if (authors.length > 1)
+                for (String author in authors)
+                  FilterChip(
+                    avatar: const Icon(Icons.person_outline, size: 18),
+                    label: Text(author),
+                    selected: _filterAuthors.contains(author),
+                    onSelected: (bool selected) => setState(() => selected
+                        ? _filterAuthors.add(author)
+                        : _filterAuthors.remove(author)),
+                  ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _listTasks(Size size) {
-    // Si el lugar tiene alguna tarea de fotografía con votación se ofrece el
-    // acceso a la vista de votación (para cualquier usuario autenticado)
-    final bool hasPhotoVote = UserXEST.userXEST.isNotGuest &&
-        tasks.any((Task t) => t.aT == AnswerType.photoVote);
-    final int extraCards = hasPhotoVote ? 1 : 0;
-    return SliverPadding(
+    final List<Task> tasksFiltered = _tasksFiltered;
+    return SliverMainAxisGroup(slivers: [
+      SliverToBoxAdapter(child: _widgetTaskFilters()),
+      if (tasksFiltered.isEmpty)
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(AppLocalizations.of(context)!.sinTareasFiltro),
+          ),
+        ),
+      SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
@@ -730,34 +831,7 @@ class _InfoFeature extends State<InfoFeature>
           AppLocalizations appLoca = AppLocalizations.of(context)!;
           ScaffoldMessengerState sMState = ScaffoldMessenger.of(context);
 
-          if (hasPhotoVote && index == 0) {
-            return Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(color: colorSheme.primary),
-                  borderRadius: const BorderRadius.all(Radius.circular(12))),
-              child: ListTile(
-                leading: const Icon(Icons.how_to_vote),
-                title: Text(appLoca.votarFotos, style: textTheme.titleMedium),
-                subtitle: Text(appLoca.votarFotosExplica),
-                trailing: const Icon(Icons.navigate_next),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => PhotoVoteView(
-                        feature.shortId,
-                        labelFeature:
-                            feature.getALabel(lang: MyApp.currentLang),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          }
-
-          Task task = tasks.elementAt(index - extraCards);
+          Task task = tasksFiltered.elementAt(index);
           Answer? answerTask = _answersTasks[task.id];
           String title = task.hasLabel
               ? task.getALabel(lang: MyApp.currentLang)
@@ -832,6 +906,16 @@ class _InfoFeature extends State<InfoFeature>
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(comment.replaceAll(RegExp('<[^>]*>'), '')),
                 ),
+                // El alias solo está disponible si su autor aceptó publicarlo
+                if (task.authorLbl != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 16, right: 16),
+                    child: Text(
+                      appLoca.autorTarea(task.authorLbl!),
+                      style: textTheme.bodySmall!
+                          .copyWith(color: colorSheme.outline),
+                    ),
+                  ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
@@ -840,7 +924,17 @@ class _InfoFeature extends State<InfoFeature>
                     child: Wrap(
                       alignment: WrapAlignment.end,
                       spacing: 10,
-                      children: mostrarFabProfe
+                      children: [
+                      // Cada tarea de votación tiene su propia galería, así que
+                      // se entra a ella desde la propia tarea
+                      if (task.aT == AnswerType.photoVote &&
+                          UserXEST.userXEST.isNotGuest)
+                        TextButton.icon(
+                          onPressed: () => _openPhotoVote(task),
+                          icon: const Icon(Icons.how_to_vote, size: 18),
+                          label: Text(appLoca.verVotacion),
+                        ),
+                      ...mostrarFabProfe
                           ? task.author == UserXEST.userXEST.iri
                               ? [
                                   TextButton(
@@ -1020,15 +1114,17 @@ class _InfoFeature extends State<InfoFeature>
                                 child: Text(appLoca.realizaTareaBt),
                               )
                             ],
+                      ],
                     ),
                   ),
                 )
               ],
             ),
           );
-        }, childCount: tasks.length + extraCards),
+        }, childCount: tasksFiltered.length),
       ),
-    );
+      ),
+    ]);
   }
 
   void showSnackTaskDelete(bool error) {
