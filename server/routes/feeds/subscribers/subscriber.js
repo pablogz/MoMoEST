@@ -8,6 +8,7 @@ const {
     getInfoUser, getFeedsUser, getInfoSubscriber,
     findCollectionAndFeed, updateFeedDB, updateSubscribedFeedBD,
     deleteFeedSubscriber, deleteSubscriber } = require('../../../util/bd');
+const { clearActiveFeedIfMatches } = require('../../users/activeFeed/activeFeed');
 
 async function _findFeedForTeacher(uid, feedId) {
     // Devuelve { feed, ownerId } si uid es propietario o co-profesor del canal; null en caso contrario
@@ -154,14 +155,21 @@ async function newSubscriber(req, res) {
             .then(async dToken => {
                 const { uid } = dToken;
                 if (uid !== '') {
-                    // Obtengo la contraseña del cuerpo de la petición
-                    const { password } = req.body;
+                    // Obtengo la contraseña y los datos personales del cuerpo de la petición
+                    const { password, name, surname } = req.body;
+                    const nameV = typeof name === 'string' && name.trim() !== '' ? name.trim() : undefined;
+                    const surnameV = typeof surname === 'string' && surname.trim() !== '' ? surname.trim() : undefined;
                     // Traigo el canal al que se quiere subscribir. Tengo que buscar en todas la colecciones para encontrarlo
                     const feedId = shortId2Id(req.params.feed);
                     const objCollFeed = await findCollectionAndFeed(feedId);
                     if (objCollFeed !== null) {
                         const ownerId = objCollFeed.userId;
                         const feed = new Feed(objCollFeed.dataFeed);
+                        // Si el canal exige nombre y apellidos no dejo apuntarse sin ellos
+                        if (feed.requireFullName && (nameV === undefined || surnameV === undefined)) {
+                            logHttp(req, 422, 'newSubscriber', start);
+                            return res.sendStatus(422);
+                        }
                         // Compruebo si no está ya subscrito.
                         let puede = !feed.subscribers.includes(uid);
                         if (puede && feed.password !== undefined && feed.password !== null) {
@@ -173,12 +181,15 @@ async function newSubscriber(req, res) {
                             feedObj.subscribers.push(uid)
                             const promesas = [];
                             promesas.push(updateFeedDB(ownerId, feedObj));
-                            // Almaceno en el documento del usuario su subscripción al canal
+                            // Almaceno en el documento del usuario su subscripción al canal.
+                            // El nombre y los apellidos solo viven en MongoDB.
                             const feedSubscriberObj = {
                                 idFeed: feedId,
                                 idOwner: ownerId,
                                 date: (new Date(Date.now()).toISOString()),
-                                answers: []
+                                answers: [],
+                                ...(nameV !== undefined && { name: nameV }),
+                                ...(surnameV !== undefined && { surname: surnameV }),
                             };
                             promesas.push(updateSubscribedFeedBD(uid, feedSubscriberObj));
                             const arrayConsultas = await Promise.all(promesas);
@@ -251,6 +262,8 @@ async function byeSubscriber(req, res) {
                                 promesas.push(deleteSubscriber(feedBorrar.idOwner, feedId, uid));
                                 const arrayPromesas = await Promise.all(promesas);
                                 const todoBien = arrayPromesas.every(Boolean);
+                                // Si el canal era el activo del usuario lo limpio también
+                                await clearActiveFeedIfMatches(uid, feedId);
                                 winston.info(Mustache.render('byeSubscriber || idUser: {{{idUser}}} - idFeed: {{{feed}}} - allOk: {{{allOk}}} || {{{time}}}', {
                                     idUser: uid,
                                     feed: feedId,
@@ -286,6 +299,8 @@ async function byeSubscriber(req, res) {
                                     promesas.push(deleteFeedSubscriber(reqSubscriberId, feedId));
                                     const arrayPromesas = await Promise.all(promesas);
                                     const todoBien = arrayPromesas.every(Boolean);
+                                    // Si el canal era el activo del estudiante lo limpio también
+                                    await clearActiveFeedIfMatches(reqSubscriberId, feedId);
                                     winston.info(Mustache.render('byeSubscriber || idUser: {{{idUser}}} - idFeed: {{{feed}}} - allOk: {{{allOk}}} || {{{time}}}', {
                                         idUser: uid,
                                         feed: feedId,

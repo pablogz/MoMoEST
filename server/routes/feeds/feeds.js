@@ -132,7 +132,7 @@ async function newFeed(req, res) {
                                 // (2) Compruebo el cuerpo del objeto que me ha enviado el usuario
                                 if (req.body) {
                                     let save = true;
-                                    let { labels, comments, password } = req.body;
+                                    let { labels, comments, password, requireFullName } = req.body;
                                     if (typeof labels === 'object') {
                                         labels = [labels];
                                     }
@@ -164,6 +164,7 @@ async function newFeed(req, res) {
                                             dataFeed.labels = labels;
                                             dataFeed.comments = comments;
                                             dataFeed.password = password;
+                                            dataFeed.requireFullName = requireFullName === true;
                                             dataFeed.date = (new Date(Date.now())).toISOString();
                                             dataFeed.owner = uid;
                                             const feed = new Feed(dataFeed);

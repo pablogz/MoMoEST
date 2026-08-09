@@ -32,6 +32,17 @@ class Queries {
   // GET/PUT PREFERENCES
   static Uri preferences() =>
       Uri.parse('${ConfigXest.addServer}/users/user/preferences');
+  // PUT canal activo del usuario
+  static Uri activeFeed() =>
+      Uri.parse('${ConfigXest.addServer}/users/user/activeFeed');
+  // GET/POST notas del usuario
+  static Uri notes() => Uri.parse('${ConfigXest.addServer}/users/user/notes/');
+  // PUT/DELETE una nota
+  static Uri note(String idNote) =>
+      Uri.parse('${ConfigXest.addServer}/users/user/notes/$idNote');
+  // GET el dibujo de una nota
+  static Uri noteFile(String fileId) =>
+      Uri.parse('${ConfigXest.addServer}/users/user/notes/files/$fileId');
 
   /*+++++++++++++++++++++++++++++++++++
   + Features                          +
@@ -88,6 +99,19 @@ class Queries {
 
   static Uri getTask(String shortIdFeature, String shortIdTask) => Uri.parse(
       '${ConfigXest.addServer}/features/$shortIdFeature/learningTasks/$shortIdTask');
+
+  /*+++++++++++++++++++++++++++++++++++
+  + Fotografías con votación pública
+  +++++++++++++++++++++++++++++++++++*/
+  // GET listado de entradas (anónimo) / POST subir foto
+  static Uri photoVoteEntries(String shortIdFeature) => Uri.parse(
+      '${ConfigXest.addServer}/features/$shortIdFeature/photoVote');
+  // PUT votar/cambiar voto
+  static Uri photoVoteVote(String shortIdFeature, String entryId) => Uri.parse(
+      '${ConfigXest.addServer}/features/$shortIdFeature/photoVote/$entryId/vote');
+  // GET fichero de imagen de una entrada
+  static Uri photoVoteFile(String shortIdFeature, String fileId) => Uri.parse(
+      '${ConfigXest.addServer}/features/$shortIdFeature/photoVote/files/$fileId');
 
   /*+++++++++++++++++++++++++++++++++++
   + Info POI LOD

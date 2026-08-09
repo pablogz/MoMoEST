@@ -606,6 +606,12 @@ function fields(uid, p4R) {
                             { uid: uid }
                         ));
                         break;
+                    case 'photoVote':
+                        triples.push(Mustache.render(
+                            '<{{{uid}}}> mo:answerType <http://momoest.gsic.uva.es/ontology/PhotoVote> . ',
+                            { uid: uid }
+                        ));
+                        break;
                     default:
                         throw new Error('Problem with the client aT');
                 }
@@ -1241,6 +1247,12 @@ function checkInfo(uid, p4R) {
                     case 'draw':
                         triples.push(Mustache.render(
                             '<{{{uid}}}> mo:answerType <http://momoest.gsic.uva.es/ontology/Draw> . ',
+                            { uid: uid }
+                        ));
+                        break;
+                    case 'photoVote':
+                        triples.push(Mustache.render(
+                            '<{{{uid}}}> mo:answerType <http://momoest.gsic.uva.es/ontology/PhotoVote> . ',
                             { uid: uid }
                         ));
                         break;

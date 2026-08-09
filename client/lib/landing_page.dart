@@ -575,8 +575,9 @@ class _LandingPage extends State<LandingPage> {
                         child: Icon(Icons.link, color: colorText),
                         onTap: () async {
                           if (!await launchUrl(Uri.parse(uriString))) {
-                            if (ConfigXest.development)
+                            if (ConfigXest.development) {
                               debugPrint('Uri problem');
+                            }
                           }
                         }),
                     label: SelectableText(

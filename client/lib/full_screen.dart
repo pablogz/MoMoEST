@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:gal/gal.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_network/image_network.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,28 +16,71 @@ import 'package:momoest/l10n/generated/app_localizations.dart';
 import 'package:momoest/util/helpers/pair.dart';
 import 'package:momoest/util/auxiliar.dart';
 
-class FullScreenImage extends StatelessWidget {
-  final PairImage urlImagen;
+/// Visor de imágenes en pantalla completa. Acepta una lista de imágenes por
+/// las que se puede navegar deslizando lateralmente, manteniendo el zoom por
+/// imagen. [labels] es opcional y posicional respecto a [images].
+class FullScreenImage extends StatefulWidget {
+  final List<PairImage> images;
+  final int initialIndex;
   final bool local;
-  final String? label;
-  const FullScreenImage(
-    this.urlImagen, {
+  final List<String?>? labels;
+
+  FullScreenImage(
+    PairImage image, {
     this.local = false,
-    this.label,
+    String? label,
+    super.key,
+  })  : images = [image],
+        initialIndex = 0,
+        labels = label != null ? [label] : null;
+
+  const FullScreenImage.list(
+    this.images, {
+    this.initialIndex = 0,
+    this.local = false,
+    this.labels,
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  State<StatefulWidget> createState() => _FullScreenImage();
+}
+
+class _FullScreenImage extends State<FullScreenImage> {
+  late PageController _pageController;
+  late int _index;
+
+  @override
+  void initState() {
+    _index = widget.initialIndex.clamp(0, widget.images.length - 1);
+    _pageController = PageController(initialPage: _index);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  PairImage get _current => widget.images.elementAt(_index);
+
+  String? get _currentLabel =>
+      widget.labels != null && _index < widget.labels!.length
+          ? widget.labels!.elementAt(_index)
+          : null;
+
+  Widget _pagina(BuildContext context, int index) {
     Size size = MediaQuery.of(context).size;
-    Widget imagen = InteractiveViewer(
+    PairImage pairImage = widget.images.elementAt(index);
+    return InteractiveViewer(
       minScale: 0.5,
       maxScale: 12,
-      child: local
-          ? Image.asset(urlImagen.image)
+      child: widget.local
+          ? Image.asset(pairImage.image)
           : ImageNetwork(
-              image: urlImagen.image,
-              imageCache: CachedNetworkImageProvider(urlImagen.image),
+              image: pairImage.image,
+              imageCache: CachedNetworkImageProvider(pairImage.image),
               height: size.height,
               width: size.width,
               duration: 0,
@@ -45,68 +91,103 @@ class FullScreenImage extends StatelessWidget {
               onLoading: const CircularProgressIndicator.adaptive(),
             ),
     );
+  }
 
-    Widget cuerpo;
-    if (urlImagen.hasLicense) {
-      cuerpo = Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: imagen),
-          label != null
-              ? Padding(
-                  padding: EdgeInsetsGeometry.all(Auxiliar.compactMargin),
-                  child: Text(
-                    label!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                )
-              : Container(),
-          TextButton.icon(
-              onPressed: () async {
-                ScaffoldMessengerState sms = ScaffoldMessenger.of(context);
-                try {
-                  if (!await launchUrl(Uri.parse(urlImagen.license))) {
-                    throw Exception();
-                  }
-                } catch (error) {
-                  sms.clearSnackBars();
-                  sms.showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        "Error",
+  @override
+  Widget build(BuildContext context) {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    bool several = widget.images.length > 1;
+    Widget visor = PageView.builder(
+      controller: _pageController,
+      itemCount: widget.images.length,
+      onPageChanged: (int i) => setState(() => _index = i),
+      itemBuilder: _pagina,
+    );
+
+    List<Widget> pie = [];
+    if (_currentLabel != null) {
+      pie.add(Padding(
+        padding: EdgeInsetsGeometry.all(Auxiliar.compactMargin),
+        child: Text(
+          _currentLabel!,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+      ));
+    }
+    if (_current.hasLicense) {
+      pie.add(TextButton.icon(
+          onPressed: () async {
+            ScaffoldMessengerState sms = ScaffoldMessenger.of(context);
+            try {
+              if (!await launchUrl(Uri.parse(_current.license))) {
+                throw Exception();
+              }
+            } catch (error) {
+              sms.clearSnackBars();
+              sms.showSnackBar(
+                SnackBar(
+                  content: Text(appLoca.noLanzarURL),
+                ),
+              );
+            }
+          },
+          label: Text(appLoca.licenciaLabel),
+          icon: const Icon(Icons.local_police)));
+    }
+
+    Widget cuerpo = Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: several
+              ? Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    visor,
+                    Positioned(
+                      left: 0,
+                      child: Visibility(
+                        visible: _index > 0,
+                        child: IconButton.filledTonal(
+                          icon: const Icon(Icons.chevron_left),
+                          tooltip: appLoca.imagenAnterior,
+                          onPressed: () => _pageController.previousPage(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
                       ),
                     ),
-                  );
-                }
-              },
-              label: Text(AppLocalizations.of(context)!.licenciaLabel),
-              icon: const Icon(Icons.local_police)),
-        ],
-      );
-    } else {
-      cuerpo = Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: imagen),
-          label != null
-              ? Padding(
-                  padding: EdgeInsetsGeometry.all(Auxiliar.compactMargin),
-                  child: Text(
-                    label!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
+                    Positioned(
+                      right: 0,
+                      child: Visibility(
+                        visible: _index < widget.images.length - 1,
+                        child: IconButton.filledTonal(
+                          icon: const Icon(Icons.chevron_right),
+                          tooltip: appLoca.imagenSiguiente,
+                          onPressed: () => _pageController.nextPage(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 )
-              : Container(),
-        ],
-      );
-    }
+              : visor,
+        ),
+        ...pie,
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.pantallaCompleta),
+        title: Text(several
+            ? '${appLoca.pantallaCompleta} (${_index + 1}/${widget.images.length})'
+            : appLoca.pantallaCompleta),
         actions: [
-          if (!local)
+          if (!widget.local)
             IconButton(
               icon: const Icon(Icons.download),
               tooltip: AppLocalizations.of(context)!.descargar,
@@ -120,26 +201,56 @@ class FullScreenImage extends StatelessWidget {
 
   Future<void> _guardarImagen(BuildContext context) async {
     final sms = ScaffoldMessenger.of(context);
+    final appLoca = AppLocalizations.of(context)!;
+    // Anchor rect para el popover del share sheet en iPad: sin él,
+    // share_plus falla en iPad aunque funcione en iPhone.
+    final box = context.findRenderObject() as RenderBox?;
+    final Rect sharePositionOrigin = box != null
+        ? box.localToGlobal(Offset.zero) & box.size
+        : Rect.fromLTWH(0, 0, MediaQuery.of(context).size.width, 100);
+    final PairImage imagen = _current;
     try {
       if (kIsWeb) {
         if (!await launchUrl(
-          Uri.parse(urlImagen.image),
+          Uri.parse(imagen.image),
           mode: LaunchMode.externalApplication,
         )) {
           throw Exception();
         }
-      } else {
-        final response = await http.get(Uri.parse(urlImagen.image));
+        return;
+      }
+      final response = await http.get(Uri.parse(imagen.image));
+      if (response.statusCode != 200) {
+        throw Exception('Status code: ${response.statusCode}');
+      }
+      final uri = Uri.parse(imagen.image);
+      final filename =
+          uri.pathSegments.isNotEmpty && uri.pathSegments.last.isNotEmpty
+              ? uri.pathSegments.last
+              : 'image.jpg';
+      try {
+        // Intento el guardado directo en la galería del dispositivo
+        await Gal.putImageBytes(response.bodyBytes, name: filename);
+        sms.clearSnackBars();
+        sms.showSnackBar(
+          SnackBar(content: Text(appLoca.imagenGuardadaGaleria)),
+        );
+      } catch (_) {
+        // Permiso denegado, plataforma sin soporte… ofrezco la hoja de
+        // compartir como alternativa
         final dir = await getTemporaryDirectory();
-        final uri = Uri.parse(urlImagen.image);
-        final filename =
-            uri.pathSegments.isNotEmpty && uri.pathSegments.last.isNotEmpty
-                ? uri.pathSegments.last
-                : 'image.jpg';
         final file = File('${dir.path}/$filename');
         await file.writeAsBytes(response.bodyBytes);
+        sms.clearSnackBars();
+        sms.showSnackBar(
+          SnackBar(content: Text(appLoca.imagenNoGuardadaCompartir)),
+        );
         await SharePlus.instance.share(
-          ShareParams(files: [XFile(file.path)], subject: label ?? ''),
+          ShareParams(
+            files: [XFile(file.path)],
+            subject: _currentLabel ?? '',
+            sharePositionOrigin: sharePositionOrigin,
+          ),
         );
       }
     } catch (_) {
@@ -150,6 +261,101 @@ class FullScreenImage extends StatelessWidget {
           content: Text(AppLocalizations.of(context)!.noLanzarURL),
         ),
       );
+    }
+  }
+}
+
+/// Visor a pantalla completa para imágenes ya descargadas en memoria
+/// (p.ej. ficheros que requieren autenticación para su descarga).
+class FullScreenImageBytes extends StatelessWidget {
+  final Uint8List bytes;
+  final String? label;
+  final String fileName;
+
+  const FullScreenImageBytes(
+    this.bytes, {
+    this.fileName = 'image.png',
+    this.label,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appLoca.pantallaCompleta),
+        actions: [
+          if (!kIsWeb)
+            IconButton(
+              icon: const Icon(Icons.download),
+              tooltip: appLoca.descargar,
+              onPressed: () => _guardar(context),
+            ),
+        ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 12,
+                child: Center(child: Image.memory(bytes)),
+              ),
+            ),
+            label != null
+                ? Padding(
+                    padding: EdgeInsetsGeometry.all(Auxiliar.compactMargin),
+                    child: Text(
+                      label!,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  )
+                : Container(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _guardar(BuildContext context) async {
+    final sms = ScaffoldMessenger.of(context);
+    final appLoca = AppLocalizations.of(context)!;
+    final box = context.findRenderObject() as RenderBox?;
+    final Rect sharePositionOrigin = box != null
+        ? box.localToGlobal(Offset.zero) & box.size
+        : Rect.fromLTWH(0, 0, MediaQuery.of(context).size.width, 100);
+    try {
+      await Gal.putImageBytes(bytes, name: fileName);
+      sms.clearSnackBars();
+      sms.showSnackBar(
+        SnackBar(content: Text(appLoca.imagenGuardadaGaleria)),
+      );
+    } catch (_) {
+      try {
+        final dir = await getTemporaryDirectory();
+        final file = File('${dir.path}/$fileName');
+        await file.writeAsBytes(bytes);
+        sms.clearSnackBars();
+        sms.showSnackBar(
+          SnackBar(content: Text(appLoca.imagenNoGuardadaCompartir)),
+        );
+        await SharePlus.instance.share(
+          ShareParams(
+            files: [XFile(file.path)],
+            subject: label ?? '',
+            sharePositionOrigin: sharePositionOrigin,
+          ),
+        );
+      } catch (_) {
+        sms.clearSnackBars();
+        sms.showSnackBar(
+          SnackBar(content: Text(appLoca.noLanzarURL)),
+        );
+      }
     }
   }
 }

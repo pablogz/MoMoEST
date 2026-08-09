@@ -38,9 +38,15 @@ function rateLimit(req, res, next) {
     next();
 }
 
+const ALLOWED_EXTENSIONS = ['.pdf', '.png'];
+const FILE_ID_REGEX = /^[A-Za-z0-9_-]+\.(pdf|png)$/;
+
 const _storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-    filename: (req, file, cb) => cb(null, `${short.generate()}.pdf`),
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        cb(null, `${short.generate()}${ALLOWED_EXTENSIONS.includes(ext) ? ext : '.pdf'}`);
+    },
 });
 
 // Only check extension here; magic bytes are checked in the handler
@@ -48,13 +54,47 @@ const _upload = multer({
     storage: _storage,
     limits: { fileSize: tamaMaxFile * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
-        if (path.extname(file.originalname).toLowerCase() === '.pdf') {
+        if (ALLOWED_EXTENSIONS.includes(path.extname(file.originalname).toLowerCase())) {
             cb(null, true);
         } else {
-            cb(new Error('Only PDF files are allowed'));
+            cb(new Error('Only PDF or PNG files are allowed'));
         }
     },
 });
+
+// Valida los bytes mágicos del fichero según su extensión. Devuelve un código
+// de estado HTTP de error o null si todo va bien.
+function _validateMagicBytes(filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    const fileSize = fs.statSync(filePath).size;
+    const fd = fs.openSync(filePath, 'r');
+    try {
+        if (ext === '.png') {
+            const magic = Buffer.alloc(8);
+            fs.readSync(fd, magic, 0, 8, 0);
+            const pngSignature = Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+            return magic.equals(pngSignature) ? null : 415;
+        }
+        // PDF: cabecera %PDF y marca %%EOF al final
+        const magic = Buffer.alloc(4);
+        fs.readSync(fd, magic, 0, 4, 0);
+        if (magic.toString('ascii') !== '%PDF') {
+            return 415;
+        }
+        const eofBuf = Buffer.alloc(Math.min(64, fileSize));
+        fs.readSync(fd, eofBuf, 0, eofBuf.length, fileSize - eofBuf.length);
+        if (!eofBuf.toString('latin1').includes('%%EOF')) {
+            return 422;
+        }
+        return null;
+    } finally {
+        fs.closeSync(fd);
+    }
+}
+
+function _contentTypeFor(fileName) {
+    return path.extname(fileName).toLowerCase() === '.png' ? 'image/png' : 'application/pdf';
+}
 
 function multerMiddleware(req, res, next) {
     winston.info(`multer-in || content-type: ${req.headers['content-type']} || content-length: ${req.headers['content-length']}`);
@@ -99,26 +139,15 @@ async function uploadFile(req, res) {
                     return res.sendStatus(403);
                 }
 
-                // Validate magic bytes (%PDF) and EOF marker (%%EOF)
-                const fileSize = fs.statSync(req.file.path).size;
-                const fd = fs.openSync(req.file.path, 'r');
-                const magic = Buffer.alloc(4);
-                fs.readSync(fd, magic, 0, 4, 0);
-                const eofBuf = Buffer.alloc(Math.min(64, fileSize));
-                fs.readSync(fd, eofBuf, 0, eofBuf.length, fileSize - eofBuf.length);
-                fs.closeSync(fd);
-                if (magic.toString('ascii') !== '%PDF') {
+                // Validación de bytes mágicos según extensión (.pdf/.png)
+                const statusError = _validateMagicBytes(req.file.path);
+                if (statusError !== null) {
                     _cleanFile(req);
-                    logHttp(req, 415, 'uploadFile', start);
-                    return res.sendStatus(415);
-                }
-                if (!eofBuf.toString('latin1').includes('%%EOF')) {
-                    _cleanFile(req);
-                    logHttp(req, 422, 'uploadFile', start);
-                    return res.sendStatus(422);
+                    logHttp(req, statusError, 'uploadFile', start);
+                    return res.sendStatus(statusError);
                 }
 
-                const { idContainer, idTask, answerMetadata, labelContainer, commentTask } = req.body;
+                const { idContainer, idTask, answerMetadata, labelContainer, commentTask, answerType, idFeed } = req.body;
                 winston.info(`uploadFile-fields || idContainer=${!!idContainer} idTask=${!!idTask} answerMetadata=${!!answerMetadata} labelContainer=${!!labelContainer} commentTask=${!!commentTask}`);
                 if (!idContainer || !idTask || !answerMetadata || !labelContainer || !commentTask) {
                     _cleanFile(req);
@@ -143,15 +172,23 @@ async function uploadFile(req, res) {
                     return res.sendStatus(400);
                 }
 
+                // El tipo de respuesta es opcional (por defecto uploadFile);
+                // la tarea de dibujo reutiliza este flujo con 'draw'
+                const validAnswerTypes = ['uploadFile', 'draw'];
+                const answerTypeV = typeof answerType === 'string' && validAnswerTypes.includes(answerType)
+                    ? answerType
+                    : 'uploadFile';
+
                 const fileName = path.basename(req.file.path);
-                const idAnswer = path.basename(fileName, '.pdf');
+                const idAnswer = path.basename(fileName, path.extname(fileName));
                 const answer2Server = {
                     hasOptionalText: meta.hasOptionalText,
                     finishClient: meta.finishClient,
                     time2Complete: meta.time2Complete,
                     labelContainer,
                     commentTask,
-                    answerType: 'uploadFile',
+                    answerType: answerTypeV,
+                    ...(typeof idFeed === 'string' && idFeed.trim() !== '' && { idFeed: idFeed.trim() }),
                     answer: {
                         file: fileName,
                         originalName: req.file.originalname,
@@ -209,9 +246,9 @@ async function downloadFile(req, res) {
                     return res.sendStatus(403);
                 }
 
-                // Sanitize: only allow UUID.pdf pattern
+                // Sanitize: only allow UUID.(pdf|png) pattern
                 const safeFileId = path.basename(req.params.fileId);
-                if (!/^[A-Za-z0-9_-]+\.pdf$/.test(safeFileId)) {
+                if (!FILE_ID_REGEX.test(safeFileId)) {
                     logHttp(req, 400, 'downloadFile', start);
                     return res.sendStatus(400);
                 }
@@ -233,7 +270,7 @@ async function downloadFile(req, res) {
                 res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
                 res.setHeader('Pragma', 'no-cache');
                 res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(originalName)}"`);
-                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Type', _contentTypeFor(safeFileId));
                 logHttp(req, 200, 'downloadFile', start);
                 res.sendFile(filePath, { cacheControl: false, etag: false, lastModified: false });
             })
@@ -280,7 +317,7 @@ async function downloadFileTeacher(req, res) {
                 }
 
                 const safeFileId = path.basename(fileId);
-                if (!/^[A-Za-z0-9_-]+\.pdf$/.test(safeFileId)) {
+                if (!FILE_ID_REGEX.test(safeFileId)) {
                     logHttp(req, 400, 'downloadFileTeacher', start);
                     return res.sendStatus(400);
                 }
@@ -348,7 +385,7 @@ async function downloadFileTeacher(req, res) {
                 res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
                 res.setHeader('Pragma', 'no-cache');
                 res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(originalName)}"`);
-                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Type', _contentTypeFor(safeFileId));
                 winston.info(Mustache.render(
                     'downloadFileTeacher || {{{uid}}} -> {{{sub}}} || {{{time}}}',
                     { uid, sub: subscriber, time: Date.now() - start }

@@ -149,6 +149,9 @@ class Task {
             case 'http://momoest.gsic.uva.es/ontology/Draw':
               aT = AnswerType.draw;
               break;
+            case 'http://momoest.gsic.uva.es/ontology/PhotoVote':
+              aT = AnswerType.photoVote;
+              break;
             default:
               throw TaskException('at');
           }
@@ -613,8 +616,6 @@ extension SpaceString on Space {
         return 'http://moult.gsic.uva.es/ontology/VirtualSpace';
       case Space.web:
         return 'http://moult.gsic.uva.es/ontology/Web';
-      default:
-        throw SpaceException('Problem with rdf');
     }
   }
 }
@@ -631,7 +632,8 @@ enum AnswerType {
   text,
   noAnswer,
   uploadFile,
-  draw
+  draw,
+  photoVote
 }
 
 enum ContainerTask { spatialThing, itinerary }

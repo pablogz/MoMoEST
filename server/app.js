@@ -17,11 +17,15 @@ const features = require('./routes/feature/features');
 const featuresLOD = require('./routes/feature/featuresLOD');
 const feature = require('./routes/feature/feature');
 const learningTasks = require('./routes/feature/learningTasks/learningTasks');
+const photoVote = require('./routes/feature/photoVote');
 const tasks = require('./routes/learningTasks/learningTasks');
 const learningTask = require('./routes/feature/learningTasks/learningTask');
 const task = require('./routes/learningTasks/learningTask');
 const user = require('./routes/users/user');
 const userPreferences = require('./routes/users/userPreferences/userPreferences')
+const userActiveFeed = require('./routes/users/activeFeed/activeFeed');
+const userNotes = require('./routes/users/notes/notes');
+const noteFiles = require('./routes/users/notes/files');
 const answers = require('./routes/users/answers/answers');
 const answerFiles = require('./routes/users/answers/files');
 // const answer = require('./routes/users/answers/answer');
@@ -57,12 +61,19 @@ const rutas = {
     feature: '/features/:feature',
     learningTasks: '/features/:feature/learningTasks',
     learningTask: '/features/:feature/learningTasks/:learningTask',
+    photoVote: '/features/:feature/photoVote',
+    photoVoteVote: '/features/:feature/photoVote/:entry/vote',
+    photoVoteFile: '/features/:feature/photoVote/files/:fileId',
     tasks: '/tasks',
     // task: '/features/:feature/learningTasks/:task',
     task: '/tasks/:task',
     users: '/users/',
     user: '/users/user',
     userPreferences: '/users/user/preferences',
+    userActiveFeed: '/users/user/activeFeed',
+    userNotes: '/users/user/notes/',
+    userNoteFile: '/users/user/notes/files/:fileId',
+    userNote: '/users/user/notes/:note',
     answers: '/users/user/answers/',
     answerFiles: '/users/user/answers/files',
     answerFile: '/users/user/answers/files/:fileId',
@@ -258,6 +269,45 @@ app
     .all(rutas.task, cors({
         origin: '*'
     }), error405)
+    // PHOTO VOTE
+    .get(rutas.photoVote, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        photoVote.listEntries(req, res) :
+        res.sendStatus(401))
+    .post(rutas.photoVote, cors({
+        origin: '*',
+        exposedHeaders: ['Location']
+    }), (req, res, next) => req.headers.authorization ? next() : res.sendStatus(401),
+        photoVote.multerMiddleware,
+        (req, res) => photoVote.uploadPhoto(req, res))
+    .options(rutas.photoVote, cors({
+        origin: '*',
+        methods: ['GET', 'POST', 'OPTIONS']
+    }), (req, res) => res.sendStatus(204))
+    .all(rutas.photoVote, cors({ origin: '*' }), error405)
+    .put(rutas.photoVoteVote, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        req.is('application/json') ?
+            photoVote.voteEntry(req, res) :
+            res.sendStatus(415) :
+        res.sendStatus(401))
+    .options(rutas.photoVoteVote, cors({
+        origin: '*',
+        methods: ['PUT', 'OPTIONS']
+    }), (req, res) => res.sendStatus(204))
+    .all(rutas.photoVoteVote, cors({ origin: '*' }), error405)
+    .get(rutas.photoVoteFile, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        photoVote.serveFile(req, res) :
+        res.sendStatus(401))
+    .options(rutas.photoVoteFile, cors({
+        origin: '*',
+        methods: ['GET', 'OPTIONS']
+    }), (req, res) => res.sendStatus(204))
+    .all(rutas.photoVoteFile, cors({ origin: '*' }), error405)
     //Users
     .all(rutas.task, cors({
         origin: '*'
@@ -316,6 +366,87 @@ app
         res.sendStatus(204);
     })
     .all(rutas.user, cors({
+        origin: '*'
+    }), error405)
+    // ACTIVE FEED
+    .put(rutas.userActiveFeed, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        req.is('application/json') ?
+            userActiveFeed.putActiveFeed(req, res) :
+            res.sendStatus(415) :
+        res.sendStatus(401))
+    .options(rutas.userActiveFeed, cors({
+        origin: '*',
+        methods: ['PUT', 'OPTIONS']
+    }), (req, res) => {
+        res.sendStatus(204);
+    })
+    .all(rutas.userActiveFeed, cors({
+        origin: '*'
+    }), error405)
+    // NOTES
+    .get(rutas.userNotes, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        userNotes.getNotes(req, res) :
+        res.sendStatus(401))
+    // El cuerpo puede ser JSON (nota sin dibujo nuevo) o multipart (con dibujo);
+    // multer deja pasar sin tocar nada lo que no sea multipart
+    .post(rutas.userNotes, cors({
+        origin: '*',
+        exposedHeaders: ['Location']
+    }), (req, res, next) => req.headers.authorization ?
+        req.is('application/json') || req.is('multipart/form-data') ?
+            next() :
+            res.sendStatus(415) :
+        res.sendStatus(401),
+        noteFiles.multerMiddleware,
+        (req, res) => userNotes.newNote(req, res))
+    .options(rutas.userNotes, cors({
+        origin: '*',
+        methods: ['GET', 'POST', 'OPTIONS']
+    }), (req, res) => {
+        res.sendStatus(204);
+    })
+    .all(rutas.userNotes, cors({
+        origin: '*'
+    }), error405)
+    .get(rutas.userNoteFile, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        userNotes.downloadNoteFile(req, res) :
+        res.sendStatus(401))
+    .options(rutas.userNoteFile, cors({
+        origin: '*',
+        methods: ['GET', 'OPTIONS']
+    }), (req, res) => {
+        res.sendStatus(204);
+    })
+    .all(rutas.userNoteFile, cors({
+        origin: '*'
+    }), error405)
+    .put(rutas.userNote, cors({
+        origin: '*'
+    }), (req, res, next) => req.headers.authorization ?
+        req.is('application/json') || req.is('multipart/form-data') ?
+            next() :
+            res.sendStatus(415) :
+        res.sendStatus(401),
+        noteFiles.multerMiddleware,
+        (req, res) => userNotes.editNote(req, res))
+    .delete(rutas.userNote, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        userNotes.deleteNote(req, res) :
+        res.sendStatus(401))
+    .options(rutas.userNote, cors({
+        origin: '*',
+        methods: ['PUT', 'DELETE', 'OPTIONS']
+    }), (req, res) => {
+        res.sendStatus(204);
+    })
+    .all(rutas.userNote, cors({
         origin: '*'
     }), error405)
     // ANSWERS

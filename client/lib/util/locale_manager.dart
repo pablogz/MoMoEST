@@ -4,7 +4,7 @@ import 'package:universal_io/io.dart';
 
 class LocaleManager {
   static const String langKey = 'lang_override';
-  static final List<String> supportedLangs = ['es', 'en'];
+  static final List<String> supportedLangs = ['es', 'en', 'pt', 'it'];
 
   static String _currentLang = _resolveDeviceLang();
 
@@ -38,7 +38,16 @@ class LocaleManager {
 
   static Locale? localeFromLang(String? lang) {
     if (lang == null) return null;
-    return lang == 'es' ? const Locale('es', 'ES') : const Locale('en', 'US');
+    switch (lang) {
+      case 'es':
+        return const Locale('es', 'ES');
+      case 'pt':
+        return const Locale('pt', 'PT');
+      case 'it':
+        return const Locale('it', 'IT');
+      default:
+        return const Locale('en', 'US');
+    }
   }
 
   // Actualiza currentLang al arrancar, una vez leída la preferencia guardada.

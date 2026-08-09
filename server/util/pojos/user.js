@@ -52,6 +52,10 @@ class InfoUser {
             this._defaultMap = data.defaultMap;
         }
 
+        if (data.activeFeed !== undefined && data.activeFeed !== null && typeof data.activeFeed === 'string') {
+            this._activeFeed = data.activeFeed;
+        }
+
         // if (data.feeder !== undefined && Array.isArray(data.feeder)) {
         //     this._feeder = data.feeder;
         // }
@@ -133,6 +137,13 @@ class InfoUser {
     set defaultMap(defaultMap) {
         if (defaultMap !== undefined && typeof defaultMap === 'string') {
             this._defaultMap = defaultMap;
+        }
+    }
+
+    get activeFeed() { return this._activeFeed; }
+    set activeFeed(activeFeed) {
+        if (activeFeed === null || activeFeed === undefined || typeof activeFeed === 'string') {
+            this._activeFeed = activeFeed === null ? undefined : activeFeed;
         }
     }
 

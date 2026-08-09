@@ -54,6 +54,8 @@ dependencies:
   string_similarity: ^2.1.1
   vsc_quill_delta_to_html: ^1.0.5
   flutter_image_compress: ^2.4.0
+  gal: ^2.3.1
+  pdf: ^3.11.1
   web: ^1.1.1
 
 # dependency_overrides:
@@ -90,6 +92,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
+  # SDWebImage llega a la vez por CocoaPods (flutter_image_compress_common) y por
+  # SPM (file_picker -> DKImagePickerController), lo que provoca símbolos
+  # duplicados al enlazar en iOS. Además, flutter_image_compress_common y
+  # sign_in_with_apple aún no soportan SPM.
+  config:
+    enable-swift-package-manager: false
 
   assets:
     - images/

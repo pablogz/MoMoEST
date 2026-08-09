@@ -101,3 +101,7 @@ class SubscriberException extends FeederException {
 class UserXESTException extends ClassException {
   UserXESTException(String message) : super('User_xEST', message);
 }
+
+class NoteException extends ClassException {
+  NoteException(String message) : super('Note', message);
+}

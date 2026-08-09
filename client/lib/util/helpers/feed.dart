@@ -20,6 +20,9 @@ class Feed {
   late List<String> _subscribersId;
   late List<Subscriber> _subscribers;
   late List<FeedTeacher> _teachers;
+
+  /// Si es verdadero, el canal exige nombre y apellidos al apuntarse
+  bool requireFullName = false;
   // late List<String> _lstStLt, _lstItineraries;
   // late List<PointItinerary> _stLt;
   // late List<Task> _tasks;
@@ -68,6 +71,8 @@ class Feed {
     } else {
       _pass = '';
     }
+
+    requireFullName = data['requireFullName'] == true;
 
     _teachers = [];
     if (data.containsKey('teachers') && data['teachers'] is List) {
@@ -619,6 +624,8 @@ class Feed {
       out['password'] = pass;
     }
 
+    out['requireFullName'] = requireFullName;
+
     out['labels'] = labels.first.toMap();
     out['comments'] = comments.first.toMap();
 
@@ -771,6 +778,7 @@ class Feed {
 /// Clase para definir los usuarios que se han apuntado a un canal
 class Subscriber {
   late String _id, _alias;
+  String? name, surname;
   late DateTime _date;
   late int _nAnswers;
   late List<Answer> _answers;
@@ -801,6 +809,14 @@ class Subscriber {
       } else {
         _alias = 'Student';
       }
+
+      // Nombre y apellidos que el estudiante dio para este canal
+      name = data['name'] is String && data['name'].trim().isNotEmpty
+          ? data['name'].trim()
+          : null;
+      surname = data['surname'] is String && data['surname'].trim().isNotEmpty
+          ? data['surname'].trim()
+          : null;
 
       _answers = [];
       if (data.containsKey('answers') && data['answers'] is List) {
@@ -852,6 +868,10 @@ class Subscriber {
   String get alias => _alias;
   DateTime get date => _date;
   int get nAnswers => _nAnswers;
+
+  bool get hasFullName => name != null || surname != null;
+  String get fullName =>
+      [name, surname].where((s) => s != null).join(' ');
 
   Map<String, dynamic> toMap() => toJson();
 

@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +16,7 @@ import 'package:image_network/image_network.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
 
+import 'package:momoest/draw_editor.dart';
 import 'package:momoest/full_screen.dart';
 import 'package:momoest/util/helpers/feature.dart';
 import 'package:momoest/l10n/generated/app_localizations.dart';
@@ -71,6 +74,18 @@ class _COTask extends State<COTask> {
   bool showMessageGoBack = false;
   PlatformFile? _selectedPdf;
   bool _uploading = false;
+  // Estado de la tarea de dibujo
+  Uint8List? _drawPng;
+  List<DrawElement>? _drawElements;
+  bool _drawExportPdf = false;
+  // Fondo elegido para el dibujo (null = lienzo en blanco) y fotografías del
+  // lugar entre las que se puede elegir
+  String? _drawBackground;
+  bool _drawBackgroundChosen = false;
+  Future<List<PairImage>>? _futureDrawImages;
+  // Estado de la tarea de fotografía con votación
+  Uint8List? _photoBytes;
+  bool _photoResponsibility = false;
 
   @override
   void initState() {
@@ -595,10 +610,23 @@ class _COTask extends State<COTask> {
       case AnswerType.uploadFile:
         lista.add(_widgetPickPdf());
         break;
+      case AnswerType.draw:
+        lista.add(_widgetDraw());
+        break;
+      case AnswerType.photoVote:
+        lista.add(_widgetPhotoVote());
+        break;
       default:
     }
 
-    if (task!.aT != AnswerType.uploadFile) lista.add(cuadrotexto);
+    Set<AnswerType> sinCuadroTexto = {
+      AnswerType.uploadFile,
+      AnswerType.draw,
+      AnswerType.photoVote,
+    };
+    if (!sinCuadroTexto.contains(task!.aT)) {
+      lista.add(cuadrotexto);
+    }
 
     return SliverPadding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -649,6 +677,9 @@ class _COTask extends State<COTask> {
       });
       request.fields['labelContainer'] = answer.labelContainer;
       request.fields['commentTask'] = answer.commentTask;
+      if (UserXEST.userXEST.hasFeedEnable) {
+        request.fields['idFeed'] = UserXEST.userXEST.feed;
+      }
 
       if (_selectedPdf!.bytes != null) {
         request.files.add(http.MultipartFile.fromBytes(
@@ -724,6 +755,522 @@ class _COTask extends State<COTask> {
       smState.showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));
       if (!ConfigXest.development) {
         // ignore: use_rethrow_when_possible
+        await FirebaseCrashlytics.instance.recordError(error, null);
+      }
+    } finally {
+      if (mounted) setState(() => _uploading = false);
+    }
+  }
+
+  /// Fotografías que se pueden usar como fondo del dibujo: la imagen que el
+  /// profesorado adjuntó a la tarea (si la hay) y las del lugar, sin repetir.
+  Future<List<PairImage>> _getDrawImages() async {
+    List<PairImage> images = [];
+    if (task!.image is PairImage) {
+      images.add(task!.image!);
+    }
+    try {
+      final Feature feature =
+          Feature.providers(widget.shortIdContainer, await _getFeature());
+      for (PairImage image in feature.image) {
+        if (!images.any((i) => i.image == image.image)) {
+          images.add(image);
+        }
+      }
+    } catch (error) {
+      if (ConfigXest.development) debugPrint(error.toString());
+    }
+    return images;
+  }
+
+  /// Miniaturas para elegir el fondo del dibujo: lienzo en blanco o cualquiera
+  /// de las fotografías disponibles del lugar.
+  Widget _widgetDrawBackground(AppLocalizations appLoca) {
+    ThemeData td = Theme.of(context);
+    _futureDrawImages ??= _getDrawImages();
+    return FutureBuilder<List<PairImage>>(
+      future: _futureDrawImages,
+      builder: (context, snapshot) {
+        final List<PairImage> images = snapshot.data ?? [];
+        if (images.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        // Por omisión se mantiene la imagen de la tarea, si la tiene
+        if (!_drawBackgroundChosen) {
+          _drawBackgroundChosen = true;
+          _drawBackground =
+              task!.image is PairImage ? task!.image!.image : null;
+        }
+        Widget option(String? url, Widget child) {
+          final bool selected = _drawBackground == url;
+          return InkWell(
+            onTap: _guardado || _uploading
+                ? null
+                : () => setState(() {
+                      _drawBackground = url;
+                      _drawBackgroundChosen = true;
+                    }),
+            child: Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: selected
+                      ? td.colorScheme.primary
+                      : td.colorScheme.outlineVariant,
+                  width: selected ? 3 : 1,
+                ),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: child,
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(appLoca.fondoDibujo, style: td.textTheme.titleSmall),
+              Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 8),
+                child: Text(appLoca.fondoDibujoInfo,
+                    style: td.textTheme.bodySmall),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: option(
+                        null,
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.crop_square),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(appLoca.lienzoBlanco,
+                                    style: td.textTheme.labelSmall,
+                                    textAlign: TextAlign.center),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    ...images.map(
+                      (image) => Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: option(
+                          image.image,
+                          Image.network(image.image, fit: BoxFit.cover),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _widgetDraw() {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _widgetDrawBackground(appLoca),
+        if (_drawPng != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 250),
+                child: Image.memory(_drawPng!, fit: BoxFit.contain),
+              ),
+            ),
+          ),
+        OutlinedButton.icon(
+          onPressed: _guardado || _uploading
+              ? null
+              : () async {
+                  DrawResult? result = await Navigator.push(
+                    context,
+                    MaterialPageRoute<DrawResult>(
+                      builder: (BuildContext context) => DrawEditor(
+                        backgroundUrl: _drawBackgroundChosen
+                            ? _drawBackground
+                            : task!.image is PairImage
+                                ? task!.image!.image
+                                : null,
+                        initialElements: _drawElements,
+                      ),
+                      fullscreenDialog: true,
+                    ),
+                  );
+                  if (result != null && mounted) {
+                    setState(() {
+                      _drawPng = result.pngBytes;
+                      _drawElements = result.elements;
+                    });
+                  }
+                },
+          icon: Icon(_drawPng == null ? Icons.draw : Icons.edit),
+          label: Text(_drawPng == null
+              ? appLoca.abrirEditorDibujo
+              : appLoca.editarDibujo),
+        ),
+        if (_drawPng != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Wrap(
+              spacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(appLoca.formatoExportacion),
+                ChoiceChip(
+                  label: const Text('PNG'),
+                  selected: !_drawExportPdf,
+                  onSelected: _guardado || _uploading
+                      ? null
+                      : (_) => setState(() => _drawExportPdf = false),
+                ),
+                ChoiceChip(
+                  label: const Text('PDF'),
+                  selected: _drawExportPdf,
+                  onSelected: _guardado || _uploading
+                      ? null
+                      : (_) => setState(() => _drawExportPdf = true),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _saveDraw(
+      ScaffoldMessengerState smState, AppLocalizations? appLoca) async {
+    if (_drawPng == null) {
+      smState.showSnackBar(SnackBar(content: Text(appLoca!.realizaDibujo)));
+      return;
+    }
+    if (mounted) setState(() => _uploading = true);
+    try {
+      final int now = DateTime.now().millisecondsSinceEpoch;
+      answer.time2Complete = now - _startTime;
+      answer.timestamp = now;
+      answer.commentTask = task!.getAComment(lang: MyApp.currentLang);
+
+      final Feature feature =
+          Feature.providers(widget.shortIdContainer, await _getFeature());
+      final String featureLabel = feature.getALabel(lang: MyApp.currentLang);
+      answer.labelContainer = featureLabel.isNotEmpty
+          ? featureLabel
+          : task!.getALabel(lang: MyApp.currentLang);
+
+      // Exporto el dibujo al formato elegido por el usuario
+      Uint8List bytes;
+      String filename;
+      if (_drawExportPdf) {
+        final pw.Document pdfDoc = pw.Document();
+        final pw.MemoryImage pdfImage = pw.MemoryImage(_drawPng!);
+        pdfDoc.addPage(
+          pw.Page(build: (pw.Context ctx) => pw.Center(child: pw.Image(pdfImage))),
+        );
+        bytes = await pdfDoc.save();
+        filename = 'drawing_$now.pdf';
+      } else {
+        bytes = _drawPng!;
+        filename = 'drawing_$now.png';
+      }
+
+      final token = await FirebaseAuth.instance.currentUser!.getIdToken();
+      final request = http.MultipartRequest('POST', Queries.uploadAnswerFile());
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['idContainer'] = answer.idContainer;
+      request.fields['idTask'] = answer.idTask;
+      request.fields['answerMetadata'] = json.encode({
+        'hasOptionalText': false,
+        'finishClient': now,
+        'time2Complete': answer.time2Complete,
+      });
+      request.fields['labelContainer'] = answer.labelContainer;
+      request.fields['commentTask'] = answer.commentTask;
+      request.fields['answerType'] = AnswerType.draw.name;
+      if (UserXEST.userXEST.hasFeedEnable) {
+        request.fields['idFeed'] = UserXEST.userXEST.feed;
+      }
+      request.files.add(http.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: filename,
+      ));
+
+      final streamed = await request.send();
+      final response = await http.Response.fromStream(streamed);
+
+      if (response.statusCode == 201) {
+        final shortId = response.headers['location']!.split('/').last;
+        answer.id = shortId;
+        answer.answer = {
+          'file': '$shortId.${_drawExportPdf ? 'pdf' : 'png'}',
+          'originalName': filename,
+          'timestamp': now,
+        };
+        if (UserXEST.userXEST.hasFeedEnable) {
+          answer.idFeed = UserXEST.userXEST.feed;
+          await http.put(
+            Queries.feedAnswer(
+              Auxiliar.id2shortId(UserXEST.userXEST.feed)!,
+              UserXEST.userXEST.id,
+              shortId,
+            ),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: json.encode({}),
+          );
+        }
+        UserXEST.userXEST.answers.add(answer);
+
+        smState.clearSnackBars();
+        smState
+            .showSnackBar(SnackBar(content: Text(appLoca!.respuestaGuardada)));
+        if (!ConfigXest.development) {
+          await FirebaseAnalytics.instance.logEvent(
+            name: "taskCompleted",
+            parameters: {
+              "feature": widget.shortIdContainer,
+              "task": widget.shortIdTask,
+            },
+          );
+        }
+        if (mounted) setState(() => _guardado = true);
+        if (mounted) GoRouter.of(context).pop();
+      } else if (response.statusCode == 413) {
+        smState.showSnackBar(SnackBar(
+            content: Text(
+                appLoca!.ficheroDemasiadoGrande(ConfigXest.maxFileSizeMB))));
+      } else {
+        smState
+            .showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));
+      }
+    } catch (error) {
+      smState.clearSnackBars();
+      smState.showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));
+      if (!ConfigXest.development) {
+        await FirebaseCrashlytics.instance.recordError(error, null);
+      }
+    } finally {
+      if (mounted) setState(() => _uploading = false);
+    }
+  }
+
+  Widget _widgetPhotoVote() {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    ThemeData td = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Aviso: la foto se mostrará públicamente de forma anónima
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 5),
+                child: Icon(Icons.info_outline,
+                    size: 20, color: td.colorScheme.onSurface),
+              ),
+              Expanded(
+                child: Text(
+                  appLoca.photoVoteAviso,
+                  style: td.textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (_photoBytes != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 280),
+                child: Image.memory(_photoBytes!, fit: BoxFit.contain),
+              ),
+            ),
+          ),
+        OutlinedButton.icon(
+          onPressed: _guardado || _uploading
+              ? null
+              : () async {
+                  ScaffoldMessengerState smState =
+                      ScaffoldMessenger.of(context);
+                  try {
+                    final List<CameraDescription> cameras =
+                        await availableCameras();
+                    if (cameras.isEmpty) {
+                      throw CameraException('noCamera', 'No cameras');
+                    }
+                    if (!mounted) return;
+                    final Uint8List? bytes = await Navigator.push(
+                      context,
+                      MaterialPageRoute<Uint8List>(
+                        builder: (BuildContext context) =>
+                            TakePhoto(cameras.first),
+                        fullscreenDialog: true,
+                      ),
+                    );
+                    if (bytes != null && mounted) {
+                      setState(() => _photoBytes = bytes);
+                    }
+                  } catch (error) {
+                    if (ConfigXest.development) {
+                      debugPrint(error.toString());
+                    }
+                    smState.clearSnackBars();
+                    smState.showSnackBar(
+                      SnackBar(content: Text(appLoca.errorCamara)),
+                    );
+                  }
+                },
+          icon: const Icon(Icons.camera_alt),
+          label: Text(
+              _photoBytes == null ? appLoca.abrirCamara : appLoca.repetirFoto),
+        ),
+        // Declaración de responsabilidad obligatoria antes de enviar
+        CheckboxListTile.adaptive(
+          value: _photoResponsibility,
+          enabled: !_guardado && !_uploading,
+          onChanged: (bool? v) {
+            if (v != null) setState(() => _photoResponsibility = v);
+          },
+          title: Text(
+            appLoca.photoVoteResponsabilidad,
+            style: td.textTheme.bodyMedium,
+          ),
+          controlAffinity: ListTileControlAffinity.leading,
+          contentPadding: EdgeInsets.zero,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _savePhotoVote(
+      ScaffoldMessengerState smState, AppLocalizations? appLoca) async {
+    if (_photoBytes == null) {
+      smState.showSnackBar(SnackBar(content: Text(appLoca!.realizaFoto)));
+      return;
+    }
+    if (!_photoResponsibility) {
+      smState.showSnackBar(
+          SnackBar(content: Text(appLoca!.photoVoteMarcaResponsabilidad)));
+      return;
+    }
+    if (mounted) setState(() => _uploading = true);
+    try {
+      final int now = DateTime.now().millisecondsSinceEpoch;
+      answer.time2Complete = now - _startTime;
+      answer.timestamp = now;
+      answer.commentTask = task!.getAComment(lang: MyApp.currentLang);
+
+      final Feature feature =
+          Feature.providers(widget.shortIdContainer, await _getFeature());
+      final String featureLabel = feature.getALabel(lang: MyApp.currentLang);
+      answer.labelContainer = featureLabel.isNotEmpty
+          ? featureLabel
+          : task!.getALabel(lang: MyApp.currentLang);
+
+      final String filename = 'photo_$now.jpg';
+      final token = await FirebaseAuth.instance.currentUser!.getIdToken();
+      final request = http.MultipartRequest(
+          'POST', Queries.photoVoteEntries(widget.shortIdContainer));
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['idTask'] = answer.idTask;
+      request.fields['answerMetadata'] = json.encode({
+        'hasOptionalText': false,
+        'finishClient': now,
+        'time2Complete': answer.time2Complete,
+      });
+      request.fields['labelContainer'] = answer.labelContainer;
+      request.fields['commentTask'] = answer.commentTask;
+      if (UserXEST.userXEST.hasFeedEnable) {
+        request.fields['idFeed'] = UserXEST.userXEST.feed;
+      }
+      request.files.add(http.MultipartFile.fromBytes(
+        'file',
+        _photoBytes!,
+        filename: filename,
+      ));
+
+      final streamed = await request.send();
+      final response = await http.Response.fromStream(streamed);
+
+      if (response.statusCode == 201) {
+        final shortId = response.headers['location']!.split('/').last;
+        answer.id = shortId;
+        answer.answer = {
+          'file': '$shortId.jpg',
+          'originalName': filename,
+          'timestamp': now,
+        };
+        if (UserXEST.userXEST.hasFeedEnable) {
+          answer.idFeed = UserXEST.userXEST.feed;
+          await http.put(
+            Queries.feedAnswer(
+              Auxiliar.id2shortId(UserXEST.userXEST.feed)!,
+              UserXEST.userXEST.id,
+              shortId,
+            ),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: json.encode({}),
+          );
+        }
+        UserXEST.userXEST.answers.add(answer);
+
+        smState.clearSnackBars();
+        smState
+            .showSnackBar(SnackBar(content: Text(appLoca!.respuestaGuardada)));
+        if (!ConfigXest.development) {
+          await FirebaseAnalytics.instance.logEvent(
+            name: "taskCompleted",
+            parameters: {
+              "feature": widget.shortIdContainer,
+              "task": widget.shortIdTask,
+            },
+          );
+        }
+        if (mounted) setState(() => _guardado = true);
+        if (mounted) GoRouter.of(context).pop();
+      } else if (response.statusCode == 413) {
+        smState.showSnackBar(SnackBar(
+            content: Text(
+                appLoca!.ficheroDemasiadoGrande(ConfigXest.maxFileSizeMB))));
+      } else {
+        smState
+            .showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));
+      }
+    } catch (error) {
+      smState.clearSnackBars();
+      smState.showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));
+      if (!ConfigXest.development) {
         await FirebaseCrashlytics.instance.recordError(error, null);
       }
     } finally {
@@ -866,6 +1413,14 @@ class _COTask extends State<COTask> {
                             await _saveUploadFile(smState, appLoca);
                             return;
                           }
+                          if (answer.answerType == AnswerType.draw) {
+                            await _saveDraw(smState, appLoca);
+                            return;
+                          }
+                          if (answer.answerType == AnswerType.photoVote) {
+                            await _savePhotoVote(smState, appLoca);
+                            return;
+                          }
                           if (_thisKey.currentState!.validate()) {
                             try {
                               int now = DateTime.now().millisecondsSinceEpoch;
@@ -945,6 +1500,9 @@ class _COTask extends State<COTask> {
 
                               answer.labelContainer =
                                   feature.getALabel(lang: MyApp.currentLang);
+                              if (UserXEST.userXEST.hasFeedEnable) {
+                                answer.idFeed = UserXEST.userXEST.feed;
+                              }
                               http
                                   .post(Queries.newAnswer(),
                                       headers: {
@@ -1133,6 +1691,8 @@ class _COTask extends State<COTask> {
   }
 }
 
+/// Pantalla de captura con la cámara del dispositivo. Devuelve los bytes de
+/// la fotografía mediante Navigator.pop.
 class TakePhoto extends StatefulWidget {
   final CameraDescription cameraDescription;
   const TakePhoto(this.cameraDescription, {super.key});
@@ -1143,10 +1703,15 @@ class TakePhoto extends StatefulWidget {
 class _TakePhoto extends State<TakePhoto> {
   late CameraController _cameraController;
   late Future<void> _cameraFuture;
+  bool _capturing = false;
+
   @override
   void initState() {
-    _cameraController =
-        CameraController(widget.cameraDescription, ResolutionPreset.medium);
+    _cameraController = CameraController(
+      widget.cameraDescription,
+      ResolutionPreset.high,
+      enableAudio: false,
+    );
     _cameraFuture = _cameraController.initialize();
     super.initState();
   }
@@ -1157,19 +1722,54 @@ class _TakePhoto extends State<TakePhoto> {
     super.dispose();
   }
 
+  Future<void> _capture() async {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    setState(() => _capturing = true);
+    try {
+      final XFile photo = await _cameraController.takePicture();
+      final Uint8List bytes = await photo.readAsBytes();
+      if (mounted) Navigator.pop(context, bytes);
+    } catch (error) {
+      if (ConfigXest.development) debugPrint(error.toString());
+      if (mounted) {
+        setState(() => _capturing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(appLoca.errorCamara)),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
     return Scaffold(
-        body: FutureBuilder<void>(
-      future: _cameraFuture,
-      builder: ((context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return CameraPreview(_cameraController);
-        } else {
-          return const Center(child: CircularProgressIndicator.adaptive());
-        }
-      }),
-    ));
+      appBar: AppBar(
+        title: Text(appLoca.abrirCamara),
+        centerTitle: false,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.large(
+        tooltip: appLoca.hacerFoto,
+        onPressed: _capturing ? null : _capture,
+        child: _capturing
+            ? const CircularProgressIndicator.adaptive()
+            : const Icon(Icons.camera),
+      ),
+      body: FutureBuilder<void>(
+        future: _cameraFuture,
+        builder: ((context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text(appLoca.errorCamara));
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Center(child: CameraPreview(_cameraController));
+          } else {
+            return const Center(child: CircularProgressIndicator.adaptive());
+          }
+        }),
+      ),
+    );
   }
 }
 
@@ -1302,6 +1902,7 @@ class _FormTask extends State<FormTask> {
                 AnswerType.text.name,
                 AnswerType.uploadFile.name,
                 AnswerType.draw.name,
+                AnswerType.photoVote.name,
               ]
             : [
                 null,
@@ -1315,6 +1916,7 @@ class _FormTask extends State<FormTask> {
                 AnswerType.text: appLoca.selectTipoRespuestaTexto,
                 AnswerType.uploadFile: appLoca.selectTipoRespuestaUploadFile,
                 AnswerType.draw: appLoca.selectTipoRespuestaDraw,
+                AnswerType.photoVote: appLoca.selectTipoRespuestaPhotoVote,
               }
             : {
                 AnswerType.text: appLoca.selectTipoRespuestaTexto,
@@ -1536,6 +2138,26 @@ class _FormTask extends State<FormTask> {
               }
               return null;
             }),
+      ),
+      // Con la tarea de dibujo, la imagen adjunta pasa a ser el fondo del
+      // lienzo del alumnado
+      Visibility(
+        visible: !_pasoUno && answerType == AnswerType.draw,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 5),
+              child: Icon(Icons.info_outline, size: 20, color: cS.onSurface),
+            ),
+            Expanded(
+              child: Text(
+                appLoca.dibujoInfoFondo,
+                style: textTheme.bodySmall,
+              ),
+            ),
+          ],
+        ),
       ),
     ];
     return ListView.builder(
@@ -2748,6 +3370,9 @@ class _COTaskItinerary extends State<COTaskItinerary> {
 
                   _answer.labelContainer =
                       _feature.getALabel(lang: MyApp.currentLang);
+                  if (UserXEST.userXEST.hasFeedEnable) {
+                    _answer.idFeed = UserXEST.userXEST.feed;
+                  }
                   http
                       .post(Queries.newAnswer(),
                           headers: {

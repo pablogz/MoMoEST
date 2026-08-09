@@ -124,6 +124,7 @@ class Auxiliar {
       AnswerType.videoText: appLoca.videoTextTitle,
       AnswerType.uploadFile: appLoca.selectTipoRespuestaUploadFile,
       AnswerType.draw: appLoca.selectTipoRespuestaDraw,
+      AnswerType.photoVote: appLoca.selectTipoRespuestaPhotoVote,
     };
 
     return mapAnswerTypeName[aT] ?? '';
@@ -508,7 +509,7 @@ class Auxiliar {
     SpatialThingType.square: Icons.square,
   };
 
-  static isUriResource(String s) {
+  static bool isUriResource(String s) {
     Uri? uri = Uri.tryParse(s);
     return uri != null ? uri.hasAbsolutePath && uri.hasScheme : false;
   }
@@ -569,9 +570,6 @@ class Auxiliar {
           showAlignmentButtons: false,
           showBackgroundColorButton: false,
           showCenterAlignment: false,
-          showClipboardCopy: false,
-          showClipboardCut: false,
-          showClipboardPaste: false,
           showCodeBlock: false,
           showColorButton: false,
           showDirection: false,

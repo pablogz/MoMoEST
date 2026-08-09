@@ -107,6 +107,14 @@ class _Settings extends State<Settings> {
               value: 'en',
               label: Text('English'),
             ),
+            const ButtonSegment(
+              value: 'pt',
+              label: Text('Português'),
+            ),
+            const ButtonSegment(
+              value: 'it',
+              label: Text('Italiano'),
+            ),
           ],
           selected: {_selectedLang},
           onSelectionChanged: (selection) {

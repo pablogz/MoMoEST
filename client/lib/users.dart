@@ -19,11 +19,17 @@ import 'package:momoest/util/config_xest.dart';
 class NewUser extends StatefulWidget {
   final double? lat, long, zoom;
 
+  /// Cuando es verdadero se muestra la pantalla de registro de profesorado
+  /// (código de invitación, descripción y consentimiento LOD). En caso
+  /// contrario se muestra el registro de estudiante.
+  final bool teacherForm;
+
   const NewUser({
     super.key,
     this.lat,
     this.long,
     this.zoom,
+    this.teacherForm = false,
   });
 
   @override
@@ -51,7 +57,7 @@ class _NewUser extends State<NewUser> {
     _codeTeacher = '';
     _confTeacherLOD = '';
     _confAliasLOD = '';
-    _boolTeacher = false;
+    _boolTeacher = widget.teacherForm;
     // aceptan la política de privacidad antes de llegar a esta pantalla
     _polPri = true;
     _entiendoLOD = false;
@@ -81,11 +87,15 @@ class _NewUser extends State<NewUser> {
         key: _keyNewUser,
         child: CustomScrollView(slivers: [
           SliverAppBar(
-            title: Text(AppLocalizations.of(context)!.nuevoUsuario,
-                overflow: TextOverflow.ellipsis, maxLines: 1),
+            title: Text(
+                widget.teacherForm
+                    ? AppLocalizations.of(context)!.registroProfesorado
+                    : AppLocalizations.of(context)!.nuevoUsuario,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1),
             centerTitle: false,
             pinned: true,
-            automaticallyImplyLeading: false,
+            automaticallyImplyLeading: widget.teacherForm,
           ),
           SliverPadding(
             padding: const EdgeInsets.only(top: 20),
@@ -220,10 +230,21 @@ class _NewUser extends State<NewUser> {
             : null,
         initialValue: _alias,
       ),
-      SwitchListTile.adaptive(
-        value: _boolTeacher,
-        onChanged: (value) => setState(() => _boolTeacher = value),
-        title: Text(appLoca.quieroAnotar),
+      Visibility(
+        visible: !widget.teacherForm,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () {
+              GoRouter.of(context).push(
+                '/users/${FirebaseAuth.instance.currentUser!.uid}/newUser/teacher',
+                extra: [widget.lat, widget.long, widget.zoom],
+              );
+            },
+            icon: const Icon(Icons.school),
+            label: Text(appLoca.eresProfesorRegistrate),
+          ),
+        ),
       ),
       Visibility(
         visible: _boolTeacher,
@@ -652,7 +673,7 @@ class _InfoUser extends State<InfoUser> {
                   onPressed: () async {
                     bool? delete = await Auxiliar.deleteDialog(
                       context,
-                      appLoca!.borrarUsuario,
+                      appLoca.borrarUsuario,
                       appLoca.confirmaBorrarUsuario,
                     );
                     if (delete is bool &&
@@ -737,7 +758,11 @@ class _InfoUser extends State<InfoUser> {
 }
 
 class EditUser extends StatefulWidget {
-  const EditUser({super.key});
+  /// Cuando es verdadero se muestra la pantalla de edición de datos de
+  /// profesorado (código de invitación, descripción y consentimiento LOD).
+  final bool teacherForm;
+
+  const EditUser({this.teacherForm = false, super.key});
 
   @override
   State<EditUser> createState() => _EditUser();
@@ -771,7 +796,7 @@ class _EditUser extends State<EditUser> {
     _codeTeacher = '';
     _confTeacherLOD = '';
     _confAliasLOD = '';
-    _boolTeacher = UserXEST.userXEST.rol.contains(Rol.teacher);
+    _boolTeacher = widget.teacherForm;
     _polPri = true;
     _entiendoLOD = UserXEST.userXEST.rol.contains(Rol.teacher);
     _bloqueaEntiendoLOD = _entiendoLOD;
@@ -805,7 +830,9 @@ class _EditUser extends State<EditUser> {
           SliverAppBar(
             centerTitle: false,
             title: Text(
-              AppLocalizations.of(context)!.editarUsuario,
+              widget.teacherForm
+                  ? AppLocalizations.of(context)!.editarDatosProfesorado
+                  : AppLocalizations.of(context)!.editarUsuario,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
@@ -948,12 +975,21 @@ class _EditUser extends State<EditUser> {
             : null,
         initialValue: _alias,
       ),
-      SwitchListTile.adaptive(
-        value: _boolTeacher,
-        onChanged: UserXEST.userXEST.rol.contains(Rol.teacher)
-            ? null
-            : (value) => setState(() => _boolTeacher = value),
-        title: Text(appLoca.quieroAnotar),
+      Visibility(
+        visible: !widget.teacherForm,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () {
+              GoRouter.of(context)
+                  .push('/users/${UserXEST.userXEST.id}/editUser/teacher');
+            },
+            icon: const Icon(Icons.school),
+            label: Text(UserXEST.userXEST.rol.contains(Rol.teacher)
+                ? appLoca.editarDatosProfesorado
+                : appLoca.eresProfesorRegistrate),
+          ),
+        ),
       ),
       Visibility(
         visible: _boolTeacher,

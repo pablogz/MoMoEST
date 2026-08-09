@@ -12,6 +12,9 @@ class Feed {
             this._password = data.password !== undefined && typeof data.password === 'string' ? data.password : null;
             this._date = data.date !== undefined && typeof data.date === 'string' ? data.date : null;
             this._owner = data.owner !== undefined && typeof data.owner === 'string' ? data.owner : null;
+            // Si es verdadero, el nombre y los apellidos son obligatorios al
+            // apuntarse al canal. Solo los ve el profesorado (MongoDB).
+            this._requireFullName = data.requireFullName === true;
         } else {
             throw new Error("Data is not an object");
         }
@@ -25,6 +28,8 @@ class Feed {
     get password() { return this._password; }
     get date() { return this._date; }
     get owner() { return this._owner; }
+    get requireFullName() { return this._requireFullName; }
+    set requireFullName(v) { this._requireFullName = v === true; }
 
     setLabels(labels) {
         this._labels = Array.isArray(labels) ? labels : null;
@@ -86,7 +91,8 @@ class Feed {
             password: this._password === null ? undefined : this._password,
             subscribers: this._subscribers,
             teachers: this._teachers,
-            date: this._date
+            date: this._date,
+            requireFullName: this._requireFullName,
         }
     }
 
@@ -95,6 +101,7 @@ class Feed {
             id: this._id,
             labels: this._labels,
             comments: this._comments,
+            requireFullName: this._requireFullName,
         }
     }
 }
@@ -106,6 +113,10 @@ class FeedSubscriber {
             this._idOwner = data.idOwner !== undefined && typeof data.idOwner === 'string' ? data.idOwner : null;
             this._date = data.date !== undefined && typeof data.date === 'string' ? data.date : (new Date.now()).toISOString();
             this._answers = data.answers !== undefined && Array.isArray(data.answers) ? data.answers : [];
+            // Nombre y apellidos que el estudiante da para este canal. Solo se
+            // guardan en MongoDB y solo los ve el profesorado del canal.
+            this._name = typeof data.name === 'string' && data.name.trim() !== '' ? data.name.trim() : undefined;
+            this._surname = typeof data.surname === 'string' && data.surname.trim() !== '' ? data.surname.trim() : undefined;
         } else {
             Error('Data is not an object');
         }
@@ -129,6 +140,16 @@ class FeedSubscriber {
     get answers() { return this._answers }
     set answers(v) {
         this._answers = v !== undefined && Array.isArray(v) ? v : this._answers;
+    }
+
+    get name() { return this._name }
+    set name(v) {
+        this._name = typeof v === 'string' && v.trim() !== '' ? v.trim() : this._name;
+    }
+
+    get surname() { return this._surname }
+    set surname(v) {
+        this._surname = typeof v === 'string' && v.trim() !== '' ? v.trim() : this._surname;
     }
 }
 

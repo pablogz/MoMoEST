@@ -44,7 +44,7 @@ class _FormFeedTeacher extends State<FormFeedTeacher> {
   late String _description, _label, _pass;
   late FocusNode _focusNode;
   late QuillController _quillController;
-  late bool _hasFocus, _errorDescription, _enviarPulsado;
+  late bool _hasFocus, _errorDescription, _enviarPulsado, _requireFullName;
   late final bool _isNewFeed;
 
   @override
@@ -57,6 +57,7 @@ class _FormFeedTeacher extends State<FormFeedTeacher> {
     _label = _feed.getALabel(lang: MyApp.currentLang);
     _description = _feed.getAComment(lang: MyApp.currentLang);
     _pass = _feed.pass;
+    _requireFullName = _feed.requireFullName;
     _quillController = QuillController.basic();
     try {
       _quillController.document =
@@ -302,6 +303,33 @@ class _FormFeedTeacher extends State<FormFeedTeacher> {
             SliverSafeArea(
               top: false,
               bottom: false,
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(maxWidth: Auxiliar.maxWidth),
+                    margin: EdgeInsets.only(
+                        top: mLateral, left: mLateral, right: mLateral),
+                    child: CheckboxListTile.adaptive(
+                      value: _requireFullName,
+                      enabled: !_enviarPulsado,
+                      onChanged: (bool? v) {
+                        if (v != null) {
+                          setState(() => _requireFullName = v);
+                        }
+                      },
+                      title: Text(appLoca.requiereNombreCanal),
+                      subtitle: Text(appLoca.requiereNombreCanalExplica),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SliverSafeArea(
+              top: false,
+              bottom: false,
               sliver: SliverPadding(
                 padding: EdgeInsets.all(mLateral),
                 sliver: SliverToBoxAdapter(
@@ -332,6 +360,7 @@ class _FormFeedTeacher extends State<FormFeedTeacher> {
                               }
 
                               _feed.pass = _pass;
+                              _feed.requireFullName = _requireFullName;
                               if (noErrorLabel && !_errorDescription) {
                                 Map<String, dynamic> out = _feed.toJson();
                                 ScaffoldMessengerState smState =
@@ -510,7 +539,7 @@ class FormFeedSubscriber extends StatefulWidget {
 
 class _FormFeedSubscriber extends State<FormFeedSubscriber> {
   late GlobalKey<FormState> _formFeedStudentKey;
-  late String _id, _pass;
+  late String _id, _pass, _name, _surname;
   late bool _enviarPulsado;
 
   @override
@@ -520,6 +549,8 @@ class _FormFeedSubscriber extends State<FormFeedSubscriber> {
 
     _id = '';
     _pass = '';
+    _name = '';
+    _surname = '';
     super.initState();
   }
 
@@ -611,6 +642,55 @@ class _FormFeedSubscriber extends State<FormFeedSubscriber> {
                           },
                           initialValue: _pass,
                         ),
+                        SizedBox(height: 15),
+                        TextFormField(
+                          maxLines: 1,
+                          enabled: !_enviarPulsado,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: appLoca.nombreCanal,
+                            hintMaxLines: 1,
+                          ),
+                          maxLength: 60,
+                          textCapitalization: TextCapitalization.words,
+                          keyboardType: TextInputType.name,
+                          onChanged: (value) => _name = value.trim(),
+                          initialValue: _name,
+                        ),
+                        SizedBox(height: 15),
+                        TextFormField(
+                          maxLines: 1,
+                          enabled: !_enviarPulsado,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: appLoca.apellidosCanal,
+                            hintMaxLines: 1,
+                          ),
+                          maxLength: 80,
+                          textCapitalization: TextCapitalization.words,
+                          keyboardType: TextInputType.name,
+                          onChanged: (value) => _surname = value.trim(),
+                          initialValue: _surname,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5),
+                              child: Icon(
+                                Icons.lock_outline,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                appLoca.nombreCanalPrivacidad,
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -641,6 +721,12 @@ class _FormFeedSubscriber extends State<FormFeedSubscriber> {
                                     Map<String, dynamic> out = {};
                                     if (_pass.trim().isNotEmpty) {
                                       out['password'] = _pass.trim();
+                                    }
+                                    if (_name.isNotEmpty) {
+                                      out['name'] = _name;
+                                    }
+                                    if (_surname.isNotEmpty) {
+                                      out['surname'] = _surname;
                                     }
                                     http
                                         .put(
@@ -692,6 +778,22 @@ class _FormFeedSubscriber extends State<FormFeedSubscriber> {
                                             }
                                             Navigator.pop(context, _id);
                                           }
+                                          break;
+                                        case 422:
+                                          // El canal exige nombre y apellidos
+                                          if (sMState != null) {
+                                            sMState.clearSnackBars();
+                                            sMState.showSnackBar(
+                                              SnackBar(
+                                                content: Text(appLoca
+                                                    .canalRequiereNombre),
+                                                duration:
+                                                    Duration(seconds: 8),
+                                              ),
+                                            );
+                                          }
+                                          setState(
+                                              () => _enviarPulsado = false);
                                           break;
                                         default:
                                           if (ConfigXest.development) {
@@ -892,6 +994,15 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                                               }).then((response) async {
                                             switch (response.statusCode) {
                                               case 200:
+                                                // El servidor ya ha limpiado
+                                                // el canal activo si era este
+                                                if (UserXEST.userXEST
+                                                        .hasFeedEnable &&
+                                                    UserXEST.userXEST.feed ==
+                                                        _feed!.id) {
+                                                  UserXEST.userXEST
+                                                      .disableFeedLocal();
+                                                }
                                                 if (mounted) {
                                                   setState(() =>
                                                       FeedCache.removeFeed(
@@ -922,8 +1033,9 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                                                           ),
                                                         );
                                                       }
-                                                      if (mounted)
+                                                      if (mounted) {
                                                         context.pop();
+                                                      }
                                                     },
                                                   ).onError(
                                                           (error, stackTrace) {
@@ -1158,13 +1270,25 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                       value: !_isOwner && _isEnableFeed,
                       onChanged: _isOwner
                           ? null
-                          : (bool newValue) {
-                              if (newValue) {
-                                UserXEST.userXEST.enableFeed(_feed!.id);
-                              } else {
-                                UserXEST.userXEST.disableFeed();
-                              }
+                          : (bool newValue) async {
+                              ScaffoldMessengerState smState =
+                                  ScaffoldMessenger.of(context);
+                              // Optimista: muestro el cambio y lo revierto si
+                              // el servidor no lo confirma
                               setState(() => _isEnableFeed = newValue);
+                              bool ok = newValue
+                                  ? await UserXEST.userXEST
+                                      .enableFeed(_feed!.id)
+                                  : await UserXEST.userXEST.disableFeed();
+                              if (!ok && mounted) {
+                                setState(() => _isEnableFeed = !newValue);
+                                smState.clearSnackBars();
+                                smState.showSnackBar(
+                                  SnackBar(
+                                    content: Text(appLoca.errorActivarCanal),
+                                  ),
+                                );
+                              }
                             },
                       title: Text(
                         appLoca.activarCanal,
@@ -1688,7 +1812,7 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
               Container(
                 padding: EdgeInsets.only(
                     top: mLateral / 2,
-                    bottom: mLateral,
+                    bottom: subscriber.hasFullName ? 0 : mLateral,
                     right: mLateral,
                     left: mLateral),
                 width: double.infinity,
@@ -1699,6 +1823,20 @@ class _InfoFeed extends State<InfoFeed> with SingleTickerProviderStateMixin {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
+              subscriber.hasFullName
+                  ? Container(
+                      padding: EdgeInsets.only(
+                          bottom: mLateral, right: mLateral, left: mLateral),
+                      width: double.infinity,
+                      child: Text(
+                        subscriber.fullName,
+                        style: textTheme.bodyMedium!
+                            .copyWith(color: colorScheme.outline),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )
+                  : Container(),
               Container(
                 padding: EdgeInsets.only(
                     bottom: mLateral, right: mLateral, left: mLateral),
@@ -2219,15 +2357,24 @@ class _AnswerUserFeed extends State<AnswersUserFeed> {
                 child: Text(answer.answer['answer'].toString()))
             : const SizedBox();
       case AnswerType.uploadFile:
+      case AnswerType.draw:
         return answer.hasAnswer
             ? Row(mainAxisSize: MainAxisSize.min, children: [
+                if (answer.answerType == AnswerType.draw)
+                  const Padding(
+                    padding: EdgeInsets.only(right: 5),
+                    child: Icon(Icons.draw),
+                  ),
                 Flexible(
-                    child: Text(answer.answer['originalName']?.toString() ?? '',
+                    child: Text(
+                        answer.answer['originalName']?.toString() ??
+                            answer.answer['file']?.toString() ??
+                            '',
                         style: bodyMediumBold,
                         overflow: TextOverflow.ellipsis)),
                 IconButton(
                     icon: const Icon(Icons.download),
-                    tooltip: appLoca.descargarPDF,
+                    tooltip: appLoca.descargar,
                     onPressed: () => _downloadPdfTeacher(answer)),
               ])
             : const SizedBox();

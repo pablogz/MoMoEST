@@ -12,7 +12,7 @@ class Category {
 
   String get iri => _iri;
   List<PairLang> get label => _label;
-  set label(label) {
+  set label(dynamic label) {
     if (label is String || label is Map || label is List) {
       if (label is String) {
         _label.add(PairLang.withoutLang(label));
@@ -48,7 +48,7 @@ class Category {
   }
 
   List<String> get broader => _broader;
-  set broader(broader) {
+  set broader(dynamic broader) {
     if (broader is List) {
       for (var element in broader) {
         _broader.add(element.toString());

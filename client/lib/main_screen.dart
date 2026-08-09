@@ -39,6 +39,7 @@ import 'package:momoest/util/auth/firebase.dart';
 import 'package:momoest/util/helpers/chest_marker.dart';
 import 'package:momoest/util/config_xest.dart';
 import 'package:momoest/answers.dart';
+import 'package:momoest/notes.dart';
 import 'package:momoest/util/map_layer.dart';
 
 class MyMap extends StatefulWidget {
@@ -229,11 +230,10 @@ class _MyMap extends State<MyMap> {
           Icons.route_outlined, Icons.route, appLoca.itinerarios),
       _navigationDestination(
           UserXEST.userXEST.hasFeedEnable
-              ? Badge(
-                  label: Text("1"), child: Icon(Icons.dynamic_feed_outlined))
+              ? Badge(child: Icon(Icons.dynamic_feed_outlined))
               : Icons.dynamic_feed_outlined,
           UserXEST.userXEST.hasFeedEnable
-              ? Badge(label: Text("1"), child: Icon(Icons.dynamic_feed))
+              ? Badge(child: Icon(Icons.dynamic_feed))
               : Icons.dynamic_feed,
           appLoca.feeds),
       _navigationDestination(
@@ -249,8 +249,8 @@ class _MyMap extends State<MyMap> {
           Icons.route_outlined, Icons.route, appLoca.itinerarios),
       UserXEST.userXEST.hasFeedEnable
           ? _navigationRailDestination(
-              Badge(label: Text("1"), child: Icon(Icons.dynamic_feed_outlined)),
-              Badge(label: Text("1"), child: Icon(Icons.dynamic_feed)),
+              Badge(child: Icon(Icons.dynamic_feed_outlined)),
+              Badge(child: Icon(Icons.dynamic_feed)),
               appLoca.feeds)
           : _navigationRailDestination(
               Icons.dynamic_feed_outlined, Icons.dynamic_feed, appLoca.feeds),
@@ -1430,7 +1430,10 @@ class _MyMap extends State<MyMap> {
         } else {
           if (feed.owner == UserXEST.userXEST.id) {
             listaFeedsPropios.add(cardFeed);
-          } else if (feed.teachers.contains(UserXEST.userXEST.id)) {
+            // } else if (feed.teachers.contains(UserXEST.userXEST.id)) {
+          } else if (feed.teachers
+                  .indexWhere((t) => t.uid == UserXEST.userXEST.id) >
+              -1) {
             listaFeedsProfeColab.add(cardFeed);
           } else {
             listaFeedsApuntado.add(cardFeed);
@@ -1681,6 +1684,26 @@ class _MyMap extends State<MyMap> {
           semanticsLabel: appLoca.misRespuestas,
         ),
         icon: Icon(Icons.my_library_books),
+      ),
+    );
+
+    widgets.add(
+      TextButton.icon(
+        onPressed: _userIded
+            ? () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => const InfoNotes(),
+                      fullscreenDialog: true,
+                    ));
+              }
+            : null,
+        label: Text(
+          appLoca.misNotas,
+          semanticsLabel: appLoca.misNotas,
+        ),
+        icon: const Icon(Icons.edit_note),
       ),
     );
 
@@ -2168,7 +2191,7 @@ class _MyMap extends State<MyMap> {
     }
   }
 
-  Future<void> changePage(index) async {
+  Future<void> changePage(int index) async {
     setState(() => _currentPageIndex = index);
     // if (index != 3) {
     //   setState(() => _currentPageIndex = index);
@@ -2402,7 +2425,6 @@ class _MyMap extends State<MyMap> {
                                 _mapController.camera.zoom
                               ]);
                           break;
-                        default:
                       }
                     }).onError((error, stackTrace) {
                       setState(() => _tryingSignIn = false);
@@ -2425,7 +2447,6 @@ class _MyMap extends State<MyMap> {
                                 ]);
                           }
                           break;
-                        default:
                       }
                     });
                     break;

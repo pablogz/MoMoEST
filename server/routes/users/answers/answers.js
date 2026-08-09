@@ -4,8 +4,33 @@ const Mustache = require('mustache');
 
 const winston = require('../../../util/winston');
 const { getTokenAuth, logHttp } = require('../../../util/auxiliar');
-const { saveAnswer, getAnswersDB, hideAnswerDB } = require('../../../util/bd');
+const { saveAnswer, getAnswersDB, hideAnswerDB, getFeedsUser } = require('../../../util/bd');
 const { urlServer } = require('../../../util/config');
+
+/**
+ * Devuelve un Map idRespuesta -> idCanal a partir de las respuestas que el
+ * usuario asoció a cada canal al que está subscrito. Sirve para saber el canal
+ * de las respuestas guardadas antes de que existiese el campo idFeed.
+ * Solo lee de MongoDB; nada de esto llega al triple-store LOD.
+ */
+async function getFeedOfAnswers(uid) {
+    const feedOfAnswer = new Map();
+    try {
+        const feedsDocument = await getFeedsUser(uid);
+        if (feedsDocument !== null && Array.isArray(feedsDocument.subscribed)) {
+            feedsDocument.subscribed.forEach((subscription) => {
+                if (typeof subscription?.idFeed === 'string' && Array.isArray(subscription.answers)) {
+                    subscription.answers.forEach((idAnswer) => {
+                        feedOfAnswer.set(idAnswer, subscription.idFeed);
+                    });
+                }
+            });
+        }
+    } catch (error) {
+        winston.error('getFeedOfAnswers:', error);
+    }
+    return feedOfAnswer;
+}
 
 async function getAnswers(req, res) {
     const start = Date.now();
@@ -18,8 +43,15 @@ async function getAnswers(req, res) {
                     const answers = await getAnswersDB(uid, allAnswers === 'true');
                     if (answers != null) {
                         if (answers.length > 0) {
+                            // Las respuestas anteriores a la incorporación del campo idFeed no lo
+                            // llevan guardado, pero el canal sí registra qué respuestas se le
+                            // asociaron: se reconstruye la relación desde el documento de canales.
+                            const feedOfAnswer = await getFeedOfAnswers(uid);
                             const response = [];
                             answers.filter(a => !a.hidden).forEach((answer) => {
+                                const idFeed = typeof answer.idFeed === 'string' && answer.idFeed !== ''
+                                    ? answer.idFeed
+                                    : feedOfAnswer.get(answer.id);
                                 const index = response.findIndex((responseAnswer) =>
                                     responseAnswer.idFeature == answer.idFeature
                                     && responseAnswer.idTask == answer.idTask);
@@ -30,6 +62,8 @@ async function getAnswers(req, res) {
                                         "labelContainer": answer.labelContainer,
                                         "idTask": answer.idTask,
                                         "commentTask": answer.commentTask,
+                                        ...(typeof idFeed === 'string' && idFeed !== '' && { "idFeed": idFeed }),
+                                        ...(typeof answer.feedback === 'string' && answer.feedback !== '' && { "feedback": answer.feedback }),
                                         // "traces": [
                                         //     {
                                         //         "idAnswer": answer.id,
@@ -52,8 +86,22 @@ async function getAnswers(req, res) {
                                     //     "hasOptionalText": answer.hasOptionalText
                                     // });
                                     if (prev.lastUpdate < answer.finishClient) {
+                                        // Cuando hay varias respuestas para la misma tarea se muestra
+                                        // la más reciente (con su canal y su realimentación).
                                         prev.lastUpdate = answer.finishClient;
-                                        prev.answers = answer.answer;
+                                        prev.answer = answer.answer;
+                                        prev.id = answer.id;
+                                        prev.answerType = answer.answerType;
+                                        if (typeof idFeed === 'string' && idFeed !== '') {
+                                            prev.idFeed = idFeed;
+                                        } else {
+                                            delete prev.idFeed;
+                                        }
+                                        if (typeof answer.feedback === 'string' && answer.feedback !== '') {
+                                            prev.feedback = answer.feedback;
+                                        } else {
+                                            delete prev.feedback;
+                                        }
                                     }
                                     if (prev.firstFinish > answer.finishClient) {
                                         prev.firstFinish = answer.firstFinish;
@@ -69,6 +117,11 @@ async function getAnswers(req, res) {
                                 }
                             ));
                             logHttp(req, 200, 'getAnswers', start);
+                            // Igual que en las notas: sin cabeceras de caché el
+                            // navegador puede servir la lista anterior tras
+                            // borrar o añadir una respuesta.
+                            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+                            res.setHeader('Pragma', 'no-cache');
                             res.send(JSON.stringify(response.sort((a, b) => b.lastUpdate - a.lastUpdate)));
                         } else {
                             winston.info(Mustache.render(
@@ -157,6 +210,9 @@ async function newAnswer(req, res) {
                                 answer2Server['labelContainer'] = body.labelContainer;
                                 answer2Server['commentTask'] = body.commentTask;
                                 answer2Server['answerType'] = body.answerType;
+                                if (typeof body.idFeed === 'string' && body.idFeed.trim() !== '') {
+                                    answer2Server['idFeed'] = body.idFeed.trim();
+                                }
                                 const idAnswer = short.generate();
                                 const r = await saveAnswer(uid, body.idContainer, body.idTask, idAnswer, answer2Server);
                                 // const r = await saveAnswer(idAnswer, body.idUser, body.idPoi, body.idTask, answer2Server);

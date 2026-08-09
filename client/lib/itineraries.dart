@@ -1654,7 +1654,7 @@ class _AddEditPointItinerary extends State<AddEditPointItineary> {
     );
   }
 
-  Future<List> _getFeature(idFeature) {
+  Future<List> _getFeature(String idFeature) {
     return http.get(Queries.getFeatureInfo(idFeature)).then((response) =>
         response.statusCode == 200 ? json.decode(response.body) : []);
   }
@@ -3640,13 +3640,24 @@ class _CarryOutIt extends State<CarryOutIt> {
                                   borderRadius: BorderRadius.circular(25),
                                   curve: Curves.easeIn,
                                   onTap: () async {
+                                    List<PairImage> imagenes =
+                                        pi.feature.image.isNotEmpty
+                                            ? pi.feature.image
+                                            : [pi.feature.thumbnail];
+                                    int indice = imagenes.indexWhere(
+                                        (PairImage p) =>
+                                            p.image ==
+                                            pi.feature.thumbnail.image);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute<void>(
                                           builder: (BuildContext context) =>
-                                              FullScreenImage(
-                                                  pi.feature.thumbnail,
-                                                  local: false),
+                                              FullScreenImage.list(
+                                                imagenes,
+                                                initialIndex:
+                                                    indice > -1 ? indice : 0,
+                                                local: false,
+                                              ),
                                           fullscreenDialog: false),
                                     );
                                   },

@@ -11,7 +11,8 @@ class Answer {
       _idTask,
       _labelContainer,
       _commentTask,
-      _feedback;
+      _feedback,
+      _idFeed;
   late AnswerType _answerType;
   late bool _hasId,
       _hasContainer,
@@ -23,7 +24,8 @@ class Answer {
       _hasCommentTask,
       _hasCompleteTask,
       _hasCompleteFeature,
-      _hasFeedback;
+      _hasFeedback,
+      _hasIdFeed;
   final Map<String, dynamic> _answer = {};
   late int _timestamp, _time2Complete;
   late Task _task;
@@ -147,6 +149,15 @@ class Answer {
       } else {
         _hasFeedback = false;
       }
+
+      if (data.containsKey('idFeed') &&
+          data['idFeed'] is String &&
+          data['idFeed'].trim().isNotEmpty) {
+        _idFeed = data['idFeed'].trim();
+        _hasIdFeed = true;
+      } else {
+        _hasIdFeed = false;
+      }
     } else {
       AnswerException('Data is not a Map');
     }
@@ -207,6 +218,7 @@ class Answer {
       _hasCompleteFeature = false;
       _hasLabelContainer = false;
       _hasCommentTask = false;
+      _hasIdFeed = false;
     } else {
       AnswerException('Data is not a Map');
     }
@@ -227,6 +239,7 @@ class Answer {
     _hasCompleteFeature = false;
     _hasFeedback = false;
     _feedback = '';
+    _hasIdFeed = false;
   }
 
   String get id =>
@@ -361,6 +374,15 @@ class Answer {
     _hasFeedback = _feedback.isNotEmpty;
   }
 
+  bool get hasIdFeed => _hasIdFeed;
+  String get idFeed => _hasIdFeed
+      ? _idFeed
+      : throw AnswerException('Answer does not have idFeed');
+  set idFeed(String idFeed) {
+    _idFeed = idFeed.trim();
+    _hasIdFeed = _idFeed.isNotEmpty;
+  }
+
   Map<String, dynamic> toMap() {
     Map<String, dynamic> body = {
       // 'idUser': Auxiliar.userCHEST.id,
@@ -384,6 +406,9 @@ class Answer {
     }
     if (hasFeedback) {
       body['feedback'] = feedback;
+    }
+    if (hasIdFeed) {
+      body['idFeed'] = idFeed;
     }
     return body;
   }

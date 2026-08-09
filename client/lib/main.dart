@@ -281,6 +281,34 @@ class _MyAppState extends State<MyApp> {
                   }
                   return null;
                 },
+                routes: [
+                  GoRoute(
+                    caseSensitive: false,
+                    path: 'teacher',
+                    builder: (context, state) {
+                      if (state.extra != null && state.extra is List) {
+                        List extra = state.extra as List;
+                        return NewUser(
+                          lat: extra[0],
+                          long: extra[1],
+                          zoom: extra[2],
+                          teacherForm: true,
+                        );
+                      } else {
+                        return const NewUser(teacherForm: true);
+                      }
+                    },
+                    redirect: (BuildContext context, GoRouterState state) {
+                      if (!UserXEST.allowNewUser) {
+                        return UserXEST.userXEST.isNotGuest &&
+                                UserXEST.userXEST.lastMapView.init
+                            ? '/home?center=${UserXEST.userXEST.lastMapView.lat!},${UserXEST.userXEST.lastMapView.long!}&zoom=${UserXEST.userXEST.lastMapView.zoom!}'
+                            : '/home';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
               GoRoute(
                 caseSensitive: false,
@@ -297,6 +325,20 @@ class _MyAppState extends State<MyApp> {
                   }
                   return null;
                 },
+                routes: [
+                  GoRoute(
+                    caseSensitive: false,
+                    path: 'teacher',
+                    builder: (context, state) =>
+                        const EditUser(teacherForm: true),
+                    redirect: (context, state) {
+                      if (!UserXEST.allowManageUser) {
+                        return '/map';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
               GoRoute(
                 caseSensitive: false,

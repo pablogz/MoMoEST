@@ -64,3 +64,6 @@ typings/
 
 package-lock.json
 util/momoest-firebase.json
+
+# Ficheros privados subidos por el alumnado (respuestas y dibujos de las notas)
+uploads/

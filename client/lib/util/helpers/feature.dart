@@ -567,7 +567,7 @@ class Feature {
 
   String get source =>
       _hasSource ? _source : throw FeatureException('Feature has not source!!');
-  set source(source) {
+  set source(String source) {
     _source = source;
     _hasSource = true;
   }
@@ -627,7 +627,7 @@ class Feature {
     _label.add(newLabel);
   }
 
-  void setLabels(labelS) {
+  void setLabels(dynamic labelS) {
     if (labelS is Map || labelS is PairLang) {
       labelS = [labelS];
     }
@@ -667,7 +667,7 @@ class Feature {
     _comment.add(newComment);
   }
 
-  void setComments(commentS) {
+  void setComments(dynamic commentS) {
     if (commentS is Map || commentS is PairLang) {
       commentS = [commentS];
     }
@@ -798,7 +798,7 @@ class Feature {
   }
 
   List<Category> get categories => _categories;
-  set categories(categories) {
+  set categories(dynamic categories) {
     if (categories is Map) {
       categories = [categories];
     }
@@ -809,7 +809,7 @@ class Feature {
     }
   }
 
-  void addCategory(category) {
+  void addCategory(dynamic category) {
     if (category is Category) {
       int index = _categories.indexWhere((Category c) => c.iri == category.iri);
       if (index == -1) {
@@ -846,7 +846,7 @@ class Feature {
     return out;
   }
 
-  set tags(listTags) {
+  set tags(dynamic listTags) {
     if (listTags is Map) {
       for (String key in listTags.keys) {
         _tags.add(TagOSM(key, listTags[key]));
@@ -860,7 +860,7 @@ class Feature {
 
   List<Provider> get providers => _providers;
 
-  addProvider(String providerId, dynamic data) {
+  void addProvider(String providerId, dynamic data) {
     dynamic obj;
     switch (providerId) {
       case 'osm':
@@ -989,39 +989,39 @@ class Feature {
   }
 }
 
-class NPOI {
-  late String _id;
-  late double _lat, _long;
-  late int _npois;
+// class NPOI {
+//   late String _id;
+//   late double _lat, _long;
+//   late int _npois;
 
-  NPOI(idZoneServer, latServer, longServer, npoisServer) {
-    if (idZoneServer is String && idZoneServer.isNotEmpty) {
-      _id = idZoneServer;
-    } else {
-      throw Exception('Problem with idZoneServer');
-    }
-    if (latServer is double && latServer >= 0 && latServer <= 90) {
-      _lat = latServer;
-    } else {
-      throw Exception('Problem with latitudeServer');
-    }
-    if (longServer is double && longServer >= -180 && longServer <= 180) {
-      _long = longServer;
-    } else {
-      throw Exception('Problem with longServer');
-    }
-    if (npoisServer is int && npoisServer >= 0) {
-      _npois = npoisServer;
-    } else {
-      throw Exception('Problem with npoisServer');
-    }
-  }
+//   NPOI(idZoneServer, latServer, longServer, npoisServer) {
+//     if (idZoneServer is String && idZoneServer.isNotEmpty) {
+//       _id = idZoneServer;
+//     } else {
+//       throw Exception('Problem with idZoneServer');
+//     }
+//     if (latServer is double && latServer >= 0 && latServer <= 90) {
+//       _lat = latServer;
+//     } else {
+//       throw Exception('Problem with latitudeServer');
+//     }
+//     if (longServer is double && longServer >= -180 && longServer <= 180) {
+//       _long = longServer;
+//     } else {
+//       throw Exception('Problem with longServer');
+//     }
+//     if (npoisServer is int && npoisServer >= 0) {
+//       _npois = npoisServer;
+//     } else {
+//       throw Exception('Problem with npoisServer');
+//     }
+//   }
 
-  String get id => _id;
-  double get lat => _lat;
-  double get long => _long;
-  int get npois => _npois;
-}
+//   String get id => _id;
+//   double get lat => _lat;
+//   double get long => _long;
+//   int get npois => _npois;
+// }
 
 class TeselaFeature {
   static const double _lado = 0.1;

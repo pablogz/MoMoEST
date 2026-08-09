@@ -15,6 +15,7 @@ const _client = new MongoClient(
 const DOCUMENT_INFO = 'infoUser';
 const DOCUMENT_ANSWERS = 'answers';
 const DOCUMENT_FEEDS = 'feeds';
+const DOCUMENT_NOTES = 'notes';
 
 let db;
 
@@ -153,6 +154,8 @@ async function saveAnswer(userCol, feature, task, idAnswer, answerC) {
                         creation: now,
                         time2Complete: answerC.time2Complete,
                         finishClient: answerC.finishClient,
+                        // Canal activo en el momento de responder (opcional)
+                        ...(typeof answerC.idFeed === 'string' && answerC.idFeed !== '' && { idFeed: answerC.idFeed }),
                         answer: answerC.answer,
                     }
                 }
@@ -182,6 +185,7 @@ async function saveNewFeed(userCol, feed) {
                         teachers: [],
                         password: feed.password,
                         date: feed.date,
+                        requireFullName: feed.requireFullName,
                     }
                 }
             },
@@ -350,6 +354,13 @@ async function getInfoSubscriber(userCol, feedId, nAnswers = true) {
             if (infoUser.alias !== undefined) {
                 out.alias = infoUser.alias;
             }
+            // Nombre y apellidos que el estudiante dio para este canal
+            if (typeof subscribed.name === 'string' && subscribed.name !== '') {
+                out.name = subscribed.name;
+            }
+            if (typeof subscribed.surname === 'string' && subscribed.surname !== '') {
+                out.surname = subscribed.surname;
+            }
             out.date = subscribed.date;
             if (subscribed.answers !== undefined && Array.isArray(subscribed.answers)) {
                 if (nAnswers) {
@@ -500,9 +511,127 @@ async function updateFeedbackAnswer(userCol, dataAnswer) {
     }
 }
 
+// Colección con las votaciones públicas de fotografías por lugar. No es una
+// colección de usuario: cualquier usuario autenticado puede leerla (el uid del
+// autor de cada entrada nunca se expone en las respuestas públicas).
+const COLLECTION_PHOTOVOTE = '_photoVote';
+
+async function getPhotoVotePlace(idFeature) {
+    try {
+        const db = await connectToDatabase();
+        return await db.collection(COLLECTION_PHOTOVOTE).findOne({ _id: idFeature });
+    } catch (error) {
+        winston.error('getPhotoVotePlace:', error);
+        return null;
+    }
+}
+
+async function addPhotoVoteEntry(idFeature, entry) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(COLLECTION_PHOTOVOTE).updateOne(
+            { _id: idFeature },
+            { $push: { entries: entry } },
+            { upsert: true }
+        );
+        return resultado.modifiedCount === 1 || resultado.upsertedId !== null;
+    } catch (error) {
+        winston.error('addPhotoVoteEntry:', error);
+        return false;
+    }
+}
+
+// Regla de voto: un único voto por usuario y lugar, que puede cambiarse.
+// Con vote=true se mueve el voto del usuario a la entrada indicada; con
+// vote=false se retira su voto de esa entrada.
+async function votePhotoVoteDB(idFeature, entryId, uid, vote) {
+    try {
+        const db = await connectToDatabase();
+        const collection = db.collection(COLLECTION_PHOTOVOTE);
+        if (vote) {
+            // Retiro el posible voto previo del usuario en este lugar
+            await collection.updateOne(
+                { _id: idFeature },
+                { $pull: { "entries.$[].votes": uid } }
+            );
+            const resultado = await collection.updateOne(
+                { _id: idFeature, "entries.entryId": entryId },
+                { $addToSet: { "entries.$.votes": uid } }
+            );
+            return resultado.matchedCount === 1;
+        }
+        const resultado = await collection.updateOne(
+            { _id: idFeature, "entries.entryId": entryId },
+            { $pull: { "entries.$.votes": uid } }
+        );
+        return resultado.matchedCount === 1;
+    } catch (error) {
+        winston.error('votePhotoVoteDB:', error);
+        return false;
+    }
+}
+
+async function getNotesDB(userCol) {
+    try {
+        const db = await connectToDatabase();
+        const doc = await db.collection(userCol).findOne({ _id: DOCUMENT_NOTES });
+        if (doc !== null && Array.isArray(doc.notes)) {
+            return doc.notes.sort((a, b) => b.lastUpdate - a.lastUpdate);
+        }
+        return [];
+    } catch (error) {
+        winston.error('getNotesDB:', error);
+        return null;
+    }
+}
+
+async function addNoteDB(userCol, note) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(userCol).updateOne(
+            { _id: DOCUMENT_NOTES },
+            { $push: { notes: note } },
+            { upsert: true }
+        );
+        return resultado.modifiedCount === 1 || resultado.upsertedId !== null;
+    } catch (error) {
+        winston.error('addNoteDB:', error);
+        return false;
+    }
+}
+
+async function updateNoteDB(userCol, note) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(userCol).updateOne(
+            { _id: DOCUMENT_NOTES, "notes.id": note.id },
+            { $set: { "notes.$": note } }
+        );
+        return resultado.matchedCount === 1;
+    } catch (error) {
+        winston.error('updateNoteDB:', error);
+        return false;
+    }
+}
+
+async function deleteNoteDB(userCol, noteId) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(userCol).updateOne(
+            { _id: DOCUMENT_NOTES },
+            { $pull: { notes: { id: noteId } } }
+        );
+        return resultado.modifiedCount === 1;
+    } catch (error) {
+        winston.error('deleteNoteDB:', error);
+        return false;
+    }
+}
+
 module.exports = {
     DOCUMENT_INFO,
     DOCUMENT_ANSWERS,
+    DOCUMENT_NOTES,
     getInfoUser,
     getFeedsUser,
     getFeed,
@@ -526,6 +655,13 @@ module.exports = {
     addAnswerFeedDB,
     deleteAnswerFeedDB,
     updateFeedbackAnswer,
+    getNotesDB,
+    addNoteDB,
+    updateNoteDB,
+    deleteNoteDB,
+    getPhotoVotePlace,
+    addPhotoVoteEntry,
+    votePhotoVoteDB,
     hideAnswerDB,
     addTeacherToFeed,
     removeTeacherFromFeed,

@@ -1,12 +1,18 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
+import 'package:momoest/util/auxiliar.dart';
 import 'package:momoest/util/map_layer.dart';
 import 'package:momoest/util/config_xest.dart';
 import 'package:momoest/util/helpers/answers.dart';
 import 'package:momoest/util/helpers/pair.dart';
 import 'package:momoest/util/exceptions.dart';
+import 'package:momoest/util/queries.dart';
 
 class UserXEST {
   static UserXEST userXEST = UserXEST.guest();
@@ -89,6 +95,7 @@ class UserXEST {
         _alias = data.containsKey('alias') && data['alias'] is String
             ? trim(data['alias'])
             : null;
+        _comment = null;
         if (data.containsKey('comment')) {
           if (data['comment'] is Map) {
             data['comment'] = [data['comment']];
@@ -107,8 +114,6 @@ class UserXEST {
               _comment = null;
             }
           }
-        } else {
-          _comment = null;
         }
         if (data.containsKey('lastMapView') &&
             data['lastMapView'] is Map &&
@@ -246,15 +251,65 @@ class UserXEST {
   bool get hasFeedEnable => _feedId != null && _feedId!.isNotEmpty;
   String get feed =>
       _feedId != null ? _feedId! : throw UserXESTException('No feed enabled');
-  bool enableFeed(String feed) {
-    if (feed.trim().isNotEmpty) {
-      _feedId = feed.trim();
-      return true;
+
+  /// Activa el canal [feed] persistiéndolo en el servidor. Devuelve true si
+  /// el servidor confirma el cambio; en caso contrario no muta el estado.
+  Future<bool> enableFeed(String feed) async {
+    if (feed.trim().isEmpty) {
+      return false;
     }
-    return false;
+    try {
+      final response = await http.put(
+        Queries.activeFeed(),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}',
+        },
+        body: json.encode({'idFeed': Auxiliar.id2shortId(feed.trim())}),
+      );
+      if (response.statusCode == 204) {
+        _feedId = feed.trim();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      if (ConfigXest.development) {
+        debugPrint(error.toString());
+      }
+      return false;
+    }
   }
 
-  void disableFeed() {
+  /// Desactiva el canal activo persistiendo el cambio en el servidor.
+  /// Devuelve true si el servidor confirma el cambio.
+  Future<bool> disableFeed() async {
+    try {
+      final response = await http.put(
+        Queries.activeFeed(),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer ${await FirebaseAuth.instance.currentUser!.getIdToken()}',
+        },
+        body: json.encode({'idFeed': null}),
+      );
+      if (response.statusCode == 204) {
+        _feedId = null;
+        return true;
+      }
+      return false;
+    } catch (error) {
+      if (ConfigXest.development) {
+        debugPrint(error.toString());
+      }
+      return false;
+    }
+  }
+
+  /// Limpia el canal activo solo en memoria. Útil cuando el servidor ya lo ha
+  /// limpiado (p.ej. al darse de baja de un canal).
+  void disableFeedLocal() {
     _feedId = null;
   }
 }

@@ -27,6 +27,7 @@ async function getUser(req, res) {
                     zoom: infoUser.lpv.zoom,
                 },
                 defaultMap: infoUser.defaultMap == null ? undefined : infoUser.defaultMap,
+                feed: infoUser.activeFeed == null ? undefined : infoUser.activeFeed,
             };
             try {
                 const sparqlQuery = new SPARQLQuery(`http://${Config.addrSparql}:8890/sparql`);
@@ -41,7 +42,8 @@ async function getUser(req, res) {
                         }
                     });
                     if (comment.length > 0) {
-                        toCHESTUser['comment'] = comment;
+                        // PARCHE TEMPORAL: omitir comment hasta actualizar cliente en stores
+                        // toCHESTUser['comment'] = comment;
                     }
                 }
             } catch (sparqlError) {

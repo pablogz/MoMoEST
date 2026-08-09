@@ -11,6 +11,7 @@ const primaryGraph = '<http://momoest.gsic.uva.es>';
 const docomomoGraph = '<http://momoest.gsic.uva.es/docomomo>';
 
 const tamaMaxFile = 25;
+const mbNotes = 50;
 
 // const addrOPA = 'https://overpass-api.de/api/interpreter';
 // const portOPA = 443;
@@ -67,4 +68,5 @@ module.exports = {
     typeST,
     classTypeST,
     tamaMaxFile,
+    mbNotes,
 }

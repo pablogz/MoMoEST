@@ -22,7 +22,11 @@ import 'package:http/http.dart' as http;
 import 'package:string_similarity/string_similarity.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:momoest/answers.dart';
+import 'package:momoest/notes.dart';
+import 'package:momoest/photo_vote.dart';
 import 'package:momoest/l10n/generated/app_localizations.dart';
+import 'package:momoest/util/helpers/answers.dart';
 import 'package:momoest/util/helpers/cache.dart';
 import 'package:momoest/full_screen.dart';
 import 'package:momoest/util/auxiliar.dart';
@@ -72,6 +76,8 @@ class _InfoFeature extends State<InfoFeature>
   final CarouselController _carouselController = CarouselController();
   int _carouselIndex = 0;
   List<Task> tasks = [];
+  // Respuesta guardada del usuario por identificador de tarea
+  final Map<String, Answer> _answersTasks = {};
   late List<String> tabs;
   late TabController _tabController;
   late Widget? _fab;
@@ -218,6 +224,31 @@ class _InfoFeature extends State<InfoFeature>
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            // Notas personales vinculadas a este lugar: el mismo botón abre la
+            // lista de notas del lugar, desde donde se pueden crear más.
+            Visibility(
+              visible: UserXEST.userXEST.isNotGuest,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: FloatingActionButton.small(
+                  heroTag: null,
+                  tooltip: appLoca!.notasLugar,
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => InfoNotes(
+                          idPlace: feature.id,
+                          labelPlace:
+                              feature.getALabel(lang: MyApp.currentLang),
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Icon(Icons.edit_note),
+                ),
+              ),
+            ),
             Visibility(
               visible: !kIsWeb,
               child: FloatingActionButton.small(
@@ -239,7 +270,7 @@ class _InfoFeature extends State<InfoFeature>
                   mostrarFabProfe && feature.author == UserXEST.userXEST.iri,
               child: FloatingActionButton.small(
                   heroTag: null,
-                  tooltip: appLoca!.borrarPOI,
+                  tooltip: appLoca.borrarPOI,
                   onPressed: () async => borraFeature(appLoca),
                   child: const Icon(Icons.delete)),
             ),
@@ -415,12 +446,22 @@ class _InfoFeature extends State<InfoFeature>
                     borderRadius: BorderRadius.circular(25),
                     curve: Curves.easeIn,
                     onTap: () async {
+                      // Todas las imágenes del lugar (Wikidata, etc.); si solo
+                      // hay portada se pasa esa
+                      List<PairImage> imagenes = feature.image.isNotEmpty
+                          ? feature.image
+                          : [feature.thumbnail];
+                      int indice = imagenes.indexWhere((PairImage p) =>
+                          p.image == feature.thumbnail.image);
                       Navigator.push(
                         context,
                         MaterialPageRoute<void>(
-                            builder: (BuildContext context) => FullScreenImage(
-                                feature.thumbnail,
-                                local: false),
+                            builder: (BuildContext context) =>
+                                FullScreenImage.list(
+                              imagenes,
+                              initialIndex: indice > -1 ? indice : 0,
+                              local: false,
+                            ),
                             fullscreenDialog: false),
                       );
                     },
@@ -563,6 +604,18 @@ class _InfoFeature extends State<InfoFeature>
     );
   }
 
+  /// Compara identificadores admitiendo la forma completa (IRI) y la corta
+  /// ('md:…'), ya que las respuestas guardan la forma corta y las tareas
+  /// la completa.
+  bool _sameId(String a, String b) {
+    if (a == b) return true;
+    String? shortA = Auxiliar.id2shortId(a);
+    String? shortB = Auxiliar.id2shortId(b);
+    return (shortA != null && shortA == b) ||
+        (shortB != null && shortB == a) ||
+        (shortA != null && shortA == shortB);
+  }
+
   Widget widgetListTasks(Size size) {
     // double pLateral = size.width > Auxiliar.maxWidth
     //     ? (size.width - Auxiliar.maxWidth) / 2
@@ -585,27 +638,27 @@ class _InfoFeature extends State<InfoFeature>
                               idContainer: feature.id,
                             );
 
-                            bool noRealizada = true;
+                            // Las tareas ya respondidas siguen visibles con
+                            // una marca de completada y acceso a la respuesta
                             for (var answer in UserXEST.userXEST.answers) {
                               if (answer.hasContainer &&
-                                  answer.idContainer == task.idContainer &&
+                                  _sameId(
+                                      answer.idContainer, task.idContainer) &&
                                   answer.hasTask &&
-                                  answer.idTask == task.id) {
-                                noRealizada = false;
+                                  _sameId(answer.idTask, task.id)) {
+                                _answersTasks[task.id] = answer;
                                 break;
                               }
                             }
-                            if (noRealizada) {
-                              bool muestra = true;
-                              for (Task t in tasks) {
-                                if (t.id == task.id) {
-                                  muestra = false;
-                                  break;
-                                }
+                            bool muestra = true;
+                            for (Task t in tasks) {
+                              if (t.id == task.id) {
+                                muestra = false;
+                                break;
                               }
-                              if (muestra) {
-                                tasks.add(task);
-                              }
+                            }
+                            if (muestra) {
+                              tasks.add(task);
                             }
                           } catch (error, stack) {
                             if (ConfigXest.development) {
@@ -662,6 +715,11 @@ class _InfoFeature extends State<InfoFeature>
   }
 
   Widget _listTasks(Size size) {
+    // Si el lugar tiene alguna tarea de fotografía con votación se ofrece el
+    // acceso a la vista de votación (para cualquier usuario autenticado)
+    final bool hasPhotoVote = UserXEST.userXEST.isNotGuest &&
+        tasks.any((Task t) => t.aT == AnswerType.photoVote);
+    final int extraCards = hasPhotoVote ? 1 : 0;
     return SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: SliverList(
@@ -672,7 +730,35 @@ class _InfoFeature extends State<InfoFeature>
           AppLocalizations appLoca = AppLocalizations.of(context)!;
           ScaffoldMessengerState sMState = ScaffoldMessenger.of(context);
 
-          Task task = tasks.elementAt(index);
+          if (hasPhotoVote && index == 0) {
+            return Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: colorSheme.primary),
+                  borderRadius: const BorderRadius.all(Radius.circular(12))),
+              child: ListTile(
+                leading: const Icon(Icons.how_to_vote),
+                title: Text(appLoca.votarFotos, style: textTheme.titleMedium),
+                subtitle: Text(appLoca.votarFotosExplica),
+                trailing: const Icon(Icons.navigate_next),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => PhotoVoteView(
+                        feature.shortId,
+                        labelFeature:
+                            feature.getALabel(lang: MyApp.currentLang),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+
+          Task task = tasks.elementAt(index - extraCards);
+          Answer? answerTask = _answersTasks[task.id];
           String title = task.hasLabel
               ? task.getALabel(lang: MyApp.currentLang)
               : Auxiliar.getLabelAnswerType(
@@ -692,26 +778,45 @@ class _InfoFeature extends State<InfoFeature>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 24, bottom: 16, right: 16, left: 16),
-                      child: Wrap(
-                          spacing: 4,
-                          children: task.spaces.map((Space space) {
-                            switch (space) {
-                              case Space.physical:
-                                return const Icon(Icons.mobile_friendly,
-                                    size: 18);
-                              case Space.virtual:
-                                return const Icon(Icons.map, size: 18);
-                              case Space.web:
-                                return const Icon(Icons.web, size: 18);
-                              default:
-                                return Container();
-                            }
-                          }).toList())),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    answerTask != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 16, left: 16),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.check_circle,
+                                    size: 18, color: colorSheme.primary),
+                                const SizedBox(width: 4),
+                                Text(
+                                  appLoca.tareaCompletada,
+                                  style: textTheme.labelMedium!
+                                      .copyWith(color: colorSheme.primary),
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                    Padding(
+                        padding: const EdgeInsets.only(
+                            top: 24, bottom: 16, right: 16, left: 16),
+                        child: Wrap(
+                            spacing: 4,
+                            children: task.spaces.map((Space space) {
+                              switch (space) {
+                                case Space.physical:
+                                  return const Icon(Icons.mobile_friendly,
+                                      size: 18);
+                                case Space.virtual:
+                                  return const Icon(Icons.map, size: 18);
+                                case Space.web:
+                                  return const Icon(Icons.web, size: 18);
+                              }
+                            }).toList())),
+                  ],
                 ),
                 Container(
                   padding:
@@ -805,7 +910,23 @@ class _InfoFeature extends State<InfoFeature>
                                     child: Text(appLoca.vistaPrevia),
                                   )
                                 ]
-                          : [
+                          : answerTask != null
+                              ? [
+                                  FilledButton.tonal(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute<void>(
+                                          builder: (BuildContext context) =>
+                                              AnswerReadOnly(answerTask),
+                                          fullscreenDialog: false,
+                                        ),
+                                      );
+                                    },
+                                    child: Text(appLoca.verRespuesta),
+                                  )
+                                ]
+                              : [
                               FilledButton(
                                 onPressed: () async {
                                   bool startTask = true;
@@ -905,7 +1026,7 @@ class _InfoFeature extends State<InfoFeature>
               ],
             ),
           );
-        }, childCount: tasks.length),
+        }, childCount: tasks.length + extraCards),
       ),
     );
   }
@@ -1156,10 +1277,16 @@ class _InfoFeature extends State<InfoFeature>
                       String docomomoURL = docomomo.seeAlso.firstWhere(
                         (element) => element.contains('docomomo'),
                       );
-                      return FullScreenImage(
-                        PairImage(docomomo.media[index].link, docomomoURL),
+                      return FullScreenImage.list(
+                        docomomo.media
+                            .map((DocomomoMedia m) =>
+                                PairImage(m.link, docomomoURL))
+                            .toList(),
+                        initialIndex: index,
                         local: false,
-                        label: docomomo.media[index].label,
+                        labels: docomomo.media
+                            .map((DocomomoMedia m) => m.label)
+                            .toList(),
                       );
                     },
                     fullscreenDialog: false,

@@ -139,7 +139,7 @@ async function updateFeed(req, res) {
                                 const newData = {};
                                 // Compruebo los datos enviados por el cliente
                                 if (req.body) {
-                                    let { labels, comments, password } = req.body;
+                                    let { labels, comments, password, requireFullName } = req.body;
                                     let update = true;
                                     if (!Array.isArray(labels)) {
                                         labels = [labels];
@@ -175,6 +175,9 @@ async function updateFeed(req, res) {
                                             newData.labels = labels;
                                             newData.comments = comments;
                                             newData.password = password;
+                                            if (requireFullName !== undefined) {
+                                                newData.requireFullName = requireFullName === true;
+                                            }
                                             newData.updated = (new Date(Date.now())).toISOString();
                                             Object.assign(feedData, newData);
                                             Object.keys(feedData).forEach(key => {
