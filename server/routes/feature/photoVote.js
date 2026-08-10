@@ -99,16 +99,74 @@ async function removeEntry(idFeature, entryId, uid) {
         ? doc.entries.find(e => e.entryId === entryId)
         : undefined;
     if (entry === undefined) {
+        winston.info(Mustache.render('removeEntry || notFound || {{{feature}}} || {{{entry}}}', {
+            feature: idFeature,
+            entry: entryId,
+        }));
         return 'notFound';
     }
     if (uid !== undefined && entry.uid !== uid) {
+        winston.info(Mustache.render('removeEntry || forbidden || {{{entry}}}', { entry: entryId }));
         return 'forbidden';
     }
     if (!await deletePhotoVoteEntryDB(idFeature, entryId)) {
+        winston.error(Mustache.render('removeEntry || error || {{{entry}}}', { entry: entryId }));
         return 'error';
     }
     _deleteFile(entry.file);
+    // La respuesta privada de quien la subió deja de mostrarse, para que el
+    // borrado sea simétrico también cuando lo hace otra persona (por ejemplo
+    // al borrar el profesorado la tarea)
+    await _hideLinkedAnswer(entry.uid, entryId);
+    winston.info(Mustache.render('removeEntry || ok || {{{entry}}} || {{{file}}}', {
+        entry: entryId,
+        file: entry.file,
+    }));
     return 'ok';
+}
+
+/** Oculta la respuesta privada enlazada con una entrada de la votación. */
+async function _hideLinkedAnswer(uid, entryId) {
+    if (typeof uid !== 'string' || uid === '') return;
+    try {
+        const answer = await getAnswerByEntry(uid, entryId);
+        if (answer !== null) {
+            await hideAnswerDB(uid, answer.id);
+        }
+    } catch (error) {
+        winston.error('photoVoteHideLinkedAnswer:', error);
+    }
+}
+
+/**
+ * Retira todas las fotografías de una tarea de votación. Se usa cuando el
+ * profesorado borra la tarea: sin esto quedarían fotografías públicas de una
+ * tarea que ya no existe y a las que nadie podría llegar para borrarlas.
+ */
+async function removeEntriesOfTask(idFeature, idTask) {
+    let removed = 0;
+    try {
+        const task = _fullId(idTask);
+        const doc = await getPhotoVotePlace(idFeature);
+        const entries = doc !== null && Array.isArray(doc.entries)
+            ? doc.entries.filter(e => e.idTask === task)
+            : [];
+        for (const entry of entries) {
+            if (await removeEntry(idFeature, entry.entryId) === 'ok') {
+                removed += 1;
+            }
+        }
+        if (entries.length > 0) {
+            winston.info(Mustache.render('removeEntriesOfTask || {{{task}}} || {{{removed}}}/{{{total}}}', {
+                task: task,
+                removed: removed,
+                total: entries.length,
+            }));
+        }
+    } catch (error) {
+        winston.error('removeEntriesOfTask:', error);
+    }
+    return removed;
 }
 
 // Valida los bytes mágicos (JPEG: FF D8 FF; PNG: firma de 8 bytes)
@@ -166,6 +224,10 @@ async function listEntries(req, res) {
                     time: Date.now() - start,
                 }));
                 logHttp(req, 200, 'photoVoteList', start);
+                // Sin cabeceras de caché el navegador puede seguir enseñando
+                // una fotografía ya retirada de la votación
+                res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+                res.setHeader('Pragma', 'no-cache');
                 res.send(JSON.stringify(out));
             })
             .catch(() => {
@@ -352,41 +414,40 @@ async function voteEntry(req, res) {
 // que el borrado sea simétrico y no queden recursos ni respuestas sueltas.
 async function deleteEntry(req, res) {
     const start = Date.now();
+    // La autenticación se resuelve aparte del resto: si no, cualquier error del
+    // borrado acabaría contestando un 401 y ocultando la causa real
+    let uid;
     try {
-        FirebaseAdmin.auth().verifyIdToken(getTokenAuth(req.headers.authorization))
-            .then(async (dToken) => {
-                const { uid } = dToken;
-                const idFeature = shortId2Id(req.params.feature);
-                const entryId = req.params.entry;
-                if (idFeature === null || typeof entryId !== 'string' || entryId === '') {
-                    logHttp(req, 400, 'photoVoteDelete', start);
-                    return res.sendStatus(400);
-                }
-                const result = await removeEntry(idFeature, entryId, uid);
-                if (result !== 'ok') {
-                    const status = result === 'notFound' ? 404 : result === 'forbidden' ? 403 : 500;
-                    logHttp(req, status, 'photoVoteDelete', start);
-                    return res.sendStatus(status);
-                }
-                // La respuesta privada del autor deja de mostrarse
-                const answer = await getAnswerByEntry(uid, entryId);
-                if (answer !== null) {
-                    await hideAnswerDB(uid, answer.id);
-                }
-                winston.info(Mustache.render('photoVoteDelete || {{{entry}}} || {{{time}}}', {
-                    entry: entryId,
-                    time: Date.now() - start,
-                }));
-                logHttp(req, 204, 'photoVoteDelete', start);
-                res.sendStatus(204);
-            })
-            .catch(() => {
-                logHttp(req, 401, 'photoVoteDelete', start);
-                res.sendStatus(401);
-            });
+        ({ uid } = await FirebaseAdmin.auth().verifyIdToken(getTokenAuth(req.headers.authorization)));
+    } catch {
+        logHttp(req, 401, 'photoVoteDelete', start);
+        return res.sendStatus(401);
+    }
+    try {
+        const idFeature = shortId2Id(req.params.feature);
+        const entryId = req.params.entry;
+        if (idFeature === null || typeof entryId !== 'string' || entryId === '') {
+            logHttp(req, 400, 'photoVoteDelete', start);
+            return res.sendStatus(400);
+        }
+        // removeEntry se encarga de la entrada, del fichero y de ocultar la
+        // respuesta privada enlazada
+        const result = await removeEntry(idFeature, entryId, uid);
+        if (result !== 'ok') {
+            const status = result === 'notFound' ? 404 : result === 'forbidden' ? 403 : 500;
+            logHttp(req, status, 'photoVoteDelete', start);
+            return res.sendStatus(status);
+        }
+        winston.info(Mustache.render('photoVoteDelete || {{{entry}}} || {{{time}}}', {
+            entry: entryId,
+            time: Date.now() - start,
+        }));
+        logHttp(req, 204, 'photoVoteDelete', start);
+        res.sendStatus(204);
     } catch (error) {
-        winston.error(Mustache.render('photoVoteDelete || {{{error}}} || {{{time}}}', {
+        winston.error(Mustache.render('photoVoteDelete || {{{error}}} || {{{stack}}} || {{{time}}}', {
             error: String(error),
+            stack: error?.stack ?? '',
             time: Date.now() - start,
         }));
         logHttp(req, 500, 'photoVoteDelete', start);
@@ -446,4 +507,5 @@ module.exports = {
     deleteEntry,
     serveFile,
     removeEntry,
+    removeEntriesOfTask,
 };

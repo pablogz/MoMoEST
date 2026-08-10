@@ -320,15 +320,24 @@ async function hideAnswer(req, res) {
                         if (ok) {
                             // Borrado simétrico: si la respuesta era una foto de
                             // una votación pública, la foto y sus votos también
-                            // desaparecen, para no dejar recursos sueltos
-                            if (target.answerType === 'photoVote'
-                                && typeof target.answer?.entryId === 'string') {
-                                const idFeature = shortId2Id(target.idFeature) ?? target.idFeature;
-                                const result = await removeEntry(idFeature, target.answer.entryId, uid);
-                                if (result !== 'ok') {
+                            // desaparecen, para no dejar recursos sueltos. Un
+                            // fallo aquí se registra pero no invalida el borrado
+                            // de la respuesta, que ya está hecho.
+                            if (target.answerType === 'photoVote') {
+                                try {
+                                    const entryId = target.answer?.entryId;
+                                    const idFeature = shortId2Id(target.idFeature) ?? target.idFeature;
+                                    const result = typeof entryId === 'string' && entryId !== ''
+                                        ? await removeEntry(idFeature, entryId, uid)
+                                        : 'noEntryId';
                                     winston.info(Mustache.render(
-                                        'hideAnswer || photoVote {{{result}}} || {{{entry}}}',
-                                        { result: result, entry: target.answer.entryId }
+                                        'hideAnswer || photoVote {{{result}}} || {{{feature}}} || {{{entry}}}',
+                                        { result: result, feature: idFeature, entry: entryId }
+                                    ));
+                                } catch (error) {
+                                    winston.error(Mustache.render(
+                                        'hideAnswer || photoVote || {{{error}}} || {{{stack}}}',
+                                        { error: String(error), stack: error?.stack ?? '' }
                                     ));
                                 }
                             }

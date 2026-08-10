@@ -5,6 +5,7 @@ const FirebaseAdmin = require('firebase-admin');
 const { options4Request, mergeResults, sparqlResponse2Json, getTokenAuth, logHttp, shortId2Id } = require('../../util/auxiliar');
 const { isAuthor, taskInIt0, taskInIt1, getInfoTask, checkInfo, deleteInfoPoi, addInfoPoi, deleteObject } = require('../../util/queries');
 const { getInfoUser } = require('../../util/bd');
+const { removeEntriesOfTask } = require('../feature/photoVote');
 
 const winston = require('../../util/winston');
 
@@ -275,7 +276,13 @@ async function deleteTask(req, res) {
                                                             if (json.boolean === false) {
                                                                 options = options4Request(deleteObject(idTask), true);
                                                                 fetch(options.url, options.init)
-                                                                    .then(r => {
+                                                                    .then(async r => {
+                                                                        // Si era una tarea de votación, sus fotografías
+                                                                        // dejan de tener tarea a la que pertenecer y
+                                                                        // nadie podría llegar a borrarlas
+                                                                        if (idFeature !== undefined && idFeature !== null) {
+                                                                            await removeEntriesOfTask(idFeature, idTask);
+                                                                        }
                                                                         winston.info(Mustache.render(
                                                                             'deleteTask || {{{uid}}} || {{{idTask}}} || {{{time}}}',
                                                                             {

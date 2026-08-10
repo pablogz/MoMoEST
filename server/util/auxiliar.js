@@ -196,12 +196,18 @@ function mergeResults(vector, idKey) {
                 let equals = true;
                 // Si es un objeto compruebo cada uno de sus campos (solo un nivel, es decir, 
                 // no puede haber un objeto dentro de un objeto).
-                if (typeof repe[k] === 'object') {
-                    Object.keys(repe[k]).forEach(k2 => {
-                        if (element[k][k2] !== undefined && element[k][k2] !== repe[k][k2]) {
-                            equals = false;
-                        }
-                    });
+                if (repe[k] !== null && typeof repe[k] === 'object') {
+                    // Con las variables OPTIONAL la clave puede venir en unas
+                    // filas y faltar en otras: entonces no son iguales
+                    if (element[k] === undefined) {
+                        equals = false;
+                    } else {
+                        Object.keys(repe[k]).forEach(k2 => {
+                            if (element[k][k2] !== undefined && element[k][k2] !== repe[k][k2]) {
+                                equals = false;
+                            }
+                        });
+                    }
                 } else {
                     // Si no es un objeto comparo directamente (no espero funciones)
                     equals = (repe[k] === element[k]);
@@ -210,8 +216,10 @@ function mergeResults(vector, idKey) {
                 if (!equals) {
                     let save = true;
                     // Compruebo ahora si no lo he guardado previamente
-                    if (typeof repe[k] === 'object') {
-                        if (Array.isArray(inter[k])) {
+                    if (repe[k] !== null && typeof repe[k] === 'object') {
+                        if (inter[k] === undefined) {
+                            save = true;
+                        } else if (Array.isArray(inter[k])) {
                             inter[k].forEach(o => {
                                 let save2 = false;
                                 Object.keys(o).forEach(k2 => {
@@ -236,11 +244,17 @@ function mergeResults(vector, idKey) {
                             save = inter[k] !== repe[k];
                         }
                     }
-                    // Guardo como vector los resultados
+                    // Guardo como vector los resultados. Si la clave no estaba
+                    // en la fusión me quedo con el valor, no con un vector que
+                    // empiece por undefined
                     if (save) {
-                        Array.isArray(inter[k]) ?
-                            inter[k].push(repe[k]) :
+                        if (inter[k] === undefined) {
+                            inter[k] = repe[k];
+                        } else if (Array.isArray(inter[k])) {
+                            inter[k].push(repe[k]);
+                        } else {
                             inter[k] = [inter[k], repe[k]];
+                        }
                     }
                 }
             });
@@ -254,6 +268,9 @@ function mergeResults(vector, idKey) {
                 const a = [];
                 inter[k].forEach((i2) => {
                     try {
+                        if (i2 === undefined || i2 === null) {
+                            return;
+                        }
                         if (i2.lang !== undefined && i2.value !== undefined) {
                             let yaExiste = false;
                             a.forEach((i3) => {

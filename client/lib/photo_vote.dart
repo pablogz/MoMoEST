@@ -167,19 +167,27 @@ class _PhotoVoteView extends State<PhotoVoteView> {
         headers: {'Authorization': 'Bearer $token'},
       );
       if (!mounted) return;
-      if (response.statusCode == 204) {
+      // Un 404 significa que la fotografía ya no está en la votación, así que
+      // para quien borra el resultado es el mismo que un borrado correcto
+      if (response.statusCode == 204 || response.statusCode == 404) {
         setState(() => _entries?.removeWhere((e) => e.entryId == entry.entryId));
         smState.clearSnackBars();
         smState.showSnackBar(SnackBar(content: Text(appLoca.fotoBorrada)));
-        await _load(silent: true);
       } else {
+        if (ConfigXest.development) {
+          debugPrint('photoVote delete: ${response.statusCode}');
+        }
         smState.clearSnackBars();
         smState.showSnackBar(SnackBar(content: Text(appLoca.errorBorrarFoto)));
       }
+      // En los dos casos se recarga: la pantalla debe enseñar lo que hay en el
+      // servidor, no lo que creemos que ha pasado
+      await _load(silent: true);
     } catch (error) {
       if (ConfigXest.development) debugPrint(error.toString());
       smState.clearSnackBars();
       smState.showSnackBar(SnackBar(content: Text(appLoca.errorBorrarFoto)));
+      await _load(silent: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
