@@ -26,14 +26,17 @@ end
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 # MoMoEST solo usa file_picker con FileType.any y FileType.custom, que abren el
-# selector de Archivos. Desactivando estos dos selectores no se compilan ni
-# DKImagePickerController ni MPMediaPickerController, de modo que el binario no
-# contiene ninguna llamada a la fototeca ni a la biblioteca musical: la
-# aplicacion no necesita NSPhotoLibraryUsageDescription ni
-# NSAppleMusicUsageDescription. Ademas, al desaparecer DKImagePickerController
-# ya no llega SDWebImage por dos caminos distintos.
+# selector de Archivos. Desactivando estos dos selectores dejan de compilarse
+# DKImagePickerController, DKPhotoGallery y SwiftyGif, con lo que file_picker no
+# aporta ninguna llamada a la fototeca ni a la biblioteca musical.
+# Ojo: esto no basta para prescindir de NSPhotoLibraryUsageDescription. El
+# binario sigue enlazando PHPhotoLibrary por quill_native_bridge_ios y
+# ALAssetsLibrary por flutter_image_compress_common, y el validador de subida a
+# App Store Connect analiza los simbolos presentes, no los alcanzables
+# (ITMS-90683). La cadena tiene que estar en el Info.plist aunque no se pida
+# nunca el permiso.
 # Si algun dia se usa FileType.image, .video, .media o .audio, hay que volver a
-# poner estas constantes a true y anadir de nuevo la cadena correspondiente.
+# poner estas constantes a true.
 Pod::PICKER_MEDIA = false
 Pod::PICKER_AUDIO = false
 
@@ -53,6 +56,21 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+
+        # MoMoEST solo pide la ubicacion en primer plano, pero geolocator compila
+        # una rama con requestAlwaysAuthorization por si el Info.plist declara el
+        # permiso en segundo plano. Esa rama nunca se ejecuta, ya que declaramos
+        # NSLocationWhenInUseUsageDescription, pero el validador de App Store
+        # Connect ve el simbolo y reclama NSLocationAlwaysAndWhenInUseUsageDescription
+        # (ITMS-90683). Con esta macro, documentada por el propio plugin, la rama
+        # no se compila y desaparece el aviso sin declarar un permiso que no
+        # usamos.
+        if target.name == 'geolocator_apple'
+          definitions = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
+          definitions = [definitions] if definitions.is_a?(String)
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] =
+            definitions + ['BYPASS_PERMISSION_LOCATION_ALWAYS=1']
+        end
     end
   end
 end
