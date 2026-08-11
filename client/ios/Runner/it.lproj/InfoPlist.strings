@@ -1,0 +1,6 @@
+/* Testi che iOS mostra quando chiede una risorsa protetta.
+   Vanno mantenuti allineati con ios/Runner/Info.plist e con gli altri .lproj. */
+
+"NSCameraUsageDescription" = "MoMoEST usa la fotocamera per permetterti di rispondere a un compito di apprendimento con una fotografia, ad esempio fotografando la facciata del monumento su cui ti interroga l'insegnante. La fotocamera si apre solo quando premi il pulsante per scattare, e l'immagine viene inviata alla tua classe soltanto dopo che l'hai confermata. MoMoEST non registra video né audio.";
+
+"NSLocationWhenInUseUsageDescription" = "MoMoEST usa la tua posizione per disegnare dove ti trovi sulla mappa, così puoi vedere quali luoghi e itinerari di apprendimento hai vicino e raggiungere a piedi la tappa successiva di un itinerario. La tua posizione viene usata solo su questo dispositivo mentre l'app è aperta: non viene mai inviata ai nostri server né condivisa con l'insegnante o i compagni.";

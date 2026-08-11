@@ -1266,6 +1266,12 @@ class _COTask extends State<COTask> {
           );
         }
         UserXEST.userXEST.answers.add(answer);
+        // La copia que se acaba de construir no lleva el identificador de la
+        // entrada de la votación, que solo conoce el servidor. Sin él, "Ver
+        // respuesta" no sabe de qué fotografía enseñar los votos, y al retirar
+        // la fotografía no hay forma de enlazarla con esta respuesta. Se pide
+        // la lista real; si la petición falla, queda la copia local.
+        await UserXEST.refreshAnswers();
 
         smState.clearSnackBars();
         smState
@@ -1285,6 +1291,11 @@ class _COTask extends State<COTask> {
         smState.showSnackBar(SnackBar(
             content: Text(
                 appLoca!.ficheroDemasiadoGrande(ConfigXest.maxFileSizeMB))));
+      } else if (response.statusCode == 409) {
+        // Una fotografía por persona y tarea: ya participó en esta votación
+        smState.showSnackBar(SnackBar(
+            content: Text(appLoca!.photoVoteYaParticipa),
+            duration: const Duration(seconds: 8)));
       } else {
         smState
             .showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));

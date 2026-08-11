@@ -8,6 +8,8 @@ import 'package:momoest/answers.dart' show AuthImage;
 import 'package:momoest/l10n/generated/app_localizations.dart';
 import 'package:momoest/util/auxiliar.dart';
 import 'package:momoest/util/config_xest.dart';
+import 'package:momoest/util/helpers/answers.dart';
+import 'package:momoest/util/helpers/user_xest.dart';
 import 'package:momoest/util/queries.dart';
 
 /// Entrada anónima de la votación pública de fotografías de una tarea
@@ -171,6 +173,15 @@ class _PhotoVoteView extends State<PhotoVoteView> {
       // para quien borra el resultado es el mismo que un borrado correcto
       if (response.statusCode == 204 || response.statusCode == 404) {
         setState(() => _entries?.removeWhere((e) => e.entryId == entry.entryId));
+        // El servidor oculta la respuesta enlazada, así que se quita también de
+        // la copia en memoria: la tarea vuelve a aparecer como pendiente y deja
+        // de ofrecer una respuesta cuya fotografía ya no existe. Se compara
+        // también por el fichero, porque una respuesta recién creada en el
+        // cliente puede no tener todavía el identificador de la entrada.
+        UserXEST.userXEST.answers.removeWhere((Answer a) =>
+            a.hasAnswer &&
+            (a.answer['entryId']?.toString() == entry.entryId ||
+                a.answer['file']?.toString() == entry.file));
         smState.clearSnackBars();
         smState.showSnackBar(SnackBar(content: Text(appLoca.fotoBorrada)));
       } else {

@@ -25,6 +25,18 @@ end
 
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
+# MoMoEST solo usa file_picker con FileType.any y FileType.custom, que abren el
+# selector de Archivos. Desactivando estos dos selectores no se compilan ni
+# DKImagePickerController ni MPMediaPickerController, de modo que el binario no
+# contiene ninguna llamada a la fototeca ni a la biblioteca musical: la
+# aplicacion no necesita NSPhotoLibraryUsageDescription ni
+# NSAppleMusicUsageDescription. Ademas, al desaparecer DKImagePickerController
+# ya no llega SDWebImage por dos caminos distintos.
+# Si algun dia se usa FileType.image, .video, .media o .audio, hay que volver a
+# poner estas constantes a true y anadir de nuevo la cadena correspondiente.
+Pod::PICKER_MEDIA = false
+Pod::PICKER_AUDIO = false
+
 flutter_ios_podfile_setup
 
 target 'Runner' do

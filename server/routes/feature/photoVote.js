@@ -290,6 +290,21 @@ async function uploadPhoto(req, res) {
                     return res.sendStatus(400);
                 }
 
+                // Una fotografía por persona y tarea. Sin esta comprobación una
+                // segunda subida dejaría la anterior pública y sin forma de
+                // llegar a ella para retirarla, porque "Mis respuestas" agrupa
+                // por lugar y tarea y solo enseña la más reciente.
+                const task = _fullId(idTask);
+                const doc = await getPhotoVotePlace(idFeature);
+                const yaParticipa = doc !== null && Array.isArray(doc.entries)
+                    && doc.entries.some(e => e.uid === uid && e.idTask === task);
+                if (yaParticipa) {
+                    _cleanFile(req);
+                    winston.info(Mustache.render('photoVoteUpload || yaParticipa || {{{task}}}', { task: task }));
+                    logHttp(req, 409, 'photoVoteUpload', start);
+                    return res.status(409).json({ error: 'alreadyParticipated' });
+                }
+
                 const fileName = path.basename(req.file.path);
                 const entryId = short.generate();
 
@@ -300,7 +315,7 @@ async function uploadPhoto(req, res) {
                     uid: uid,
                     // La tarea a la que pertenece la foto: un lugar puede tener
                     // varias votaciones y cada una es independiente
-                    ...(_fullId(idTask) !== null && { idTask: _fullId(idTask) }),
+                    ...(task !== null && { idTask: task }),
                     file: fileName,
                     creation: meta.finishClient,
                     votes: [],
@@ -337,9 +352,11 @@ async function uploadPhoto(req, res) {
                     logHttp(req, 201, 'photoVoteUpload', start);
                     res.location(`${urlServer}/users/user/answers/${idAnswer}`).sendStatus(201);
                 } else {
+                    // Fallo al guardar la respuesta, no un conflicto: el 409 se
+                    // reserva para quien ya participó en esta votación
                     _cleanFile(req);
-                    logHttp(req, 409, 'photoVoteUpload', start);
-                    res.sendStatus(409);
+                    logHttp(req, 500, 'photoVoteUpload', start);
+                    res.sendStatus(500);
                 }
             })
             .catch((error) => {

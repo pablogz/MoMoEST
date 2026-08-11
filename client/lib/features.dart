@@ -79,8 +79,6 @@ class _InfoFeature extends State<InfoFeature>
   // Filtros de la lista de tareas: tipos de tarea y alias de autores elegidos
   final Set<AnswerType> _filterTypes = {};
   final Set<String> _filterAuthors = {};
-  // Respuesta guardada del usuario por identificador de tarea
-  final Map<String, Answer> _answersTasks = {};
   late List<String> tabs;
   late TabController _tabController;
   late Widget? _fab;
@@ -619,6 +617,22 @@ class _InfoFeature extends State<InfoFeature>
         (shortA != null && shortA == shortB);
   }
 
+  /// Respuesta guardada del usuario para una tarea, si la hay. Se busca en cada
+  /// pintado y no al recuperar la lista de tareas: así la tarjeta refleja lo que
+  /// el usuario acaba de hacer (responder la tarea, o retirar su fotografía de
+  /// la votación) sin tener que salir del lugar y volver a entrar.
+  Answer? _answerOfTask(Task task) {
+    for (Answer answer in UserXEST.userXEST.answers) {
+      if (answer.hasContainer &&
+          _sameId(answer.idContainer, task.idContainer) &&
+          answer.hasTask &&
+          _sameId(answer.idTask, task.id)) {
+        return answer;
+      }
+    }
+    return null;
+  }
+
   Widget widgetListTasks(Size size) {
     // double pLateral = size.width > Auxiliar.maxWidth
     //     ? (size.width - Auxiliar.maxWidth) / 2
@@ -641,18 +655,6 @@ class _InfoFeature extends State<InfoFeature>
                               idContainer: feature.id,
                             );
 
-                            // Las tareas ya respondidas siguen visibles con
-                            // una marca de completada y acceso a la respuesta
-                            for (var answer in UserXEST.userXEST.answers) {
-                              if (answer.hasContainer &&
-                                  _sameId(
-                                      answer.idContainer, task.idContainer) &&
-                                  answer.hasTask &&
-                                  _sameId(answer.idTask, task.id)) {
-                                _answersTasks[task.id] = answer;
-                                break;
-                              }
-                            }
                             bool muestra = true;
                             for (Task t in tasks) {
                               if (t.id == task.id) {
@@ -730,7 +732,11 @@ class _InfoFeature extends State<InfoFeature>
           labelTask: task.hasLabel ? task.getALabel(lang: MyApp.currentLang) : null,
         ),
       ),
-    );
+      // Al volver se repinta la lista: si el usuario ha retirado su fotografía,
+      // la tarea vuelve a estar pendiente
+    ).then((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   /// Tareas que quedan tras aplicar los filtros de tipo y de autor
@@ -832,7 +838,7 @@ class _InfoFeature extends State<InfoFeature>
           ScaffoldMessengerState sMState = ScaffoldMessenger.of(context);
 
           Task task = tasksFiltered.elementAt(index);
-          Answer? answerTask = _answersTasks[task.id];
+          Answer? answerTask = _answerOfTask(task);
           String title = task.hasLabel
               ? task.getALabel(lang: MyApp.currentLang)
               : Auxiliar.getLabelAnswerType(
@@ -954,6 +960,15 @@ class _InfoFeature extends State<InfoFeature>
                                             setState(() {
                                               tasks.removeWhere(
                                                   (t) => t.id == task.id);
+                                              // Sin la tarea no hay respuesta
+                                              // que enseñar: el servidor las ha
+                                              // ocultado y aquí se quitan de la
+                                              // copia en memoria
+                                              UserXEST.userXEST.answers
+                                                  .removeWhere((Answer a) =>
+                                                      a.hasTask &&
+                                                      _sameId(a.idTask,
+                                                          task.id));
                                               if (tasks.isEmpty) {
                                                 _requestTask = false;
                                               }
@@ -1167,9 +1182,16 @@ class _InfoFeature extends State<InfoFeature>
     }).onError((error, stackTrace) => false);
   }
 
-  Future<List> _getTasks(id) {
-    return http.get(Queries.getTasks(id)).then((response) =>
-        response.statusCode == 200 ? json.decode(response.body) : []);
+  Future<List> _getTasks(id) async {
+    // Las respuestas se refrescan al abrir el lugar: son las que deciden qué
+    // tareas se marcan como completadas, y pueden haber cambiado fuera de esta
+    // pantalla (en otra sesión, o porque el servidor haya ocultado alguna al
+    // retirarse una fotografía o borrarse la tarea). Las dos peticiones van a
+    // la vez para no retrasar la lista de tareas.
+    final Future<void> answers = UserXEST.refreshAnswers();
+    final http.Response response = await http.get(Queries.getTasks(id));
+    await answers;
+    return response.statusCode == 200 ? json.decode(response.body) : [];
   }
 
   void checkUserLocation() async {
