@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:momoest/util/secret.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:momoest/l10n/generated/app_localizations.dart';
@@ -56,7 +57,7 @@ class MapLayer {
             minZoom: 1,
             maxNativeZoom: 20,
             urlTemplate:
-                'https://{s}.basemaps.cartocdn.com/${brightness == Brightness.light ? 'light_all' : 'dark_all'}/{z}/{x}/{y}{r}.png',
+                'https://{s}.basemaps.cartocdn.com/${brightness == Brightness.light ? 'light_all' : 'dark_all'}/{z}/{x}/{y}{r}.png?key=${ConfigSecrect.keyCarto}',
             subdomains: const ['a', 'b', 'c', 'd'],
             userAgentPackageName: ConfigXest.namespace,
             tileProvider: NetworkTileProvider(),
