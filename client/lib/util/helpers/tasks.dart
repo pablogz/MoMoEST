@@ -8,6 +8,10 @@ class Task {
   /// La tarea puede estar contenida en un spatial thing o en un itineario
   late ContainerTask? _container;
   late String _id, _author, _idContainer;
+
+  /// Alias del autor de la tarea. Solo está disponible si esa persona aceptó
+  /// publicarlo, así que puede ser nulo.
+  String? authorLbl;
   final List<Space> _space = [];
   late AnswerType aT;
   late bool _hasLabel,
@@ -68,6 +72,17 @@ class Task {
           _author = data['author'];
         } else {
           throw TaskException('author');
+        }
+
+        // El alias del autor solo está en el triple-store si dio permiso para
+        // publicarlo, y puede llegar repetido si tiene varias etiquetas
+        if (data['authorLbl'] is String &&
+            data['authorLbl'].toString().trim().isNotEmpty) {
+          authorLbl = data['authorLbl'].toString().trim();
+        } else if (data['authorLbl'] is List &&
+            data['authorLbl'].isNotEmpty &&
+            data['authorLbl'].first is String) {
+          authorLbl = data['authorLbl'].first.toString().trim();
         }
 
         if (data.containsKey('space')) {

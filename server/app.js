@@ -63,6 +63,7 @@ const rutas = {
     learningTask: '/features/:feature/learningTasks/:learningTask',
     photoVote: '/features/:feature/photoVote',
     photoVoteVote: '/features/:feature/photoVote/:entry/vote',
+    photoVoteEntry: '/features/:feature/photoVote/:entry',
     photoVoteFile: '/features/:feature/photoVote/files/:fileId',
     tasks: '/tasks',
     // task: '/features/:feature/learningTasks/:task',
@@ -298,6 +299,16 @@ app
         methods: ['PUT', 'OPTIONS']
     }), (req, res) => res.sendStatus(204))
     .all(rutas.photoVoteVote, cors({ origin: '*' }), error405)
+    .delete(rutas.photoVoteEntry, cors({
+        origin: '*'
+    }), (req, res) => req.headers.authorization ?
+        photoVote.deleteEntry(req, res) :
+        res.sendStatus(401))
+    .options(rutas.photoVoteEntry, cors({
+        origin: '*',
+        methods: ['DELETE', 'OPTIONS']
+    }), (req, res) => res.sendStatus(204))
+    .all(rutas.photoVoteEntry, cors({ origin: '*' }), error405)
     .get(rutas.photoVoteFile, cors({
         origin: '*'
     }), (req, res) => req.headers.authorization ?

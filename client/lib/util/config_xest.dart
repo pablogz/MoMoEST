@@ -1,5 +1,5 @@
 class ConfigXest {
-  static const String version = "0.2.0";
+  static const String version = "0.2.6";
 
   static const bool development = false;
 

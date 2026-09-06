@@ -29,6 +29,46 @@ class UserXEST {
   late LastPosition lastMapView;
   late Layers defaultMap;
 
+  /// Recupera del servidor las respuestas del usuario. La marca de "tarea
+  /// completada" de los lugares se decide con esta lista, que hasta ahora solo
+  /// se rellenaba al entrar en "Mis respuestas" o al responder durante la
+  /// sesión: sin esto, una respuesta de otro día no marcaba la tarea, y una
+  /// respuesta que el servidor haya ocultado seguía marcándola.
+  /// Si la petición falla se conserva la lista que hubiera.
+  static Future<void> refreshAnswers() async {
+    final UserXEST user = userXEST;
+    final User? account = FirebaseAuth.instance.currentUser;
+    if (user.isGuest || account == null) return;
+    try {
+      final http.Response response = await http.get(
+        Queries.getAnswers(),
+        headers: {'Authorization': 'Bearer ${await account.getIdToken()}'},
+      );
+      if (response.statusCode == 204) {
+        user.answers = [];
+        return;
+      }
+      if (response.statusCode != 200) return;
+      final dynamic data = json.decode(response.body);
+      if (data is! List) return;
+      final List<Answer> lista = [];
+      for (var ele in data) {
+        try {
+          lista.add(Answer(ele));
+        } catch (error, stackTrace) {
+          if (ConfigXest.development) {
+            debugPrint(error.toString());
+          } else {
+            await FirebaseCrashlytics.instance.recordError(error, stackTrace);
+          }
+        }
+      }
+      user.answers = lista;
+    } catch (error) {
+      if (ConfigXest.development) debugPrint(error.toString());
+    }
+  }
+
   UserXEST.guest() {
     _id = '';
     _alias = null;

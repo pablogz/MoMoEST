@@ -76,8 +76,9 @@ class _InfoFeature extends State<InfoFeature>
   final CarouselController _carouselController = CarouselController();
   int _carouselIndex = 0;
   List<Task> tasks = [];
-  // Respuesta guardada del usuario por identificador de tarea
-  final Map<String, Answer> _answersTasks = {};
+  // Filtros de la lista de tareas: tipos de tarea y alias de autores elegidos
+  final Set<AnswerType> _filterTypes = {};
+  final Set<String> _filterAuthors = {};
   late List<String> tabs;
   late TabController _tabController;
   late Widget? _fab;
@@ -616,6 +617,22 @@ class _InfoFeature extends State<InfoFeature>
         (shortA != null && shortA == shortB);
   }
 
+  /// Respuesta guardada del usuario para una tarea, si la hay. Se busca en cada
+  /// pintado y no al recuperar la lista de tareas: así la tarjeta refleja lo que
+  /// el usuario acaba de hacer (responder la tarea, o retirar su fotografía de
+  /// la votación) sin tener que salir del lugar y volver a entrar.
+  Answer? _answerOfTask(Task task) {
+    for (Answer answer in UserXEST.userXEST.answers) {
+      if (answer.hasContainer &&
+          _sameId(answer.idContainer, task.idContainer) &&
+          answer.hasTask &&
+          _sameId(answer.idTask, task.id)) {
+        return answer;
+      }
+    }
+    return null;
+  }
+
   Widget widgetListTasks(Size size) {
     // double pLateral = size.width > Auxiliar.maxWidth
     //     ? (size.width - Auxiliar.maxWidth) / 2
@@ -638,18 +655,6 @@ class _InfoFeature extends State<InfoFeature>
                               idContainer: feature.id,
                             );
 
-                            // Las tareas ya respondidas siguen visibles con
-                            // una marca de completada y acceso a la respuesta
-                            for (var answer in UserXEST.userXEST.answers) {
-                              if (answer.hasContainer &&
-                                  _sameId(
-                                      answer.idContainer, task.idContainer) &&
-                                  answer.hasTask &&
-                                  _sameId(answer.idTask, task.id)) {
-                                _answersTasks[task.id] = answer;
-                                break;
-                              }
-                            }
                             bool muestra = true;
                             for (Task t in tasks) {
                               if (t.id == task.id) {
@@ -714,13 +719,115 @@ class _InfoFeature extends State<InfoFeature>
     }
   }
 
+  /// Abre la votación de una tarea de fotografía con votación. Cada tarea tiene
+  /// su propia votación, aunque varias compartan lugar.
+  void _openPhotoVote(Task task) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => PhotoVoteView(
+          feature.shortId,
+          idTask: task.id,
+          labelFeature: feature.getALabel(lang: MyApp.currentLang),
+          labelTask: task.hasLabel ? task.getALabel(lang: MyApp.currentLang) : null,
+        ),
+      ),
+      // Al volver se repinta la lista: si el usuario ha retirado su fotografía,
+      // la tarea vuelve a estar pendiente
+    ).then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  /// Tareas que quedan tras aplicar los filtros de tipo y de autor
+  List<Task> get _tasksFiltered => tasks
+      .where((Task t) =>
+          (_filterTypes.isEmpty || _filterTypes.contains(t.aT)) &&
+          (_filterAuthors.isEmpty ||
+              (t.authorLbl != null && _filterAuthors.contains(t.authorLbl))))
+      .toList();
+
+  /// Filtros de la lista de tareas del lugar: por tipo de tarea y por alias de
+  /// quien la propuso. Solo se ofrecen los valores presentes en el lugar.
+  Widget _widgetTaskFilters() {
+    ThemeData td = Theme.of(context);
+    AppLocalizations appLoca = AppLocalizations.of(context)!;
+    final List<AnswerType> types = tasks.map((Task t) => t.aT).toSet().toList();
+    final List<String> authors = tasks
+        .map((Task t) => t.authorLbl)
+        .whereType<String>()
+        .toSet()
+        .toList()
+      ..sort();
+    if (types.length < 2 && authors.length < 2) {
+      return const SizedBox.shrink();
+    }
+    final bool filtering = _filterTypes.isNotEmpty || _filterAuthors.isNotEmpty;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.filter_list, size: 18, color: td.colorScheme.outline),
+              const SizedBox(width: 5),
+              Text(appLoca.filtrarTareas,
+                  style: td.textTheme.titleSmall!
+                      .copyWith(color: td.colorScheme.outline)),
+              const Spacer(),
+              if (filtering)
+                TextButton(
+                  onPressed: () => setState(() {
+                    _filterTypes.clear();
+                    _filterAuthors.clear();
+                  }),
+                  child: Text(appLoca.quitarFiltros),
+                ),
+            ],
+          ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              if (types.length > 1)
+                for (AnswerType type in types)
+                  FilterChip(
+                    label: Text(Auxiliar.getLabelAnswerType(appLoca, type)),
+                    selected: _filterTypes.contains(type),
+                    onSelected: (bool selected) => setState(() => selected
+                        ? _filterTypes.add(type)
+                        : _filterTypes.remove(type)),
+                  ),
+              if (authors.length > 1)
+                for (String author in authors)
+                  FilterChip(
+                    avatar: const Icon(Icons.person_outline, size: 18),
+                    label: Text(author),
+                    selected: _filterAuthors.contains(author),
+                    onSelected: (bool selected) => setState(() => selected
+                        ? _filterAuthors.add(author)
+                        : _filterAuthors.remove(author)),
+                  ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _listTasks(Size size) {
-    // Si el lugar tiene alguna tarea de fotografía con votación se ofrece el
-    // acceso a la vista de votación (para cualquier usuario autenticado)
-    final bool hasPhotoVote = UserXEST.userXEST.isNotGuest &&
-        tasks.any((Task t) => t.aT == AnswerType.photoVote);
-    final int extraCards = hasPhotoVote ? 1 : 0;
-    return SliverPadding(
+    final List<Task> tasksFiltered = _tasksFiltered;
+    return SliverMainAxisGroup(slivers: [
+      SliverToBoxAdapter(child: _widgetTaskFilters()),
+      if (tasksFiltered.isEmpty)
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(AppLocalizations.of(context)!.sinTareasFiltro),
+          ),
+        ),
+      SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
@@ -730,35 +837,8 @@ class _InfoFeature extends State<InfoFeature>
           AppLocalizations appLoca = AppLocalizations.of(context)!;
           ScaffoldMessengerState sMState = ScaffoldMessenger.of(context);
 
-          if (hasPhotoVote && index == 0) {
-            return Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(color: colorSheme.primary),
-                  borderRadius: const BorderRadius.all(Radius.circular(12))),
-              child: ListTile(
-                leading: const Icon(Icons.how_to_vote),
-                title: Text(appLoca.votarFotos, style: textTheme.titleMedium),
-                subtitle: Text(appLoca.votarFotosExplica),
-                trailing: const Icon(Icons.navigate_next),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => PhotoVoteView(
-                        feature.shortId,
-                        labelFeature:
-                            feature.getALabel(lang: MyApp.currentLang),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          }
-
-          Task task = tasks.elementAt(index - extraCards);
-          Answer? answerTask = _answersTasks[task.id];
+          Task task = tasksFiltered.elementAt(index);
+          Answer? answerTask = _answerOfTask(task);
           String title = task.hasLabel
               ? task.getALabel(lang: MyApp.currentLang)
               : Auxiliar.getLabelAnswerType(
@@ -832,6 +912,16 @@ class _InfoFeature extends State<InfoFeature>
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(comment.replaceAll(RegExp('<[^>]*>'), '')),
                 ),
+                // El alias solo está disponible si su autor aceptó publicarlo
+                if (task.authorLbl != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 16, right: 16),
+                    child: Text(
+                      appLoca.autorTarea(task.authorLbl!),
+                      style: textTheme.bodySmall!
+                          .copyWith(color: colorSheme.outline),
+                    ),
+                  ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
@@ -840,7 +930,17 @@ class _InfoFeature extends State<InfoFeature>
                     child: Wrap(
                       alignment: WrapAlignment.end,
                       spacing: 10,
-                      children: mostrarFabProfe
+                      children: [
+                      // Cada tarea de votación tiene su propia galería, así que
+                      // se entra a ella desde la propia tarea
+                      if (task.aT == AnswerType.photoVote &&
+                          UserXEST.userXEST.isNotGuest)
+                        TextButton.icon(
+                          onPressed: () => _openPhotoVote(task),
+                          icon: const Icon(Icons.how_to_vote, size: 18),
+                          label: Text(appLoca.verVotacion),
+                        ),
+                      ...mostrarFabProfe
                           ? task.author == UserXEST.userXEST.iri
                               ? [
                                   TextButton(
@@ -860,6 +960,15 @@ class _InfoFeature extends State<InfoFeature>
                                             setState(() {
                                               tasks.removeWhere(
                                                   (t) => t.id == task.id);
+                                              // Sin la tarea no hay respuesta
+                                              // que enseñar: el servidor las ha
+                                              // ocultado y aquí se quitan de la
+                                              // copia en memoria
+                                              UserXEST.userXEST.answers
+                                                  .removeWhere((Answer a) =>
+                                                      a.hasTask &&
+                                                      _sameId(a.idTask,
+                                                          task.id));
                                               if (tasks.isEmpty) {
                                                 _requestTask = false;
                                               }
@@ -1020,15 +1129,17 @@ class _InfoFeature extends State<InfoFeature>
                                 child: Text(appLoca.realizaTareaBt),
                               )
                             ],
+                      ],
                     ),
                   ),
                 )
               ],
             ),
           );
-        }, childCount: tasks.length + extraCards),
+        }, childCount: tasksFiltered.length),
       ),
-    );
+      ),
+    ]);
   }
 
   void showSnackTaskDelete(bool error) {
@@ -1071,9 +1182,16 @@ class _InfoFeature extends State<InfoFeature>
     }).onError((error, stackTrace) => false);
   }
 
-  Future<List> _getTasks(id) {
-    return http.get(Queries.getTasks(id)).then((response) =>
-        response.statusCode == 200 ? json.decode(response.body) : []);
+  Future<List> _getTasks(id) async {
+    // Las respuestas se refrescan al abrir el lugar: son las que deciden qué
+    // tareas se marcan como completadas, y pueden haber cambiado fuera de esta
+    // pantalla (en otra sesión, o porque el servidor haya ocultado alguna al
+    // retirarse una fotografía o borrarse la tarea). Las dos peticiones van a
+    // la vez para no retrasar la lista de tareas.
+    final Future<void> answers = UserXEST.refreshAnswers();
+    final http.Response response = await http.get(Queries.getTasks(id));
+    await answers;
+    return response.statusCode == 200 ? json.decode(response.body) : [];
   }
 
   void checkUserLocation() async {

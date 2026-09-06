@@ -18,6 +18,7 @@ import 'package:flutter_quill_delta_from_html/parser/html_to_delta.dart';
 
 import 'package:momoest/draw_editor.dart';
 import 'package:momoest/full_screen.dart';
+import 'package:momoest/photo_vote.dart';
 import 'package:momoest/util/helpers/feature.dart';
 import 'package:momoest/l10n/generated/app_localizations.dart';
 import 'package:momoest/util/config_xest.dart';
@@ -1152,6 +1153,27 @@ class _COTask extends State<COTask> {
           label: Text(
               _photoBytes == null ? appLoca.abrirCamara : appLoca.repetirFoto),
         ),
+        // La votación es la de esta tarea: cada tarea tiene su propia galería
+        // aunque varias compartan lugar
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: TextButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => PhotoVoteView(
+                  widget.shortIdContainer,
+                  idTask: widget.shortIdTask,
+                  labelTask: task!.hasLabel
+                      ? task!.getALabel(lang: MyApp.currentLang)
+                      : null,
+                ),
+              ),
+            ),
+            icon: const Icon(Icons.how_to_vote, size: 18),
+            label: Text(appLoca.verVotacion),
+          ),
+        ),
         // Declaración de responsabilidad obligatoria antes de enviar
         CheckboxListTile.adaptive(
           value: _photoResponsibility,
@@ -1244,6 +1266,12 @@ class _COTask extends State<COTask> {
           );
         }
         UserXEST.userXEST.answers.add(answer);
+        // La copia que se acaba de construir no lleva el identificador de la
+        // entrada de la votación, que solo conoce el servidor. Sin él, "Ver
+        // respuesta" no sabe de qué fotografía enseñar los votos, y al retirar
+        // la fotografía no hay forma de enlazarla con esta respuesta. Se pide
+        // la lista real; si la petición falla, queda la copia local.
+        await UserXEST.refreshAnswers();
 
         smState.clearSnackBars();
         smState
@@ -1263,6 +1291,11 @@ class _COTask extends State<COTask> {
         smState.showSnackBar(SnackBar(
             content: Text(
                 appLoca!.ficheroDemasiadoGrande(ConfigXest.maxFileSizeMB))));
+      } else if (response.statusCode == 409) {
+        // Una fotografía por persona y tarea: ya participó en esta votación
+        smState.showSnackBar(SnackBar(
+            content: Text(appLoca!.photoVoteYaParticipa),
+            duration: const Duration(seconds: 8)));
       } else {
         smState
             .showSnackBar(SnackBar(content: Text(appLoca!.errorSubirFichero)));

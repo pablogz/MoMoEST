@@ -3,17 +3,14 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:gal/gal.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_network/image_network.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:universal_io/io.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:momoest/l10n/generated/app_localizations.dart';
 import 'package:momoest/util/helpers/pair.dart';
+import 'package:momoest/util/helpers/save_file.dart';
 import 'package:momoest/util/auxiliar.dart';
 
 /// Visor de imágenes en pantalla completa. Acepta una lista de imágenes por
@@ -228,31 +225,15 @@ class _FullScreenImage extends State<FullScreenImage> {
           uri.pathSegments.isNotEmpty && uri.pathSegments.last.isNotEmpty
               ? uri.pathSegments.last
               : 'image.jpg';
-      try {
-        // Intento el guardado directo en la galería del dispositivo
-        await Gal.putImageBytes(response.bodyBytes, name: filename);
-        sms.clearSnackBars();
-        sms.showSnackBar(
-          SnackBar(content: Text(appLoca.imagenGuardadaGaleria)),
-        );
-      } catch (_) {
-        // Permiso denegado, plataforma sin soporte… ofrezco la hoja de
-        // compartir como alternativa
-        final dir = await getTemporaryDirectory();
-        final file = File('${dir.path}/$filename');
-        await file.writeAsBytes(response.bodyBytes);
-        sms.clearSnackBars();
-        sms.showSnackBar(
-          SnackBar(content: Text(appLoca.imagenNoGuardadaCompartir)),
-        );
-        await SharePlus.instance.share(
-          ShareParams(
-            files: [XFile(file.path)],
-            subject: _currentLabel ?? '',
-            sharePositionOrigin: sharePositionOrigin,
-          ),
-        );
-      }
+      final SaveResult resultado = await SaveFile.save(
+        bytes: response.bodyBytes,
+        fileName: filename,
+        subject: _currentLabel ?? '',
+        sharePositionOrigin: sharePositionOrigin,
+      );
+      sms.clearSnackBars();
+      final String? aviso = mensajeGuardado(appLoca, resultado);
+      if (aviso != null) sms.showSnackBar(SnackBar(content: Text(aviso)));
     } catch (_) {
       if (!context.mounted) return;
       sms.clearSnackBars();
@@ -328,35 +309,32 @@ class FullScreenImageBytes extends StatelessWidget {
     final Rect sharePositionOrigin = box != null
         ? box.localToGlobal(Offset.zero) & box.size
         : Rect.fromLTWH(0, 0, MediaQuery.of(context).size.width, 100);
-    try {
-      await Gal.putImageBytes(bytes, name: fileName);
-      sms.clearSnackBars();
-      sms.showSnackBar(
-        SnackBar(content: Text(appLoca.imagenGuardadaGaleria)),
-      );
-    } catch (_) {
-      try {
-        final dir = await getTemporaryDirectory();
-        final file = File('${dir.path}/$fileName');
-        await file.writeAsBytes(bytes);
-        sms.clearSnackBars();
-        sms.showSnackBar(
-          SnackBar(content: Text(appLoca.imagenNoGuardadaCompartir)),
-        );
-        await SharePlus.instance.share(
-          ShareParams(
-            files: [XFile(file.path)],
-            subject: label ?? '',
-            sharePositionOrigin: sharePositionOrigin,
-          ),
-        );
-      } catch (_) {
-        sms.clearSnackBars();
-        sms.showSnackBar(
-          SnackBar(content: Text(appLoca.noLanzarURL)),
-        );
-      }
-    }
+    final SaveResult resultado = await SaveFile.save(
+      bytes: bytes,
+      fileName: fileName,
+      mime: 'image/png',
+      subject: label ?? '',
+      sharePositionOrigin: sharePositionOrigin,
+    );
+    sms.clearSnackBars();
+    final String? aviso = mensajeGuardado(appLoca, resultado);
+    if (aviso != null) sms.showSnackBar(SnackBar(content: Text(aviso)));
+  }
+}
+
+/// Aviso que se enseña tras pedir la descarga de una imagen. Devuelve null
+/// cuando el usuario ya ha visto la hoja de compartir y no hace falta decir
+/// nada más.
+String? mensajeGuardado(AppLocalizations appLoca, SaveResult resultado) {
+  switch (resultado) {
+    case SaveResult.downloads:
+      return appLoca.imagenGuardadaDescargas;
+    case SaveResult.appFiles:
+      return appLoca.imagenGuardadaArchivos;
+    case SaveResult.shared:
+      return null;
+    case SaveResult.error:
+      return appLoca.noLanzarURL;
   }
 }
 

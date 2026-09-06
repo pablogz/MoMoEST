@@ -20,10 +20,15 @@ try {
 
 /**
  * Get port from environment and store in Express.
+ *
+ * El puerto sale siempre de util/config.js, que es propio de cada máquina y no
+ * se despliega. No lo fijes aquí a un valor de pruebas: este fichero sí viaja
+ * al servidor, y allí el puerto de pruebas está ocupado por otro servicio, con
+ * lo que el proceso muere al arrancar y pm2 se queda reiniciándolo. Para
+ * cambiarlo en local, cambia serverPort en tu util/config.js.
  */
 
-// const port = normalizePort(process.env.PORT || config.serverPort);
-const port = 11110;
+const port = normalizePort(process.env.PORT || config.serverPort);
 app.set('port', port);
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 

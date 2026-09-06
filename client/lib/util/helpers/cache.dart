@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:momoest/main.dart';
 import 'package:momoest/util/auxiliar.dart';
 import 'package:momoest/util/helpers/feed.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -465,6 +466,48 @@ class FeedCache {
       return index > -1 ? _feeds!.elementAt(index) : null;
     }
     return null;
+  }
+
+  /// Carga los canales del usuario si todavía no están en la caché. Hay
+  /// pantallas, como "Mis respuestas", que necesitan la etiqueta de un canal
+  /// sin haber pasado antes por la pantalla de canales.
+  static Future<void> ensureLoaded() async {
+    if (feedsIsNotNull) return;
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      final http.Response response = await http.get(
+        Queries.feeds(),
+        headers: {'Authorization': 'Bearer ${await user.getIdToken()}'},
+      );
+      if (response.statusCode != 200) return;
+      final dynamic data = json.decode(response.body);
+      final List<Feed> feedL = [];
+      if (data is Map<String, dynamic>) {
+        for (String key in ['owner', 'subscribed', 'teaching']) {
+          if (data[key] is List) {
+            for (var f in data[key]) {
+              if (f is Map<String, dynamic>) {
+                try {
+                  feedL.add(Feed.json(f));
+                } catch (e, stackTrace) {
+                  if (ConfigXest.development) {
+                    debugPrint(e.toString());
+                  } else {
+                    await FirebaseCrashlytics.instance.recordError(e, stackTrace);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      // Con la lista vacía la caché queda igualmente inicializada, para no
+      // repetir la petición en cada pantalla
+      addAll(feedL);
+    } catch (e) {
+      if (ConfigXest.development) debugPrint(e.toString());
+    }
   }
 
   static bool get feedsIsNull => _feeds == null;

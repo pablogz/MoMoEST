@@ -82,7 +82,18 @@ class _Settings extends State<Settings> {
     );
   }
 
+  /// Cada idioma se muestra escrito en su propio idioma, para que se reconozca
+  /// aunque la aplicación esté en una lengua que no se entienda.
+  static const Map<String, String> _langNames = {
+    'es': 'Español',
+    'en': 'English',
+    'pt': 'Português',
+    'it': 'Italiano',
+  };
+
   Widget _langSelector(AppLocalizations appLoca) {
+    ThemeData td = Theme.of(context);
+    List<String?> langs = [null, ..._langNames.keys];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -90,38 +101,36 @@ class _Settings extends State<Settings> {
           padding: const EdgeInsets.only(top: 8, bottom: 8),
           child: Text(
             appLoca.idiomaApp,
-            style: Theme.of(context).textTheme.titleSmall,
+            style: td.textTheme.titleSmall,
           ),
         ),
-        SegmentedButton<String?>(
-          segments: [
-            ButtonSegment(
-              value: null,
-              label: Text(appLoca.idiomaDispositivo),
+        Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: td.colorScheme.outline),
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+          ),
+          child: RadioGroup<String?>(
+            groupValue: _selectedLang,
+            onChanged: (String? value) {
+              setState(() => _selectedLang = value);
+              LocaleManager.applyLocale(value);
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: langs
+                  .map((String? lang) => RadioListTile<String?>.adaptive(
+                        value: lang,
+                        title: Text(
+                          lang == null
+                              ? appLoca.idiomaDispositivo
+                              : _langNames[lang]!,
+                          style: td.textTheme.bodyLarge,
+                        ),
+                      ))
+                  .toList(),
             ),
-            const ButtonSegment(
-              value: 'es',
-              label: Text('Español'),
-            ),
-            const ButtonSegment(
-              value: 'en',
-              label: Text('English'),
-            ),
-            const ButtonSegment(
-              value: 'pt',
-              label: Text('Português'),
-            ),
-            const ButtonSegment(
-              value: 'it',
-              label: Text('Italiano'),
-            ),
-          ],
-          selected: {_selectedLang},
-          onSelectionChanged: (selection) {
-            final lang = selection.first;
-            setState(() => _selectedLang = lang);
-            LocaleManager.applyLocale(lang);
-          },
+          ),
         ),
       ],
     );

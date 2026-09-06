@@ -541,18 +541,24 @@ async function addPhotoVoteEntry(idFeature, entry) {
     }
 }
 
-// Regla de voto: un único voto por usuario y lugar, que puede cambiarse.
+// Regla de voto: un único voto por usuario y tarea, que puede cambiarse. Un
+// mismo lugar puede tener varias tareas de votación (de distinto profesorado),
+// así que el voto se limita a las entradas de la tarea indicada.
 // Con vote=true se mueve el voto del usuario a la entrada indicada; con
 // vote=false se retira su voto de esa entrada.
-async function votePhotoVoteDB(idFeature, entryId, uid, vote) {
+async function votePhotoVoteDB(idFeature, idTask, entryId, uid, vote) {
     try {
         const db = await connectToDatabase();
         const collection = db.collection(COLLECTION_PHOTOVOTE);
         if (vote) {
-            // Retiro el posible voto previo del usuario en este lugar
+            // Retiro el posible voto previo del usuario en esta misma tarea
+            const sameTask = typeof idTask === 'string' && idTask !== ''
+                ? { "e.idTask": idTask }
+                : { "e.idTask": { $exists: false } };
             await collection.updateOne(
                 { _id: idFeature },
-                { $pull: { "entries.$[].votes": uid } }
+                { $pull: { "entries.$[e].votes": uid } },
+                { arrayFilters: [sameTask] }
             );
             const resultado = await collection.updateOne(
                 { _id: idFeature, "entries.entryId": entryId },
@@ -568,6 +574,40 @@ async function votePhotoVoteDB(idFeature, entryId, uid, vote) {
     } catch (error) {
         winston.error('votePhotoVoteDB:', error);
         return false;
+    }
+}
+
+// Retira una entrada de la votación. Los votos viven dentro de la propia
+// entrada, así que desaparecen con ella.
+async function deletePhotoVoteEntryDB(idFeature, entryId) {
+    try {
+        const db = await connectToDatabase();
+        const resultado = await db.collection(COLLECTION_PHOTOVOTE).updateOne(
+            { _id: idFeature },
+            { $pull: { entries: { entryId: entryId } } }
+        );
+        return resultado.modifiedCount === 1;
+    } catch (error) {
+        winston.error('deletePhotoVoteEntryDB:', error);
+        return false;
+    }
+}
+
+// Respuesta privada enlazada con una entrada de la votación de fotografías
+async function getAnswerByEntry(userCol, entryId) {
+    try {
+        const db = await connectToDatabase();
+        const doc = await db.collection(userCol).findOne(
+            { _id: DOCUMENT_ANSWERS, "answers.answer.entryId": entryId },
+            { projection: { "answers.$": 1 } }
+        );
+        if (doc?.answers?.length === 1) {
+            return doc.answers[0];
+        }
+        return null;
+    } catch (error) {
+        winston.error('getAnswerByEntry:', error);
+        return null;
     }
 }
 
@@ -662,6 +702,8 @@ module.exports = {
     getPhotoVotePlace,
     addPhotoVoteEntry,
     votePhotoVoteDB,
+    deletePhotoVoteEntryDB,
+    getAnswerByEntry,
     hideAnswerDB,
     addTeacherToFeed,
     removeTeacherFromFeed,

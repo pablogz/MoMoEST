@@ -42,16 +42,14 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs access to the camera to take photos and record videos.</string>
+	<string>MoMoEST uses the camera so you can answer a learning task with a photo, for example photographing the facade of the monument your teacher asks about. The camera opens only when you tap the button to take the photo, and the picture is sent to your class only after you confirm it. MoMoEST does not record video or audio.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs access to the microhpone to record videos.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This app requires read and write access to the photo library.</string>
+	<string>MoMoEST uses your location to draw your position on the map, so you can see which learning places and itineraries are near you and walk to the next stop of an itinerary. Your location is used on this device only while the app is open: it is never uploaded to our servers nor shared with your teacher or classmates.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library.</string>
+	<string>MoMoEST never reads, adds or changes anything in your photo library, and this permission is never requested while you use the app. The description is required because a third party component of the rich text editor contains code that can reach the photo library, even though MoMoEST does not call it. The photo you send to your class is taken with the camera at that moment, and the images you download are saved to the MoMoEST folder you can open in the Files app.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -74,6 +72,8 @@
 		</dict>
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
