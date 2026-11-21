@@ -96,7 +96,7 @@ class FeatureLocalRepo {
             labels: this.labels,
             comments: this.comments,
             author: this.author,
-            license: 'CHEST contributors'
+            license: 'MoMoEST contributors'
         };
     }
 
@@ -111,7 +111,7 @@ class FeatureLocalRepo {
             labels: this.labels,
             comments: this.comments,
             author: this.author,
-            license: 'CHEST contributors'
+            license: 'MoMoEST contributors'
         };
     }
 }

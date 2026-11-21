@@ -33,6 +33,7 @@ const typeST = [
     'goverment',
     'hotel',
     'place_of_worship',
+    'placeOfWorship',
     'residential',
     'square'
 ];
@@ -45,6 +46,7 @@ const classTypeST = {
     'hotel': 'Hotel',
     'fountain': 'Fountain',
     'place_of_worship': 'PlaceOfWorship',
+    'placeOfWorship': 'PlaceOfWorship',
     'residential': 'Residential',
     'square': 'Square'
 }; 

@@ -37,10 +37,11 @@ xsd:decimal(?lng) < {{{east}}}) .
 function getInfoFeaturesSparql(bounds) {
     return Mustache.render(
         `PREFIX mo: <http://moult.gsic.uva.es/ontology/>
+PREFIX momo: <http://momoest.gsic.uva.es/ontology/>
 WITH {{{pg}}}
 SELECT DISTINCT ?feature ?type ?lat ?lng ?label ?comment ?author ?thumbnailImg ?thumbnailLic ?category WHERE {
 ?feature 
-a mo:SpatialThing ;
+a momo:Feature ;
 a ?type ;
 mo:hasGeometry ?geo ;
 rdfs:label ?label ;
@@ -896,7 +897,7 @@ function fields(uid, p4R) {
                 }
                 if (Array.isArray(p4R[key])) {
                     p4R[key].forEach((tipo) => {
-                        if (typeof tipo === 'string' && tipo.includes('http://moult.gsic.uva.es/ontology/')) {
+                        if (typeof tipo === 'string' && tipo.includes('http://momoest.gsic.uva.es/ontology/')) {
                             triples.push(Mustache.render(
                                 '<{{{uid}}}> a <{{{type}}}> . ',
                                 {

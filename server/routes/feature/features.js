@@ -343,12 +343,12 @@ curl -X POST --user pablo:pablo -H "Content-Type: application/json" -d "{\"lat\"
                                             if (Array.isArray(type)) {
                                                 type.forEach(ele => {
                                                     if (Config.typeST.includes(ele)) {
-                                                        types.push(`http://moult.gsic.uva.es/ontology/${Config.classTypeST[ele]}`);
+                                                        types.push(`http://momoest.gsic.uva.es/ontology/${Config.classTypeST[ele]}`);
                                                     }
                                                 });
                                             }
-                                            if (!types.includes('http://moult.gsic.uva.es/ontology/SpatialThing')) {
-                                                types.push('http://moult.gsic.uva.es/ontology/SpatialThing');
+                                            if (!types.includes('http://momoest.gsic.uva.es/ontology/Feature')) {
+                                                types.push('http://momoest.gsic.uva.es/ontology/Feature');
                                             }
                                             p4R.a = types;
                                         }
